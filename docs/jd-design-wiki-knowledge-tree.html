@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京东 Design Wiki · 知识树</title>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    fontFamily: '"PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif',
+    fontSize: '15px',
+    primaryColor: '#1a1a1c',
+    primaryTextColor: '#f8f4ec',
+    primaryBorderColor: '#fa2c19',
+    lineColor: '#666',
+    secondaryColor: '#0e0e10',
+    tertiaryColor: '#1a1a1c',
+    background: '#0e0e10',
+    mainBkg: '#1a1a1c',
+    nodeBorder: '#fa2c19',
+    clusterBkg: 'rgba(250,44,25,0.05)',
+    clusterBorder: 'rgba(250,44,25,0.2)',
+    edgeLabelBackground: '#0e0e10'
+  }
+});
+</script>
+<style>
+:root {
+  --bg: #0e0e10;
+  --ink: #f8f4ec;
+  --muted: #8b8680;
+  --line: rgba(248,244,236,0.08);
+  --accent: #fa2c19;
+  --accent-soft: rgba(250,44,25,0.12);
+  --surface: rgba(255,255,255,0.03);
+  --surface-hi: rgba(255,255,255,0.05);
+}
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+.glow-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60vw 60vh at 90% 0%, rgba(250,44,25,0.08), transparent 50%),
+    radial-gradient(ellipse 70vw 70vh at 10% 100%, rgba(250,44,25,0.05), transparent 60%);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  position: relative; z-index: 1;
+}
+
+/* HEADER */
+header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 2rem; margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.eyebrow {
+  font-size: 0.75rem; letter-spacing: 0.3em; color: var(--muted);
+  font-weight: 500; text-transform: uppercase; margin-bottom: 0.6em;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+h1 .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.meta {
+  text-align: right; font-size: 0.78rem; color: var(--muted); line-height: 1.7;
+}
+
+/* HERO TAGLINE */
+.tagline {
+  margin: clamp(1rem, 2vw, 2rem) 0 clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 12px 12px 0;
+}
+.tagline-text {
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-weight: 600; line-height: 1.55;
+}
+.tagline-meta {
+  font-size: 0.85rem; color: var(--muted); margin-top: 0.6rem;
+  letter-spacing: 0.05em; font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* SECTION HEADER */
+.section-head {
+  margin: clamp(2.5rem, 5vw, 4rem) 0 clamp(1rem, 2vw, 1.5rem);
+}
+.section-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  margin-bottom: 0.6em;
+}
+.section-title {
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+.section-desc {
+  color: var(--muted); font-size: 0.95rem; max-width: 720px;
+}
+
+/* MERMAID Wrapper */
+.mindmap-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1rem, 2vw, 2rem);
+  margin: 1.5rem 0;
+  overflow: auto;
+  box-shadow: 0 0 60px rgba(250,44,25,0.04);
+}
+.mermaid {
+  text-align: center;
+  min-height: 400px;
+}
+/* Mermaid mindmap node styling overrides */
+.mermaid .root rect, .mermaid .section-root rect {
+  fill: rgba(250,44,25,0.15) !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2 !important;
+}
+
+/* 5 ZONES BENTO */
+.zones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(1rem, 1.6vw, 1.4rem);
+  margin: 2rem 0;
+}
+.zone {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: clamp(1.2rem, 2vw, 1.8rem);
+  display: flex; flex-direction: column;
+  gap: 0.8rem;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.zone:hover {
+  border-color: rgba(250,44,25,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(250,44,25,0.06);
+}
+.zone-emoji { font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1; }
+.zone-title {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 800; letter-spacing: -0.01em; margin: 0;
+}
+.zone-tag {
+  font-size: 0.7rem; color: var(--accent);
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  font-weight: 600;
+}
+.zone-scenario {
+  padding: 0.5rem 0.8rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  border-left: 2px solid rgba(250,44,25,0.4);
+  margin-top: 0.2rem;
+}
+.zone-children {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+}
+.zone-children li {
+  display: flex; align-items: baseline; gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.zone-children li::before {
+  content: "→";
+  color: var(--accent);
+  font-family: "SF Mono", monospace;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+.zone-children li .child-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.zone-children li .child-desc {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+/* Focal zone (highlighted one) */
+.zone.focal {
+  background: linear-gradient(135deg, rgba(250,44,25,0.1) 0%, rgba(250,44,25,0.02) 100%);
+  border-color: rgba(250,44,25,0.3);
+}
+
+/* CONSUMPTION FLOW */
+.flow-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 2rem 0;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: clamp(180px, 22vw, 280px) 1fr;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  padding: 0.9rem 0;
+  border-bottom: 1px dashed var(--line);
+  align-items: center;
+}
+.flow-row:last-child { border-bottom: none; }
+.flow-trigger {
+  font-size: 0.95rem;
+  color: var(--ink);
+  font-weight: 600;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.flow-trigger .icon { font-size: 1.3em; }
+.flow-target {
+  display: flex; align-items: center; gap: 0.7rem;
+  font-size: 0.9rem;
+}
+.flow-target::before {
+  content: "→";
+  color: var(--accent);
+  font-family: "SF Mono", monospace;
+  font-weight: 700;
+}
+.flow-zone {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid rgba(250,44,25,0.4);
+  background: rgba(250,44,25,0.08);
+  border-radius: 6px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* FOOTER */
+footer {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-size: 0.78rem; color: var(--muted);
+  letter-spacing: 0.02em;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  header { flex-direction: column; }
+  .meta { text-align: left; }
+  .flow-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-bg"></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div>
+      <div class="eyebrow">JD Design Wiki · Knowledge Tree · v0.1</div>
+      <h1>京东 Design Wiki <span class="accent">知识树</span></h1>
+    </div>
+    <div class="meta">
+      2026-04-27<br/>
+      综合业务设计组 · Shaka 牵引
+    </div>
+  </header>
+
+  <!-- HERO TAGLINE -->
+  <div class="tagline">
+    <div class="tagline-text">
+      5 大顶层分区 · 18 个二级目录 · <span style="color:var(--accent);">1 套消费心智</span>
+    </div>
+    <div class="tagline-meta">
+      让大家都能参与进来 · 每个分区对应一种工作场景，不重叠、不遗漏
+    </div>
+  </div>
+
+  <!-- SECTION 1: 知识树主图 -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 01 · MIND MAP</div>
+    <h2 class="section-title">整体知识树</h2>
+    <p class="section-desc">从中心向外发散：Wiki 根 → 5 大分区 → 二级目录。每个二级是设计师可独立认领的"建设单元"。</p>
+  </div>
+
+  <div class="mindmap-wrap">
+    <div class="mermaid">
+mindmap
+  root((🌳 Design Wiki))
+    📚 Design 知识
+      内部知识库
+      通识设计原则
+      资源索引
+    🎨 Design 基础
+      Token 体系
+      原则守则
+      原子组件
+    🤖 AI 机制
+      Skill 规范
+      Skill Registry
+      消费协议
+      Agent 守则
+    🏗 组织架构
+      domains 部门×业务×组件
+        设计与用研部-综合业务设计部
+        设计与用研部-XX 设计部
+      shared 跨部门通用
+      pages 核心页面
+      relations 引用关系
+    🚀 横向专项
+      进行中
+      已完成归档
+      治理协议
+      反哺接口
+    </div>
+  </div>
+
+  <!-- SECTION 2: 5 个分区详情 -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 02 · ZONES IN DETAIL</div>
+    <h2 class="section-title">5 大分区详情</h2>
+    <p class="section-desc">每个分区有自己的「消费场景 + 二级目录」。设计师按场景找入口，不会迷路。</p>
+  </div>
+
+  <div class="zones-grid">
+
+    <!-- 1. Design 知识 -->
+    <div class="zone">
+      <div class="zone-tag">ZONE 01</div>
+      <div class="zone-emoji">📚</div>
+      <h3 class="zone-title">Design 知识</h3>
+      <div class="zone-scenario">"我想学一个概念 / 找一个研究 / 看外部参考"</div>
+      <ul class="zone-children">
+        <li><span><span class="child-label">内部知识库</span> <span class="child-desc">京东设计师研究 / 决策 / 案例</span></span></li>
+        <li><span><span class="child-label">通识设计原则</span> <span class="child-desc">行业经验 / 设计哲学转译</span></span></li>
+        <li><span><span class="child-label">资源索引</span> <span class="child-desc">外部参考 / 友商对标 / Figma 链接</span></span></li>
+      </ul>
+    </div>
+
+    <!-- 2. Design 基础 -->
+    <div class="zone">
+      <div class="zone-tag">ZONE 02</div>
+      <div class="zone-emoji">🎨</div>
+      <h3 class="zone-title">Design 基础</h3>
+      <div class="zone-scenario">"我要查一个 token / 颜色 / 圆角值"</div>
+      <ul class="zone-children">
+        <li><span><span class="child-label">Token 体系</span> <span class="child-desc">color / typography / spacing / radius / motion / voice</span></span></li>
+        <li><span><span class="child-label">原则守则</span> <span class="child-desc">principles + guidelines</span></span></li>
+        <li><span><span class="child-label">原子组件</span> <span class="child-desc">单一元素的基础变体</span></span></li>
+      </ul>
+    </div>
+
+    <!-- 3. AI 机制 (Focal) -->
+    <div class="zone focal">
+      <div class="zone-tag">ZONE 03 · ★ AI-NATIVE</div>
+      <div class="zone-emoji">🤖</div>
+      <h3 class="zone-title">AI 机制</h3>
+      <div class="zone-scenario">"我要让 AI 帮我做 / 接入工具 / 写 Skill"</div>
+      <ul class="zone-children">
+        <li><span><span class="child-label">Skill 规范</span> <span class="child-desc">META.md / 如何写 Skill</span></span></li>
+        <li><span><span class="child-label">Skill Registry</span> <span class="child-desc">已注册 Skill 索引</span></span></li>
+        <li><span><span class="child-label">消费协议</span> <span class="child-desc">Figma / Stitch / Cursor 等接入</span></span></li>
+        <li><span><span class="child-label">Agent 守则</span> <span class="child-desc">反 AI slop / 自检环路 / IP gate</span></span></li>
+      </ul>
+    </div>
+
+    <!-- 4. 组织架构 -->
+    <div class="zone">
+      <div class="zone-tag">ZONE 04</div>
+      <div class="zone-emoji">🏗</div>
+      <h3 class="zone-title">组织架构</h3>
+      <div class="zone-scenario">"我做组件 / 找业务结构 / 看复用关系"(业务线设计师主战场)</div>
+      <ul class="zone-children">
+        <li><span><span class="child-label">domains/</span> <span class="child-desc">部门 → 业务 → 组件 三级结构 ★</span></span></li>
+        <li><span><span class="child-label">shared/</span> <span class="child-desc">跨部门通用组件 (有专门 owner)</span></span></li>
+        <li><span><span class="child-label">pages/</span> <span class="child-desc">详情 / 搜索 / 个人中心 等主干页面</span></span></li>
+        <li><span><span class="child-label">relations/</span> <span class="child-desc">跨部门复用 / 引用关系图</span></span></li>
+      </ul>
+    </div>
+
+    <!-- 5. 横向专项 -->
+    <div class="zone">
+      <div class="zone-tag">ZONE 05</div>
+      <div class="zone-emoji">🚀</div>
+      <h3 class="zone-title">横向专项</h3>
+      <div class="zone-scenario">"我要发起 / 跟进 / 查阅一个治理项目"</div>
+      <ul class="zone-children">
+        <li><span><span class="child-label">进行中专项</span> <span class="child-desc">双列卡 / 其他</span></span></li>
+        <li><span><span class="child-label">已完成归档</span> <span class="child-desc">做过的专项沉淀</span></span></li>
+        <li><span><span class="child-label">治理协议</span> <span class="child-desc">怎么发起 / Review / 落地</span></span></li>
+        <li><span><span class="child-label">反哺接口</span> <span class="child-desc">专项产出回流到哪一层</span></span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- SECTION 3: 消费路径 -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 03 · CONSUMPTION FLOW</div>
+    <h2 class="section-title">设计师消费路径</h2>
+    <p class="section-desc">不同工作场景对应不同 Zone。一眼能找到入口，不需要全 wiki 翻一遍。</p>
+  </div>
+
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">📖</span> 学一个概念 / 看通识知识</div>
+      <div class="flow-target"><span class="flow-zone">📚 Design 知识</span></div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🔍</span> 查一个 token / 规范值</div>
+      <div class="flow-target"><span class="flow-zone">🎨 Design 基础</span></div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🗺</span> 看业务结构 / 场域关系</div>
+      <div class="flow-target"><span class="flow-zone">🏗 组织架构</span></div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">⚙️</span> 找治理动作 / 跟专项</div>
+      <div class="flow-target"><span class="flow-zone">🚀 横向专项</span></div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🤖</span> 让 AI 帮我做 / 接入工具</div>
+      <div class="flow-target"><span class="flow-zone">🤖 AI 机制</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 谁参与什么 -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 04 · WHO BUILDS WHAT</div>
+    <h2 class="section-title">谁参与建设什么</h2>
+    <p class="section-desc">让大家都参与进来 —— 每个 Zone 都有明确的 owner 角色。</p>
+  </div>
+
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">📚</span> Design 知识</div>
+      <div class="flow-target">用研团队 + 资深设计师 + 知识管理员</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🎨</span> Design 基础</div>
+      <div class="flow-target">视觉负责人 + 基础组件 owner + 前端架构</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🤖</span> AI 机制</div>
+      <div class="flow-target">AI / Agent 团队 + 设计系统 maintainer</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🏗</span> 组织架构</div>
+      <div class="flow-target">各业务线设计 owner + 产品 PM</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-trigger"><span class="icon">🚀</span> 横向专项</div>
+      <div class="flow-target">专项发起人 + 跨业务代表 + 治理委员会</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>v0.2 · 综合业务设计组 · Shaka 牵引</div>
+    <div>配套阅读: <a href="./jd-design-wiki-master-diagram.html" style="color:var(--accent);text-decoration:none">架构大图</a> · <a href="./jd-design-wiki-contributor-guide.html" style="color:var(--accent);text-decoration:none">贡献指南</a></div>
+  </footer>
+
+</div>
+
+</body>
+</html>

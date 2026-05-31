@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JD APP 16.0 GUIDELINE · Icon 图标</title>
+  <style>
+    :root {
+      --color-text: #11141A;
+      --color-help: #6B6F7A;
+      --color-divider: rgba(17, 20, 26, 0.08);
+      --color-tips-bg: #F0F7FF;
+      --color-tips-border: #B3D4FC;
+      --color-must: #E94B5A;
+      --color-optional: #5BAA5F;
+      --color-example-bg: #FFF8DC;
+      --color-link: #1976D2;
+      --color-bullet: #1976D2;
+      --max-width: 1666px;
+      --page-max-width: 1200px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #fff; color: var(--color-text); font-family: "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.6; }
+    .wrap { max-width: var(--max-width); margin: 0 auto; }
+    .banner { position: relative; background: #fff; display: grid; grid-template-columns: 1fr 548px; min-height: 240px; }
+    .banner__text { padding: 54px 60px; display: flex; flex-direction: column; gap: 28px; }
+    .banner__tag { font-size: 20px; line-height: 20px; letter-spacing: .04em; }
+    .banner__title { font-size: 40px; line-height: 1.1; margin: 0; font-weight: 600; }
+    .banner__subtitle { font-size: 16px; line-height: 16px; margin: 0; }
+    .banner__art { width: 548px; height: 240px; background-image: radial-gradient(circle at 30% 50%, #FFB8C5 0%, #FFE0E6 28%, transparent 62%), radial-gradient(circle at 68% 48%, #E8DDFF 0%, transparent 52%); }
+    .page { max-width: var(--page-max-width); margin: 0 auto; padding: 60px; }
+    .page__h2 { font-size: 28px; font-weight: 600; margin: 0 0 40px; }
+    .page__h2 .num { color: var(--color-link); margin-right: 8px; }
+    .guideline-tips { border: 1px solid var(--color-tips-border); background: var(--color-tips-bg); padding: 28px 36px; border-radius: 8px; margin: 0 0 56px; }
+    .guideline-tips h3 { margin: 0 0 16px; }
+    .guideline-tips ol { margin: 0; padding-left: 24px; }
+    .must { color: var(--color-must); }
+    .optional { color: var(--color-optional); }
+    .example-header { background: var(--color-example-bg); padding: 10px 16px; margin: 0 0 36px; border-radius: 4px; display: flex; gap: 24px; flex-wrap: wrap; }
+    .example-tag { color: var(--color-must); font-weight: 600; }
+    .example-link { color: var(--color-link); text-decoration: none; }
+    .bullet-section { margin: 0 0 44px; }
+    .bullet-section__title { position: relative; padding-left: 24px; font-size: 18px; margin: 0 0 16px; }
+    .bullet-section__title::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-bullet); }
+    .section-table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14px; }
+    .section-table th, .section-table td { border: 1px solid var(--color-divider); text-align: left; padding: 10px 14px; vertical-align: top; }
+    .section-table th { background: #F5F6FA; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    .muted { color: var(--color-help); }
+    .site-footer { padding: 40px 60px; border-top: 1px solid var(--color-divider); color: var(--color-help); font-size: 13px; }
+    @media (max-width: 768px) {
+      .banner { grid-template-columns: 1fr; }
+      .banner__art { width: 100%; height: 120px; }
+      .banner__text, .page, .site-footer { padding: 24px 20px; }
+      .banner__title { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__tag">JD APP 16.0  GUIDELINE</span>
+        <h1 class="banner__title">Icon 图标</h1>
+        <p class="banner__subtitle">设计与用研部 - AI 核心产品设计部</p>
+      </div>
+      <div class="banner__art" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+      <h2 class="page__h2"><span class="num">1.</span>业务组件库（业务型组件）</h2>
+
+      <aside class="guideline-tips">
+        <h3>🌟 规范要素参考：</h3>
+        <ol>
+          <li><strong>组件定义</strong><span class="must">（必写）</span>：组件目的或用途</li>
+          <li><strong>行为准则</strong><span class="optional">（选写）</span>：与用户约定好的行为规则</li>
+          <li><strong>组件类型</strong><span class="optional">（选写）</span>：交互/视觉形态分类</li>
+          <li><strong>组件结构</strong><span class="must">（必写）</span>：内部组成、层级及约束</li>
+          <li><strong>组件属性</strong><span class="must">（必写）</span>：尺寸、间距、颜色、适配</li>
+          <li><strong>典型场景示意</strong><span class="must">（必写）</span>：覆盖典型场景</li>
+          <li><strong>错误示例</strong><span class="optional">（选写）</span>：避免误用</li>
+        </ol>
+      </aside>
+
+      <p class="example-header">
+        <span class="example-tag">*示意：</span>
+        <span><strong>Icon 图标（Icon） · published v1.1</strong></span>
+        <a class="example-link" href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=146%3A39&node_id=1487%3A10277">Relay 规范入口 →</a>
+      </p>
+
+      <section class="bullet-section" id="icon-definition">
+        <h3 class="bullet-section__title">Icon 图标 定义</h3>
+        <p>统一动作语义表达与跨业务一致性图形系统。规范唯一来源为 JDSP 文件 <span class="mono">1958051135088508929</span> 的「1.3 icon图标 🟢」页，锚点节点 <span class="mono">1487:10277</span>。</p>
+      </section>
+
+      <section class="bullet-section" id="icon-behavior">
+        <h3 class="bullet-section__title">行为准则</h3>
+        <ul>
+          <li>统一语义优先：同一语义跨场景保持形态一致，仅调整尺寸与色值。</li>
+          <li>15.0 主流程一致：视频详情、逛双列、评论区、搜索结果、短剧统一 48 母版网格。</li>
+          <li>情感层级控制：高唤起动作强化反馈，中性动作降低噪声。</li>
+          <li>单色继承策略：运行态统一使用 <span class="mono">currentColor</span> 驱动默认/激活/禁用颜色。</li>
+        </ul>
+      </section>
+
+      <section class="bullet-section" id="icon-types">
+        <h3 class="bullet-section__title">Icon 图标 类型</h3>
+        <table class="section-table">
+          <thead><tr><th>Variant</th><th>Description</th><th>Frame nodeId</th></tr></thead>
+          <tbody>
+            <tr><td>线 (line)</td><td>Outline / stroke style</td><td class="mono">1719:3234</td></tr>
+            <tr><td>面 (filled)</td><td>Solid / filled style</td><td class="mono">1719:4170</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">v2 更新：线/面完全分离；已移除 icon-minus、icon-question、icon-like-hand、icon-commodity-dislike。</p>
+      </section>
+
+      <section class="bullet-section" id="icon-structure">
+        <h3 class="bullet-section__title">Icon 图标 结构</h3>
+        <p>目录结构分为 <span class="mono">line</span>、<span class="mono">fill</span>、<span class="mono">interactive</span>、<span class="mono">legacy</span> 四类；互动区图标在 <span class="mono">50×50</span> 热区中以 <span class="mono">36px</span> 视觉盒渲染，并与计数区组成 <span class="mono">50×62</span> 单项容器。</p>
+      </section>
+
+      <section class="bullet-section" id="icon-properties">
+        <h3 class="bullet-section__title">设计属性</h3>
+        <table class="section-table">
+          <thead><tr><th>维度</th><th>规则</th><th>参数</th></tr></thead>
+          <tbody>
+            <tr><td>母版网格</td><td>统一来源「1.3 icon图标」</td><td class="mono">48×48</td></tr>
+            <tr><td>输出尺寸</td><td>标准输出</td><td class="mono">20 / 24 / 32 / 48</td></tr>
+            <tr><td>默认线宽</td><td>常规线图</td><td class="mono">3dp (icon.strokeWidth.default)</td></tr>
+            <tr><td>提示线宽</td><td>告警/提示类</td><td class="mono">4dp (icon.strokeWidth.hint)</td></tr>
+            <tr><td>圆角梯度</td><td>outer/detail/sharp/endpoint</td><td class="mono">8/6/4/1.5/0.5dp</td></tr>
+            <tr><td>阴影</td><td>互动区图标与文字</td><td class="mono">0 1px 1px rgba(0,0,0,0.2)</td></tr>
+          </tbody>
+        </table>
+        <p>核心互动资产映射（node <span class="mono">1808:654</span>）：like / comment / grass / share，均需执行单色清洗并移除固定 fill/stroke 绑定。</p>
+      </section>
+
+      <section class="bullet-section" id="icon-scenes">
+        <h3 class="bullet-section__title">典型场景示意</h3>
+        <p>覆盖导航、Actions、Social & Engagement、Communication、Media、Commerce & User、System & Files、Status/Emotion 等分类，并提供 line/fill 双库存量清单与 nodeId 溯源链接。</p>
+        <p><a class="example-link" href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=146%3A39&node_id=1487%3A10277">查看规范页面与资产映射 →</a></p>
+      </section>
+
+      <section class="bullet-section" id="icon-donts">
+        <h3 class="bullet-section__title">错误示例</h3>
+        <ul>
+          <li>引用非指定 JDSP 页面作为规范来源。</li>
+          <li>线/面跨分区混用，或将 loose icon 节点直接投产。</li>
+          <li>在资产内部写死业务态颜色，而非使用 <span class="mono">currentColor</span>。</li>
+          <li>删除废弃图标而非迁移到 <span class="mono">legacy</span> 归档。</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      生成于 <time datetime="2026-05-22T00:00:00.000Z">2026-05-22T00:00:00.000Z</time> · 源内容：JDSP-design-skill/components/Icon.md
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!--
+  ═══════════════════════════════════════════════════════════════════════
+  docs/design.html · 16.0 GUIDELINE 对外站点骨架（v0.2 范式）
+  ═══════════════════════════════════════════════════════════════════════
+
+  范式来源：docs/「design.html 范式」PDF —— 顶部唯一 banner + 规范要素
+  参考蓝框 + 示意黄标题 + 7 章节圆点列表（定义/行为/类型/结构/属性/
+  典型场景/错误示例）。
+
+  本文件由 `design-md-to-portal` skill 复制 → 替换占位符 → 覆写到
+  `docs/design.html`。**故意留大量 TBD 占位**，预期多轮迭代填。
+
+  顶层占位符：
+    {{generated_at}}       —— ISO 时间戳
+    {{spec_sections}}      —— 所有 spec section 串联，模板见文件末尾
+
+  禁止做的事（本期）：
+    × 每个 spec section 再加 banner —— 顶部已唯一 banner，spec 内不重复
+    × 加 token 表样式（spec section 用 section-table 通用样式）
+    × 加暗色模式 / 搜索 / 12 断点
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JD APP 16.0 GUIDELINE · 设计系统</title>
+  <meta name="description" content="JD APP 16.0 设计系统对外公开规范。设计与用研部 - AI 核心产品设计部。" />
+  <style>
+    :root {
+      --color-text: #11141A;
+      --color-text-help: #6B6F7A;
+      /* banner 底色：V16 token color_background_component (= gray.6 = #F5F6FA) */
+      --color-banner-bg: #F5F6FA;
+      --color-divider: rgba(17, 20, 26, 0.08);
+      /* 范式色板（来自 PDF），TBD 后续换成 V16 真 token */
+      --color-tips-bg: #F0F7FF;
+      --color-tips-border: #B3D4FC;
+      --color-must: #E94B5A;
+      --color-optional: #5BAA5F;
+      --color-example-bg: #FFF8DC;
+      --color-link: #1976D2;
+      --color-bullet: #1976D2;
+      --font-display: 'Intro', 'Helvetica Neue', Arial, sans-serif;
+      --font-cjk: 'PingFang SC', 'PingFang-SC', 'Microsoft YaHei', sans-serif;
+      --max-width: 1666px;
+      --page-max-width: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #fff; color: var(--color-text); font-family: var(--font-cjk); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    .wrap { max-width: var(--max-width); margin: 0 auto; }
+
+    /* ─── 顶部唯一 banner ────────────────────────────────────── */
+    /* banner 底色用纯白：panda PNG 透明区不再透出灰色，玻璃质感清爽。
+       --color-banner-bg (#F5F6FA) 留给表头等其它用途。 */
+    .banner {
+      position: relative;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1fr 548px;
+      min-height: 240px;
+    }
+    .banner__text { padding: 54px 60px; display: flex; flex-direction: column; gap: 28px; grid-column: 1; min-width: 0; }
+    .banner__tag { font-family: var(--font-display); font-size: 20px; line-height: 20px; letter-spacing: 0.04em; }
+    .banner__title { font-family: var(--font-cjk); font-size: 40px; font-weight: 600; line-height: 1.1; margin: 0; word-break: break-word; }
+    .banner__subtitle { font-family: var(--font-cjk); font-size: 16px; line-height: 16px; margin: 0; }
+    .banner__art {
+      grid-column: 2;
+      width: 548px;
+      height: 240px;
+      /* 白底 banner 下 multiply 无作用，移除让 PNG 玻璃质感清爽渲染 */
+      background-image:
+        url('assets/banner-art.png'),
+        radial-gradient(circle at 30% 50%, #FFB8C5 0%, #FFE0E6 28%, transparent 62%),
+        radial-gradient(circle at 68% 48%, #E8DDFF 0%, transparent 52%);
+      background-size: cover, auto, auto;
+      background-position: center, center, center;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+    }
+
+    /* ─── 正文限宽容器 ──────────────────────────────────────── */
+    .page { max-width: var(--page-max-width); margin: 0 auto; padding: 60px; }
+    .page__h2 { font-size: 28px; font-weight: 600; margin: 0 0 40px; letter-spacing: 0.5px; }
+    .page__h2 .num { color: var(--color-link); font-weight: 600; margin-right: 8px; }
+
+    /* ─── 规范要素参考蓝框 ──────────────────────────────────── */
+    .guideline-tips { border: 1px solid var(--color-tips-border); background: var(--color-tips-bg); padding: 28px 36px; border-radius: 8px; margin: 0 0 56px; }
+    .guideline-tips__title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+    .guideline-tips ol { margin: 0; padding-left: 24px; font-size: 15px; line-height: 1.85; }
+    .guideline-tips ol li { margin-bottom: 4px; }
+    .guideline-tips .must { color: var(--color-must); font-weight: 500; }
+    .guideline-tips .optional { color: var(--color-optional); font-weight: 500; }
+    .guideline-tips strong { font-weight: 600; }
+
+    /* ─── 示意黄色标题 ──────────────────────────────────────── */
+    .example-header { background: var(--color-example-bg); padding: 10px 16px; margin: 0 0 36px; font-size: 15px; border-radius: 4px; display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; }
+    .example-tag { color: var(--color-must); font-weight: 600; }
+    .example-name { font-weight: 600; }
+    .example-link { color: var(--color-link); text-decoration: none; }
+    .example-link:hover { text-decoration: underline; }
+
+    /* ─── 圆点章节 ──────────────────────────────────────────── */
+    .bullet-section { margin: 0 0 56px; }
+    .bullet-section__title { position: relative; padding-left: 24px; font-size: 18px; font-weight: 500; margin: 0 0 20px; letter-spacing: 0.3px; }
+    .bullet-section__title::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-bullet); }
+    .bullet-section p,
+    .bullet-section ol,
+    .bullet-section ul { font-size: 15px; line-height: 1.8; margin: 0 0 16px; }
+    .bullet-section ol,
+    .bullet-section ul { padding-left: 24px; }
+    .bullet-section ol li,
+    .bullet-section ul li { margin-bottom: 6px; }
+
+    /* ─── 章节内插表格 ──────────────────────────────────────── */
+    .section-table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 14px; }
+    .section-table th,
+    .section-table td { text-align: left; padding: 12px 16px; border: 1px solid var(--color-divider); vertical-align: top; }
+    .section-table th { background: var(--color-banner-bg); font-weight: 600; }
+
+    /* ─── 章节内图示 ────────────────────────────────────────── */
+    .section-figure { margin: 16px 0 24px; }
+    .section-figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--color-divider); border-radius: 4px; }
+    .section-figure figcaption { font-size: 13px; color: var(--color-text-help); margin-top: 8px; }
+
+    /* ─── 页脚 ──────────────────────────────────────────────── */
+    .site-footer { padding: 40px 60px; border-top: 1px solid var(--color-divider); font-size: 13px; color: var(--color-text-help); }
+    .site-footer a { color: inherit; }
+
+    /* ─── 移动端 ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .banner { grid-template-columns: 1fr; grid-template-rows: auto auto; min-height: 0; }
+      .banner__art { grid-column: 1; width: 100%; height: 120px; }
+      .banner__text, .page, .site-footer { padding: 32px 20px; }
+      .banner__title { font-size: 28px; line-height: 1.2; }
+      .page__h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- 顶部唯一 banner -->
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__tag">JD APP 16.0&nbsp;&nbsp;GUIDELINE</span>
+        <h1 class="banner__title">设计系统</h1>
+        <p class="banner__subtitle">设计与用研部 - AI 核心产品设计部</p>
+      </div>
+      <div class="banner__art" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+
+      <h2 class="page__h2"><span class="num">1.</span>业务组件库（业务型组件）</h2>
+
+      <!-- 规范要素参考蓝框（固定，对所有 spec 通用） -->
+      <aside class="guideline-tips">
+        <h3 class="guideline-tips__title">🌟 规范要素参考：</h3>
+        <ol>
+          <li><strong>组件定义</strong><span class="must">（必写）</span>：组件的目的或用途</li>
+          <li><strong>行为准则</strong><span class="optional">（选写）</span>：和用户约定好的行为规则</li>
+          <li><strong>组件类型</strong><span class="optional">（选写）</span>：根据不同交互/视觉形态或功能模式的分类</li>
+          <li><strong>组件结构</strong><span class="must">（必写）</span>：组件的骨架说明，包括组件的内部组成、层级关系、必需和可选元素，需明确每个元素的使用场景及使用上下限，包括是否为必配置项、文本字数限制、按钮数量等</li>
+          <li><strong>组件属性</strong><span class="must">（必写）</span>：元素的空间关系、对齐方式、间距、颜色、在不同尺寸下的适配规则等</li>
+          <li><strong>典型场景示意</strong><span class="must">（必写）</span>：组件的使用场景举例，需尽可能覆盖全部典型场景</li>
+          <li><strong>错误示例</strong><span class="optional">（选写）</span>：组件"千万别这么做"的反面案例，尽量避免滥用或误用</li>
+        </ol>
+      </aside>
+
+      <!-- spec 们逐份铺开（每份是示意头 + 7 圆点章节） -->
+      {{spec_sections}}
+
+    </main>
+
+    <footer class="site-footer">
+      生成于 <time datetime="{{generated_at}}">{{generated_at}}</time> ·
+      源：<a href="https://github.com/ShuaiMXu/jd-design-wiki-proposal">jd-design-wiki-proposal</a>
+      <!-- TBD: 战略 HTML footer 互链 -->
+    </footer>
+
+  </div>
+</body>
+</html>
+
+<!--
+═══════════════════════════════════════════════════════════════════════
+  SPEC_SECTION 模板 · 每份 spec 一段，拼到 {{spec_sections}}
+═══════════════════════════════════════════════════════════════════════
+
+  对每份 design.md，按 PDF 范式渲染：示意黄头 + 7 圆点章节。
+  章节内容由 skill 解析 frontmatter / 正文填充；缺失的字段填 TBD 占位。
+
+  占位符：
+    {{spec_name_zh}}        spec frontmatter name_zh
+    {{spec_name_en}}        frontmatter name_en
+    {{spec_status}}         frontmatter status (draft / wip / stable)
+    {{spec_version}}        frontmatter version
+    {{spec_md_relpath}}     ../jd-design-system-md-v16/.../design.md
+    {{spec_screenshot}}     同目录 preview.png
+    {{spec_relay_url}}      frontmatter relay_source.url
+    {{spec_definition}}     正文「## 定义」段（缺则填 TBD）
+    {{spec_behavior_rules}} 正文「## 行为准则」段（缺则填 TBD）
+    ...etc
+
+  ── HTML ────────────────────────────────────────────────────────────
+
+  <p class="example-header">
+    <span class="example-tag">*示意：</span>
+    <span class="example-name">{{spec_name_zh}}（{{spec_name_en}}） · {{spec_status}} v{{spec_version}}</span>
+    <a class="example-link" href="../{{spec_md_relpath}}">design.md →</a>
+  </p>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">{{spec_name_zh}} 定义</h3>
+    <p>{{spec_definition}}</p>
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">行为准则</h3>
+    {{spec_behavior_rules}}
+    <!-- TBD: frontmatter 缺则填占位 -->
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">{{spec_name_zh}} 类型</h3>
+    <!-- TBD: 变体表（从 frontmatter variants 或 references/variant-vocab.json 反查） -->
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">{{spec_name_zh}} 结构</h3>
+    <!-- TBD: 元素表（从正文「## 结构」段抽） -->
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">设计属性</h3>
+    <!-- TBD: token 表（从 frontmatter uses_tokens 渲染） -->
+    <!-- TBD: 对齐 / 间距 / 颜色说明 -->
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">典型场景示意</h3>
+    <figure class="section-figure">
+      <img src="{{spec_screenshot}}" alt="{{spec_name_zh}} 截图" />
+      <figcaption>来源：<a href="{{spec_relay_url}}">Relay frame</a></figcaption>
+    </figure>
+    <!-- TBD: 多场景对比表 -->
+  </section>
+
+  <section class="bullet-section">
+    <h3 class="bullet-section__title">错误示例</h3>
+    <!-- TBD: 从正文「## 错误示例」抽（选写） -->
+  </section>
+-->

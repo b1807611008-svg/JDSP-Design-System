@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JD Design Wiki · 给老板的 30 秒汇报</title>
+<style>
+:root {
+  --bg: #0a0a0c;
+  --ink: #f8f4ec;
+  --muted: #8b8680;
+  --line: rgba(248,244,236,0.08);
+  --line-strong: rgba(248,244,236,0.18);
+  --accent: #fa2c19;
+  --accent-soft: rgba(250,44,25,0.12);
+  --accent-glow: rgba(250,44,25,0.25);
+  --surface: rgba(255,255,255,0.03);
+  --green: #4ade80;
+  --green-soft: rgba(74,222,128,0.12);
+  --warn: #f6ad55;
+  --warn-soft: rgba(246,173,85,0.12);
+  --bad: #ef4444;
+  --bad-soft: rgba(239,68,68,0.1);
+}
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+.glow-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60vw 60vh at 90% 0%, rgba(250,44,25,0.1), transparent 50%),
+    radial-gradient(ellipse 70vw 70vh at 10% 100%, rgba(250,44,25,0.05), transparent 60%);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  position: relative; z-index: 1;
+}
+
+/* ============ HERO ============ */
+header.page-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 2rem; margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.eyebrow {
+  font-size: 0.75rem; letter-spacing: 0.3em; color: var(--muted);
+  font-weight: 500; text-transform: uppercase; margin-bottom: 0.6em;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+h1 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+h1 .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+  color: rgba(248,244,236,0.7);
+  margin-top: 1.2rem;
+  max-width: 60ch;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.meta {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-family: "SF Mono", monospace;
+}
+
+/* ============ SECTION COMMON ============ */
+.section-block { margin: clamp(2.5rem, 5vw, 4rem) 0; }
+.section-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+}
+.section-title {
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.5rem;
+  line-height: 1.25;
+}
+.section-title .accent { color: var(--accent); }
+
+/* ============ §1 BEFORE/AFTER 对比表 ============ */
+.compare-table {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+.compare-head {
+  padding: 1rem 1.4rem;
+  font-family: "SF Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-head.before {
+  color: var(--bad);
+  background: var(--bad-soft);
+}
+.compare-head.after {
+  color: var(--green);
+  background: var(--green-soft);
+}
+.compare-vs {
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--line-strong);
+  padding: 1rem 0.8rem;
+  font-family: "SF Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-align: center;
+  font-weight: 600;
+}
+.compare-row {
+  display: contents;
+}
+.compare-cell {
+  padding: 0.95rem 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  border-bottom: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.compare-row:last-child .compare-cell { border-bottom: none; }
+.compare-cell.before {
+  color: rgba(248,244,236,0.7);
+}
+.compare-cell.before::before {
+  content: "✗";
+  color: var(--bad);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.compare-cell.after {
+  color: var(--ink);
+  font-weight: 500;
+}
+.compare-cell.after::before {
+  content: "✓";
+  color: var(--green);
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.compare-cell.divider {
+  background: rgba(0,0,0,0.4);
+  color: var(--muted);
+  text-align: center;
+  font-family: "SF Mono", monospace;
+  font-size: 0.85rem;
+  border-bottom: 1px dashed var(--line);
+  padding: 0.95rem 0.6rem;
+  justify-content: center;
+}
+
+/* ============ §2 流程转换图 (Old → 改造 → New) ============ */
+.transform-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1.4fr auto 1fr;
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  align-items: stretch;
+  margin: 1.5rem 0;
+}
+.flow-side {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.flow-side.old {
+  border-left: 3px solid var(--bad);
+}
+.flow-side.new {
+  border-left: 3px solid var(--green);
+  background: linear-gradient(135deg, rgba(74,222,128,0.06) 0%, var(--surface) 100%);
+}
+.flow-side-label {
+  font-family: "SF Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 0.4em;
+}
+.flow-side.old .flow-side-label { color: var(--bad); }
+.flow-side.new .flow-side-label { color: var(--green); }
+.flow-side-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 0.5em;
+}
+.flow-side ul {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 0.45rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.flow-side ul li {
+  padding-left: 1rem;
+  position: relative;
+  color: rgba(248,244,236,0.8);
+}
+.flow-side.old ul li::before {
+  content: "•";
+  position: absolute; left: 0;
+  color: var(--bad);
+}
+.flow-side.new ul li::before {
+  content: "•";
+  position: absolute; left: 0;
+  color: var(--green);
+}
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: "SF Mono", monospace;
+  color: var(--accent);
+  font-size: 1.6rem;
+  font-weight: 900;
+  padding: 0 0.3rem;
+}
+.flow-mid {
+  background: linear-gradient(135deg, rgba(250,44,25,0.15) 0%, rgba(250,44,25,0.04) 100%);
+  border: 2px solid rgba(250,44,25,0.4);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex; flex-direction: column;
+  gap: 0.55rem;
+  box-shadow: 0 0 30px rgba(250,44,25,0.1);
+}
+.flow-mid-label {
+  font-family: "SF Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.2em;
+}
+.flow-mid-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 0.3em;
+  color: var(--ink);
+}
+.flow-mid ol {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  counter-reset: improve-counter;
+}
+.flow-mid ol li {
+  padding-left: 2rem;
+  position: relative;
+  counter-increment: improve-counter;
+  color: var(--ink);
+}
+.flow-mid ol li::before {
+  content: counter(improve-counter);
+  position: absolute; left: 0; top: 0.05em;
+  width: 1.4rem; height: 1.4rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-family: "SF Mono", monospace;
+  font-weight: 900;
+  font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.flow-mid ol li strong { color: var(--accent); }
+
+/* ============ §3 水平时间线 (3 个月) ============ */
+.timeline {
+  position: relative;
+  padding: 1.5rem 0 0.5rem;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 2.6rem;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--warn) 0%,
+    var(--warn) 33%,
+    var(--accent) 33%,
+    var(--accent) 67%,
+    var(--green) 67%,
+    var(--green) 100%);
+  border-radius: 1px;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.8rem, 2vw, 1.6rem);
+  position: relative;
+}
+.timeline-node {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.6rem 1.2rem 1.2rem;
+  position: relative;
+}
+.timeline-dot {
+  position: absolute;
+  top: -6px; left: 50%;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid var(--bg);
+  z-index: 1;
+}
+.timeline-node.m1 .timeline-dot { background: var(--warn); }
+.timeline-node.m2 .timeline-dot { background: var(--accent); }
+.timeline-node.m3 .timeline-dot { background: var(--green); }
+.timeline-node.m1 { border-top: 3px solid var(--warn); }
+.timeline-node.m2 { border-top: 3px solid var(--accent); }
+.timeline-node.m3 { border-top: 3px solid var(--green); }
+.timeline-time {
+  font-family: "SF Mono", monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin-bottom: 0.3em;
+}
+.timeline-node.m1 .timeline-time { color: var(--warn); }
+.timeline-node.m2 .timeline-time { color: var(--accent); }
+.timeline-node.m3 .timeline-time { color: var(--green); }
+.timeline-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 0.6em;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.timeline-result {
+  font-size: 0.85rem;
+  color: rgba(248,244,236,0.85);
+  line-height: 1.55;
+  margin-bottom: 0.7rem;
+}
+.timeline-metric {
+  display: flex; align-items: baseline;
+  gap: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+}
+.timeline-metric .num {
+  font-family: "SF Mono", monospace;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+.timeline-node.m1 .timeline-metric .num { color: var(--warn); }
+.timeline-node.m2 .timeline-metric .num { color: var(--accent); }
+.timeline-node.m3 .timeline-metric .num { color: var(--green); }
+.timeline-metric .label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: "SF Mono", monospace;
+  letter-spacing: 0.05em;
+}
+
+/* ============ §4 进度条 ============ */
+.progress-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.5rem 1.8rem;
+  margin: 1rem 0;
+}
+.progress-row {
+  display: grid;
+  grid-template-columns: clamp(120px, 18vw, 180px) 1fr clamp(60px, 8vw, 80px);
+  gap: 1rem;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+.progress-row:last-child { border-bottom: none; }
+.progress-label {
+  font-size: 0.92rem;
+  color: var(--ink);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.progress-status {
+  font-family: "SF Mono", monospace;
+  font-size: 1rem;
+  font-weight: 900;
+}
+.progress-status.done { color: var(--green); }
+.progress-status.doing { color: var(--accent); }
+.progress-status.todo { color: var(--muted); }
+.progress-bar-wrap {
+  height: 10px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s;
+}
+.progress-bar.done { background: linear-gradient(90deg, var(--green), #6ee79a); }
+.progress-bar.doing { background: linear-gradient(90deg, var(--accent), #ff8c69); }
+.progress-bar.todo { background: var(--muted); opacity: 0.3; }
+.progress-percent {
+  font-family: "SF Mono", monospace;
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-weight: 700;
+  text-align: right;
+}
+
+.support-needed {
+  margin-top: 1rem;
+  padding: 1rem 1.4rem;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+.support-needed-label {
+  font-family: "SF Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0.4em;
+}
+.support-needed-text {
+  font-size: 0.92rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.support-needed-text strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ============ §5 CTA 金句 ============ */
+.cta-block {
+  background: linear-gradient(135deg, rgba(250,44,25,0.18) 0%, rgba(250,44,25,0.04) 100%);
+  border: 2px solid rgba(250,44,25,0.5);
+  border-radius: 18px;
+  padding: clamp(1.8rem, 3vw, 2.4rem);
+  margin: clamp(2rem, 4vw, 3rem) 0;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(250,44,25,0.15);
+}
+.cta-text {
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.cta-text .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.cta-sub {
+  font-size: 0.95rem;
+  color: rgba(248,244,236,0.7);
+  margin-top: 0.8em;
+  font-weight: 400;
+}
+
+/* ============ FOOTER ============ */
+footer {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-size: 0.78rem; color: var(--muted);
+  letter-spacing: 0.02em;
+  font-family: "SF Mono", monospace;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 800px) {
+  header.page-head { flex-direction: column; }
+  .meta { text-align: left; }
+  .compare-table { grid-template-columns: 1fr; }
+  .compare-head.before, .compare-head.after,
+  .compare-cell.before, .compare-cell.after,
+  .compare-vs, .compare-cell.divider {
+    border-right: none;
+  }
+  .transform-flow { grid-template-columns: 1fr; }
+  .flow-arrow { transform: rotate(90deg); padding: 0.5rem 0; }
+  .timeline-row { grid-template-columns: 1fr; }
+  .timeline::before { display: none; }
+  .timeline-node { border-top: none !important; border-left: 3px solid; }
+  .timeline-node.m1 { border-left-color: var(--warn); }
+  .timeline-node.m2 { border-left-color: var(--accent); }
+  .timeline-node.m3 { border-left-color: var(--green); }
+  .progress-row { grid-template-columns: 1fr; gap: 0.4rem; }
+  .progress-percent { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-bg"></div>
+
+<div class="container">
+
+  <!-- ============ HERO ============ -->
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">EXECUTIVE SUMMARY · 给老板的 30 秒汇报</div>
+      <h1>让京东设计 wiki<br/>在 <span class="accent">AI 时代</span>真正可用</h1>
+      <p class="subtitle">不是建一套新的设计系统,是把已经存在的 wiki 升级为 AI 可消费的资产。3 个月跑通,可量化。</p>
+    </div>
+    <div class="meta">
+      v1.1 · 2026-04-27<br/>
+      综合业务设计组<br/>
+      Shaka 牵引
+    </div>
+  </header>
+
+  <!-- ============ §1 · WHY (Before/After 对比表) ============ -->
+  <section class="section-block">
+    <div class="section-tag">§1 · WHY · 为什么必须做</div>
+    <h2 class="section-title">现状 <span style="color:var(--muted);font-weight:400">vs</span> AI 时代要求 — <span class="accent">4 处错位</span></h2>
+
+    <div class="compare-table">
+      <div class="compare-head before">现状 (BEFORE)</div>
+      <div class="compare-vs">vs</div>
+      <div class="compare-head after">AI 时代 (AFTER)</div>
+
+      <div class="compare-row">
+        <div class="compare-cell before">自然语言为主 · AI 工具消费不了</div>
+        <div class="compare-cell divider">消费方式</div>
+        <div class="compare-cell after">结构化字段 · Cursor/Figma AI/v0 可读</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell before">业务线各自迭代 · 体验割裂</div>
+        <div class="compare-cell divider">组织协作</div>
+        <div class="compare-cell after">5 大 Zone 统一 · 跨业务复用</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell before">设计师沉淀靠人 · 离职带走经验</div>
+        <div class="compare-cell divider">知识传承</div>
+        <div class="compare-cell after">multi-md 文件 · 自动入 wiki</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell before">竞品已用 AI 加速 · 京东窗口期收窄</div>
+        <div class="compare-cell divider">外部竞争</div>
+        <div class="compare-cell after">先 AI-ready · 抢占设计 AI 高地</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §2 · WHAT (流程转换图) ============ -->
+  <section class="section-block">
+    <div class="section-tag">§2 · WHAT · 我们做什么</div>
+    <h2 class="section-title">从 旧 wiki <span class="accent">→ 3 个改造 →</span> 新 wiki</h2>
+
+    <div class="transform-flow">
+      <div class="flow-side old">
+        <span class="flow-side-label">旧 wiki</span>
+        <h3 class="flow-side-title">10 年积累但难复用</h3>
+        <ul>
+          <li>自由文档</li>
+          <li>业务线散落</li>
+          <li>主要靠人维护</li>
+          <li>AI 工具读不懂</li>
+        </ul>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-mid">
+        <span class="flow-mid-label">3 个核心改造</span>
+        <h3 class="flow-mid-title">不重建,只升级</h3>
+        <ol>
+          <li><strong>5 大 Zone</strong> 重新分类 — 按工作场景组织</li>
+          <li><strong>multi-md</strong> 文件结构 — 角色清晰 / Git 协作</li>
+          <li><strong>部门-业务-组件</strong> 三级 — 对齐组织架构</li>
+        </ol>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-side new">
+        <span class="flow-side-label">新 wiki</span>
+        <h3 class="flow-side-title">人 + AI 双消费</h3>
+        <ul>
+          <li>结构化字段</li>
+          <li>5 Zone 统一</li>
+          <li>Git 自然协作</li>
+          <li>AI 工具直接订阅</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §3 · SO WHAT (3 个月时间线) ============ -->
+  <section class="section-block">
+    <div class="section-tag">§3 · SO WHAT · 3 个月可量化产出</div>
+    <h2 class="section-title">3 个月 <span class="accent">分阶段</span> 拿到结果</h2>
+
+    <div class="timeline">
+      <div class="timeline-row">
+        <div class="timeline-node m1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">📅 Month 1</div>
+          <h3 class="timeline-title">MVP 跑通</h3>
+          <p class="timeline-result">15.0 设计语言录入 + 双列卡试点(已有样本) + 角色模板就位。证明方法论闭环。</p>
+          <div class="timeline-metric">
+            <span class="num">100%</span>
+            <span class="label">方法论验证 / 样本完成</span>
+          </div>
+        </div>
+
+        <div class="timeline-node m2">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">📅 Month 2</div>
+          <h3 class="timeline-title">2-3 业务线推广</h3>
+          <p class="timeline-result">推荐 + 点评 + 直播 接入。Figma + Zero 双向同步 POC。AI Skill 工具链跑通。</p>
+          <div class="timeline-metric">
+            <span class="num">+30%</span>
+            <span class="label">跨业务复用率</span>
+          </div>
+        </div>
+
+        <div class="timeline-node m3">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">📅 Month 3</div>
+          <h3 class="timeline-title">5 业务线 + AI 自动化</h3>
+          <p class="timeline-result">推广到 5 个核心业务线全量。AI 工具自动消费设计系统。新人 onboarding 快速上手。</p>
+          <div class="timeline-metric">
+            <span class="num">-25%</span>
+            <span class="label">新人 onboarding 时间</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §4 · NEXT (进度条) ============ -->
+  <section class="section-block">
+    <div class="section-tag">§4 · NEXT · 现在到哪了</div>
+    <h2 class="section-title">顶层 <span class="accent">已就位</span>,准备进入执行</h2>
+
+    <div class="progress-list">
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-status done">✓</span> 顶层框架</div>
+        <div class="progress-bar-wrap"><div class="progress-bar done" style="width:100%"></div></div>
+        <div class="progress-percent">100%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-status done">✓</span> 4 份 HTML 资产</div>
+        <div class="progress-bar-wrap"><div class="progress-bar done" style="width:100%"></div></div>
+        <div class="progress-percent">100%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-status doing">→</span> 双列卡试点</div>
+        <div class="progress-bar-wrap"><div class="progress-bar doing" style="width:60%"></div></div>
+        <div class="progress-percent">60%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-status todo">○</span> Figma + Zero 打通</div>
+        <div class="progress-bar-wrap"><div class="progress-bar todo" style="width:5%"></div></div>
+        <div class="progress-percent">5%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label"><span class="progress-status todo">○</span> AI 自动消费</div>
+        <div class="progress-bar-wrap"><div class="progress-bar todo" style="width:5%"></div></div>
+        <div class="progress-percent">5%</div>
+      </div>
+    </div>
+
+    <div class="support-needed">
+      <div class="support-needed-label">⊕ 需要老板支持</div>
+      <div class="support-needed-text">
+        <strong>用研团队</strong> 配合 Research 模板填写 ·
+        <strong>视觉负责人</strong> Token 体系迁移 ·
+        <strong>AI 团队</strong> Skill 工程化协作 ·
+        每周 2-3 小时跨部门 sync,3 个月内不显著影响业务进度。
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §5 · CTA 金句 ============ -->
+  <div class="cta-block">
+    <p class="cta-text">
+      <span class="accent">设计师的判断</span>,可以变成可被 AI 执行的<span class="accent">资产</span>。<br/>
+      京东有 10 年设计积累,需要的不是新工具,而是让积累<span class="accent">真正用起来</span>。
+    </p>
+    <p class="cta-sub">— 这是我希望和您对齐的核心。</p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>v1.1 · 综合业务设计组 · Shaka 牵引</div>
+    <div>
+      详见:
+      <a href="./jd-design-wiki-master-diagram.html">架构大图</a> ·
+      <a href="./jd-design-wiki-knowledge-tree.html">知识树</a> ·
+      <a href="./jd-design-wiki-contributor-guide.html">贡献指南</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

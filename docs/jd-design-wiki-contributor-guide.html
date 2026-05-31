@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京东 Design Wiki · 业务线设计师贡献指南</title>
+<style>
+:root {
+  --bg: #0e0e10;
+  --ink: #f8f4ec;
+  --muted: #8b8680;
+  --line: rgba(248,244,236,0.08);
+  --line-strong: rgba(248,244,236,0.18);
+  --accent: #fa2c19;
+  --accent-soft: rgba(250,44,25,0.12);
+  --surface: rgba(255,255,255,0.03);
+  --surface-hi: rgba(255,255,255,0.05);
+  --dept: #5b9eff;
+  --dept-soft: rgba(91,158,255,0.12);
+  --green: #4ade80;
+  --green-soft: rgba(74,222,128,0.1);
+}
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+.glow-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60vw 60vh at 90% 0%, rgba(250,44,25,0.08), transparent 50%),
+    radial-gradient(ellipse 70vw 70vh at 10% 100%, rgba(250,44,25,0.05), transparent 60%);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  position: relative; z-index: 1;
+}
+
+header.page-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 2rem; margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.eyebrow {
+  font-size: 0.75rem; letter-spacing: 0.3em; color: var(--muted);
+  font-weight: 500; text-transform: uppercase; margin-bottom: 0.6em;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+h1 .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.meta {
+  text-align: right; font-size: 0.78rem; color: var(--muted); line-height: 1.7;
+}
+
+.tagline {
+  margin: clamp(1rem, 2vw, 2rem) 0 clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 12px 12px 0;
+}
+.tagline-text {
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-weight: 600; line-height: 1.55;
+}
+.tagline-meta {
+  font-size: 0.85rem; color: var(--muted); margin-top: 0.6rem;
+  letter-spacing: 0.05em; font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+.section-head {
+  margin: clamp(2.5rem, 5vw, 4rem) 0 clamp(1rem, 2vw, 1.5rem);
+}
+.section-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  margin-bottom: 0.6em;
+}
+.section-title {
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+.section-desc {
+  color: var(--muted); font-size: 0.95rem; max-width: 760px;
+}
+
+/* ========= ROUTING TABLE ========= */
+.route-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: clamp(1.2rem, 2vw, 1.8rem);
+  margin: 1.5rem 0;
+}
+.route-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: clamp(0.6rem, 1.5vw, 1.4rem);
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+.route-row:last-child { border-bottom: none; }
+.route-row.featured {
+  background: linear-gradient(90deg, rgba(250,44,25,0.05) 0%, transparent 100%);
+  border-radius: 8px;
+  padding: 1rem 0.8rem;
+}
+.route-text { font-size: 0.92rem; color: var(--ink); }
+.route-arrow {
+  font-family: "SF Mono", monospace;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.route-zone {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid rgba(250,44,25,0.4);
+  background: rgba(250,44,25,0.08);
+  border-radius: 8px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+.route-doc {
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--muted);
+  background: rgba(255,255,255,0.04);
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* ========= ZONE CARDS (deep) ========= */
+.zone-deep {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  margin: 1.2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.zone-deep.focal {
+  background: linear-gradient(135deg, rgba(250,44,25,0.1) 0%, rgba(250,44,25,0.02) 100%);
+  border-color: rgba(250,44,25,0.3);
+  box-shadow: 0 0 60px rgba(250,44,25,0.05);
+}
+.zone-deep-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem; margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+.zone-deep-title-group {
+  display: flex; align-items: center; gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.zone-deep-emoji { font-size: 2rem; line-height: 1; }
+.zone-deep-title {
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 800; letter-spacing: -0.01em; margin: 0;
+}
+.zone-deep-tag {
+  font-size: 0.7rem; color: var(--accent);
+  font-family: "SF Mono", ui-monospace, monospace;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgba(250,44,25,0.4);
+  border-radius: 6px;
+}
+.zone-deep-tag.featured {
+  background: rgba(250,44,25,0.15);
+}
+.zone-deep-meta {
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+  text-align: right;
+}
+.zone-deep-meta .label {
+  color: var(--ink); font-weight: 600;
+}
+
+/* ========= TREE ========= */
+.tree {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.85;
+  margin: 0.8rem 0;
+  overflow-x: auto;
+}
+.tree-line { white-space: pre; }
+.tree-line .dept {
+  background: var(--dept-soft);
+  color: var(--dept);
+  padding: 0.05rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+.tree-line .biz { color: var(--accent); font-weight: 600; }
+.tree-line .file { color: var(--green); }
+.tree-line .comment { color: var(--muted); font-style: italic; }
+.tree-line .star { color: var(--accent); font-weight: 700; }
+.tree-line a.file {
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(74,222,128,0.3);
+  transition: all 0.2s;
+}
+.tree-line a.file:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ========= ZONE INFO BAR ========= */
+.zone-info-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line);
+}
+.zone-info {
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+.zone-info-label {
+  font-family: "SF Mono", ui-monospace, monospace;
+  color: var(--accent);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.3em;
+  font-weight: 600;
+}
+.zone-info-text {
+  color: var(--ink);
+}
+
+/* ========= 11 SEGMENTS TABLE ========= */
+.skeleton-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.86rem;
+}
+.skeleton-table th {
+  text-align: left;
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 0.8rem 0.6rem;
+  border-bottom: 2px solid var(--accent);
+}
+.skeleton-table td {
+  padding: 0.7rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  line-height: 1.55;
+}
+.skeleton-table tr:hover {
+  background: rgba(250,44,25,0.03);
+}
+.skeleton-table .num {
+  font-family: "SF Mono", monospace;
+  color: var(--accent);
+  font-weight: 700;
+  width: 40px;
+}
+.skeleton-table .seg-name {
+  font-weight: 700;
+  color: var(--ink);
+}
+.skeleton-table .role {
+  font-size: 0.78rem;
+  color: var(--dept);
+  white-space: nowrap;
+}
+.skeleton-table .depth {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.skeleton-table tr.dim-row {
+  background: rgba(250,44,25,0.04);
+}
+
+/* ========= DIMENSION TABLE ========= */
+.dim-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.86rem;
+}
+.dim-table th, .dim-table td {
+  padding: 0.7rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+.dim-table th {
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent);
+  background: rgba(250,44,25,0.03);
+}
+.dim-table th.dim-col {
+  text-align: center;
+  width: 100px;
+}
+.dim-table td.dim-col {
+  text-align: center;
+  font-size: 1.1rem;
+}
+.dim-table .field-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.dim-icon-main { color: var(--accent); font-weight: 800; }
+.dim-icon-ref  { color: var(--green); }
+.dim-icon-no   { color: var(--muted); }
+
+/* ========= LINK RULES ========= */
+.link-rule {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+.link-rule:last-child { border-bottom: none; }
+.link-from {
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+.link-from .field {
+  font-family: "SF Mono", monospace;
+  background: rgba(91,158,255,0.12);
+  color: var(--dept);
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.86em;
+  margin-right: 0.4em;
+}
+.link-arrow {
+  font-family: "SF Mono", monospace;
+  color: var(--accent);
+  font-weight: 700;
+}
+.link-to {
+  font-family: "SF Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--green);
+  background: rgba(74,222,128,0.08);
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ========= FOOTER ========= */
+footer {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-size: 0.78rem; color: var(--muted);
+  letter-spacing: 0.02em;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ========= RESPONSIVE ========= */
+@media (max-width: 800px) {
+  header.page-head { flex-direction: column; }
+  .meta { text-align: left; }
+  .route-row { grid-template-columns: 1fr; gap: 0.4rem; }
+  .route-arrow { display: none; }
+  .link-rule { grid-template-columns: 1fr; }
+  .link-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-bg"></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">JD Design Wiki · Contributor Guide · v0.1</div>
+      <h1>业务线设计师 <span class="accent">贡献指南</span></h1>
+    </div>
+    <div class="meta">
+      2026-04-27<br/>
+      综合业务设计组 · Shaka 牵引<br/>
+      配套: <a href="./jd-design-wiki-master-diagram.html" style="color:var(--accent);text-decoration:none">架构大图</a> · <a href="./jd-design-wiki-knowledge-tree.html" style="color:var(--accent);text-decoration:none">知识树</a>
+    </div>
+  </header>
+
+  <!-- TAGLINE -->
+  <div class="tagline">
+    <div class="tagline-text">
+      我做的工作 → 归到哪 → 怎么写 → 怎么不打架 → 怎么关联其他 Zone
+    </div>
+    <div class="tagline-meta">
+      5 段闭环 · 部门 owner 视角 · 一份 DESIGN.md 嵌套到一个 Zone
+    </div>
+  </div>
+
+  <!-- ============ SECTION 01 · ROUTING ============ -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 01 · WHERE</div>
+    <h2 class="section-title">路由表 · 我归到哪个 Zone</h2>
+    <p class="section-desc">5 秒定位你的工作产出归属。一份完整文档,只能归一个 Zone。</p>
+  </div>
+
+  <div class="route-wrap">
+    <div class="route-row featured">
+      <div class="route-text">迭代 / 治理一个组件</div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-zone">🏗 组织架构</span></div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-doc">完整 DESIGN.md (11 段)</span> ★</div>
+    </div>
+    <div class="route-row">
+      <div class="route-text">发起跨业务治理项目</div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-zone">🚀 横向专项</span></div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-doc">专项目录 (多份资产)</span></div>
+    </div>
+    <div class="route-row">
+      <div class="route-text">沉淀用研 / 案例 / 笔记</div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-zone">📚 Design 知识</span></div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-doc">研究 .md / 案例 .md</span></div>
+    </div>
+    <div class="route-row">
+      <div class="route-text">调整基础 Token / 原子组件</div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-zone">🎨 Design 基础</span></div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-doc">foundations/*.md</span></div>
+    </div>
+    <div class="route-row">
+      <div class="route-text">写一个 AI Skill</div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-zone">🤖 AI 机制</span></div>
+      <div class="route-arrow">→</div>
+      <div><span class="route-doc">SKILL.md + 配套</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 02 · ZONES DEEP ============ -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 02 · ZONES DEEP</div>
+    <h2 class="section-title">5 大 Zone · 内部深度展开</h2>
+    <p class="section-desc">每个 Zone 的目录结构 / 文档形态 / 谁贡献 / 关联出口。<strong style="color:var(--accent);">部门-业务-组件</strong> 三级结构是组织架构 Zone 的核心。</p>
+  </div>
+
+  <!-- ZONE 02.1 · Design 知识 -->
+  <div class="zone-deep">
+    <div class="zone-deep-header">
+      <div class="zone-deep-title-group">
+        <span class="zone-deep-emoji">📚</span>
+        <h3 class="zone-deep-title">02.1 · Design 知识</h3>
+        <span class="zone-deep-tag">ZONE 1 / 5</span>
+      </div>
+      <div class="zone-deep-meta">
+        <div><span class="label">收纳</span>:知识/研究/案例文档</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-line">📚 Design 知识/</span>
+<span class="tree-line">├── <span class="biz">internal/</span>                          <span class="comment"># 部门内部知识库 (按部门切)</span></span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-综合业务设计部/</span></span>
+<span class="tree-line">│   │   ├── research/                       <span class="comment"># 本部门用研报告</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">用户视频消费习惯调研-2026Q2.md</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播用户行为路径分析.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">圈子用户画像研究.md</span></span>
+<span class="tree-line">│   │   ├── cases/                          <span class="comment"># 本部门案例研究</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">双列卡治理案例.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">短视频卡迭代案例.md</span></span>
+<span class="tree-line">│   │   ├── notes/                          <span class="comment"># 设计师笔记</span></span>
+<span class="tree-line">│   │   └── decisions/                      <span class="comment"># ADR 决策记录</span></span>
+<span class="tree-line">│   │       ├── <span class="file">ADR-001-双列卡家族体系.md</span></span>
+<span class="tree-line">│   │       └── <span class="file">ADR-002-跨场景同物种识别.md</span></span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-XX 设计部/</span></span>
+<span class="tree-line">│   └── ...</span>
+<span class="tree-line">├── <span class="biz">wisdom/</span>                            <span class="comment"># 通识设计原则 (公共)</span></span>
+<span class="tree-line">│   ├── principles/                         <span class="comment"># 行业通用原则</span></span>
+<span class="tree-line">│   │   ├── <span class="file">cross-context-id.md</span>      跨场景同物种识别</span>
+<span class="tree-line">│   │   ├── <span class="file">structure-over-content.md</span> 结构优先内容无涉</span>
+<span class="tree-line">│   │   └── <span class="file">anti-ai-slop.md</span>          反 AI slop 守则</span>
+<span class="tree-line">│   └── philosophy/                         <span class="comment"># 设计哲学</span></span>
+<span class="tree-line">│       ├── <span class="file">家族 DNA 哲学.md</span></span>
+<span class="tree-line">│       └── <span class="file">设计师作为 AI 协作者.md</span></span>
+<span class="tree-line">└── <span class="biz">index/</span>                             <span class="comment"># 资源索引 (公共)</span></span>
+<span class="tree-line">    ├── external/                           <span class="comment"># 外部参考链接</span></span>
+<span class="tree-line">    │   ├── <span class="file">claude-design-philosophy.md</span></span>
+<span class="tree-line">    │   └── <span class="file">material-design-3-bench.md</span></span>
+<span class="tree-line">    └── benchmarks/                         <span class="comment"># 友商对标</span></span>
+<span class="tree-line">        ├── <span class="file">小红书内容卡.md</span></span>
+<span class="tree-line">        └── <span class="file">抖音视频卡.md</span></span>
+    </div>
+
+    <div class="zone-info-bar">
+      <div class="zone-info">
+        <div class="zone-info-label">贡献场景</div>
+        <div class="zone-info-text">做完用研 / 整理案例 / 读到好原则后沉淀</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">文档模板</div>
+        <div class="zone-info-text">轻量模板 (标题+摘要+正文+引用)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">谁贡献</div>
+        <div class="zone-info-text">用研团队 / 资深设计师 / 任何设计师</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">关联出口</div>
+        <div class="zone-info-text">DESIGN.md 的 Research / Experience 段 link 引用</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE 02.2 · Design 基础 -->
+  <div class="zone-deep">
+    <div class="zone-deep-header">
+      <div class="zone-deep-title-group">
+        <span class="zone-deep-emoji">🎨</span>
+        <h3 class="zone-deep-title">02.2 · Design 设计基础</h3>
+        <span class="zone-deep-tag">ZONE 2 / 5</span>
+      </div>
+      <div class="zone-deep-meta">
+        <div><span class="label">收纳</span>:基础规范 (Token 层)</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-line">🎨 Design 基础/                              <span class="comment"># 全公司公共 (不按部门切)</span></span>
+<span class="tree-line">├── <span class="biz">foundations/</span>                       <span class="comment"># 基础 Token (15.0 迁移)</span></span>
+<span class="tree-line">│   ├── <span class="file">color.md</span>                          颜色 token</span>
+<span class="tree-line">│   │   <span class="comment"># brand-primary / text-primary / bg-primary ...</span></span>
+<span class="tree-line">│   ├── <span class="file">typography.md</span>                     字号 / 字重 / 行高</span>
+<span class="tree-line">│   │   <span class="comment"># h1/h2/body/caption · 字号阶梯 · 字重阶梯</span></span>
+<span class="tree-line">│   ├── <span class="file">spacing.md</span>                        栅格 / 间距</span>
+<span class="tree-line">│   │   <span class="comment"># 4-base 阶梯: 4/8/12/16/24/32</span></span>
+<span class="tree-line">│   ├── <span class="file">radius.md</span>                         圆角值域</span>
+<span class="tree-line">│   │   <span class="comment"># 0/4/8/12/16</span></span>
+<span class="tree-line">│   ├── <span class="file">motion.md</span>                         动效规格</span>
+<span class="tree-line">│   │   <span class="comment"># 250ms ease / 350ms ease-out</span></span>
+<span class="tree-line">│   └── <span class="file">voice.md</span>                          文案语气</span>
+<span class="tree-line">├── <span class="biz">principles-system/</span>               <span class="comment"># 系统级设计原则</span></span>
+<span class="tree-line">│   ├── <span class="file">15.0-design-tone.md</span>             15.0 整体调性</span>
+<span class="tree-line">│   ├── <span class="file">accessibility.md</span>                可访问性原则</span>
+<span class="tree-line">│   └── <span class="file">responsive-rules.md</span>             响应式规则</span>
+<span class="tree-line">└── <span class="biz">atoms/</span>                              <span class="comment"># 原子组件 spec</span></span>
+<span class="tree-line">    ├── <span class="file">button.md</span>      按钮(主/次/幽灵 各变体)</span>
+<span class="tree-line">    ├── <span class="file">icon.md</span>        图标系统</span>
+<span class="tree-line">    ├── <span class="file">input.md</span>       输入框</span>
+<span class="tree-line">    ├── <span class="file">tag.md</span>         标签 / 胶囊</span>
+<span class="tree-line">    └── <span class="file">avatar.md</span>      头像规格</span>
+    </div>
+
+    <div class="zone-info-bar">
+      <div class="zone-info">
+        <div class="zone-info-label">贡献场景</div>
+        <div class="zone-info-text">提议 token 调整 / 新增原子组件</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">文档模板</div>
+        <div class="zone-info-text">Token 表 + W3C DTCG JSON</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">谁贡献</div>
+        <div class="zone-info-text">视觉负责人 / 基础组件 owner / 前端架构</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">关联出口</div>
+        <div class="zone-info-text">所有 DESIGN.md 的 Visual 段 link 引用</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE 02.3 · AI 机制 -->
+  <div class="zone-deep">
+    <div class="zone-deep-header">
+      <div class="zone-deep-title-group">
+        <span class="zone-deep-emoji">🤖</span>
+        <h3 class="zone-deep-title">02.3 · AI 机制</h3>
+        <span class="zone-deep-tag">ZONE 3 / 5</span>
+      </div>
+      <div class="zone-deep-meta">
+        <div><span class="label">收纳</span>:AI 协议 / Skill / Agent 守则</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-line">🤖 AI 机制/                                <span class="comment"># 全公司公共 (不按部门切)</span></span>
+<span class="tree-line">├── <span class="biz">skills/</span>                            <span class="comment"># Skill 库 (按 agentskills.io 标准)</span></span>
+<span class="tree-line">│   ├── <span class="file">double-column-card/</span>             <span class="star">★</span> 已开源样本</span>
+<span class="tree-line">│   │   ├── SKILL.md                       agent 入口契约</span>
+<span class="tree-line">│   │   ├── references/                    详细规则参考</span>
+<span class="tree-line">│   │   ├── examples/                      gold-standard 样例</span>
+<span class="tree-line">│   │   └── prompts/                       PE 模板</span>
+<span class="tree-line">│   ├── <span class="file">视频卡治理-skill/</span>               (待建)</span>
+<span class="tree-line">│   ├── <span class="file">直播卡治理-skill/</span>               (待建)</span>
+<span class="tree-line">│   └── <span class="file">[其他组件 skill]/</span></span>
+<span class="tree-line">├── <span class="biz">meta/</span>                              <span class="comment"># 元规范</span></span>
+<span class="tree-line">│   ├── <span class="file">META.md</span>                          如何写 SKILL</span>
+<span class="tree-line">│   ├── <span class="file">skill-registry.md</span>                Skill 索引</span>
+<span class="tree-line">│   └── <span class="file">version-protocol.md</span>              版本协议</span>
+<span class="tree-line">├── <span class="biz">protocols/</span>                          <span class="comment"># 消费协议</span></span>
+<span class="tree-line">│   ├── <span class="file">figma-接入.md</span>                    Figma AI 消费</span>
+<span class="tree-line">│   ├── <span class="file">stitch-接入.md</span>                   Google Stitch 消费</span>
+<span class="tree-line">│   ├── <span class="file">cursor-接入.md</span>                   Cursor / Claude Code</span>
+<span class="tree-line">│   ├── <span class="file">v0-接入.md</span>                       Vercel v0</span>
+<span class="tree-line">│   └── <span class="file">自研 agent-接入.md</span></span>
+<span class="tree-line">└── <span class="biz">guards/</span>                            <span class="comment"># Agent 守则</span></span>
+<span class="tree-line">    ├── <span class="file">反 AI slop.md</span>                    避免塌缩到平庸</span>
+<span class="tree-line">    ├── <span class="file">自检环路.md</span>                      fork_verifier 模式</span>
+<span class="tree-line">    ├── <span class="file">IP 边界.md</span>                       不复刻竞品 UI</span>
+<span class="tree-line">    └── <span class="file">上下文优先.md</span>                    先读现有规范再生成</span>
+    </div>
+
+    <div class="zone-info-bar">
+      <div class="zone-info">
+        <div class="zone-info-label">贡献场景</div>
+        <div class="zone-info-text">把组件治理沉淀成 Skill / 加 agent 守则</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">文档模板</div>
+        <div class="zone-info-text">SKILL.md (agentskills.io 标准)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">谁贡献</div>
+        <div class="zone-info-text">AI / Agent 团队 + 系统 maintainer</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">关联出口</div>
+        <div class="zone-info-text">DESIGN.md 的 AI Schema 段 link 引用</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE 02.4 · 组织架构 (★ FOCAL) -->
+  <div class="zone-deep focal">
+    <div class="zone-deep-header">
+      <div class="zone-deep-title-group">
+        <span class="zone-deep-emoji">🏗</span>
+        <h3 class="zone-deep-title">02.4 · 组织架构</h3>
+        <span class="zone-deep-tag featured">★ 业务线设计师主战场</span>
+      </div>
+      <div class="zone-deep-meta">
+        <div><span class="label">收纳</span>:业务/组件文档 (DESIGN.md 主家)</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-line">🏗 组织架构/</span>
+<span class="tree-line">├── <span class="biz">domains/</span>                         <span class="comment"># 部门-业务-组件 三级结构 ★</span></span>
+<span class="tree-line">│   │</span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-综合业务设计部/</span>     <span class="comment"># 你所在的部门</span></span>
+<span class="tree-line">│   │   ├── 视频/</span>
+<span class="tree-line">│   │   │   ├── <span class="file">视频卡-基础/</span>                  <span class="star">★</span> multi-md 结构</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-readme" class="file">README.md</a>          概述+Meta</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-business" class="file">business.md</a>        业务视角</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-research" class="file">research.md</a>        用研视角 ★</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-experience" class="file">experience.md</a>      体验视角 ★</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-visual" class="file">visual.md</a>          视觉视角 ★</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-interaction" class="file">interaction.md</a>     交互</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-content" class="file">content.md</a>         文案规范</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-donts" class="file">donts.md</a>           禁止用法</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-ai-schema" class="file">ai-schema.md</a>       AI 消费字段</span>
+<span class="tree-line">│   │   │   │   ├── <a href="./jd-design-wiki-master-diagram.html#tpl-changelog" class="file">CHANGELOG.md</a>       变更记录</span>
+<span class="tree-line">│   │   │   │   ├── variants/</span>
+<span class="tree-line">│   │   │   │   └── examples/</span>
+<span class="tree-line">│   │   │   └── <span class="file">视频卡-沉浸式/</span></span>
+<span class="tree-line">│   │   ├── 直播/</span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播卡-基础/DESIGN.md</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播卡-红包雨变体/DESIGN.md</span></span>
+<span class="tree-line">│   │   │   └── ...</span>
+<span class="tree-line">│   │   ├── 内容/</span>
+<span class="tree-line">│   │   ├── 圈子/</span>
+<span class="tree-line">│   │   └── 个人中心/</span>
+<span class="tree-line">│   │</span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-XX 设计部/</span></span>
+<span class="tree-line">│   │   ├── 业务 A/</span>
+<span class="tree-line">│   │   └── 业务 B/</span>
+<span class="tree-line">│   │</span>
+<span class="tree-line">│   └── <span class="dept">设计与用研部-XXX 设计部/</span></span>
+<span class="tree-line">│       └── ...</span>
+<span class="tree-line">│</span>
+<span class="tree-line">├── <span class="biz">shared/</span>                          <span class="comment"># 跨部门通用组件 (有专门 owner)</span></span>
+<span class="tree-line">│   ├── <span class="file">视频卡-通用/DESIGN.md</span></span>
+<span class="tree-line">│   └── ...</span>
+<span class="tree-line">│</span>
+<span class="tree-line">├── <span class="biz">pages/</span>                           <span class="comment"># 核心页面</span></span>
+<span class="tree-line">│   ├── 详情页/</span>
+<span class="tree-line">│   ├── 搜索结果/</span>
+<span class="tree-line">│   └── 个人中心/</span>
+<span class="tree-line">│</span>
+<span class="tree-line">└── <span class="biz">relations/</span>                       <span class="comment"># 引用关系图</span></span>
+<span class="tree-line">    ├── 跨部门复用/</span>
+<span class="tree-line">    └── 跨业务依赖/</span>
+    </div>
+
+    <div class="zone-info-bar">
+      <div class="zone-info">
+        <div class="zone-info-label">贡献场景</div>
+        <div class="zone-info-text">迭代 / 治理 / 新增任何组件 (本部门负责的范围)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">文档模板</div>
+        <div class="zone-info-text">★ multi-md 文件结构 (Section 03 展开)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">谁贡献</div>
+        <div class="zone-info-text">业务线设计师 (用研 / 体验 / 视觉协作填写)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">关联出口</div>
+        <div class="zone-info-text">link 引用其他 4 个 Zone 的资产</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE 02.5 · 横向专项 -->
+  <div class="zone-deep">
+    <div class="zone-deep-header">
+      <div class="zone-deep-title-group">
+        <span class="zone-deep-emoji">🚀</span>
+        <h3 class="zone-deep-title">02.5 · 横向专项</h3>
+        <span class="zone-deep-tag">ZONE 5 / 5</span>
+      </div>
+      <div class="zone-deep-meta">
+        <div><span class="label">收纳</span>:跨部门治理项目</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-line">🚀 横向专项/                              <span class="comment"># 跨部门 (按专项名切)</span></span>
+<span class="tree-line">├── <span class="biz">active/</span>                          <span class="comment"># 进行中</span></span>
+<span class="tree-line">│   ├── <span class="file">double-column-card/</span>             <span class="star">★</span> 已跑通样本</span>
+<span class="tree-line">│   │   ├── README.md                      专项概述</span>
+<span class="tree-line">│   │   ├── DESIGN.md                      专项设计语言</span>
+<span class="tree-line">│   │   ├── variants/                      变体案例库</span>
+<span class="tree-line">│   │   ├── skill/                         对应 AI Skill</span>
+<span class="tree-line">│   │   ├── ADR/                           决策记录</span>
+<span class="tree-line">│   │   │   ├── <span class="file">ADR-001-五大家族.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">ADR-002-跨场景识别.md</span></span>
+<span class="tree-line">│   │   └── screenshots/                   真实样本</span>
+<span class="tree-line">│   ├── <span class="file">视频卡治理/</span>                       (规划中)</span>
+<span class="tree-line">│   └── <span class="file">直播卡治理/</span>                       (规划中)</span>
+<span class="tree-line">├── <span class="biz">archive/</span>                         <span class="comment"># 已完成归档</span></span>
+<span class="tree-line">│   ├── <span class="file">2024-Q4/</span></span>
+<span class="tree-line">│   ├── <span class="file">2025-Q1/</span></span>
+<span class="tree-line">│   └── <span class="file">2025-Q2/</span></span>
+<span class="tree-line">├── <span class="biz">protocols/</span>                       <span class="comment"># 治理协议</span></span>
+<span class="tree-line">│   ├── <span class="file">怎么发起.md</span>                      专项立项流程</span>
+<span class="tree-line">│   ├── <span class="file">Review 流程.md</span>                   评审协议</span>
+<span class="tree-line">│   ├── <span class="file">落地协议.md</span>                      推广路径</span>
+<span class="tree-line">│   ├── <span class="file">反哺机制.md</span>                      产出回流规则</span>
+<span class="tree-line">│   └── <span class="file">跨部门协调.md</span>                    多部门冲突解决</span>
+<span class="tree-line">└── <span class="biz">handoff/</span>                         <span class="comment"># 反哺接口</span></span>
+<span class="tree-line">    ├── <span class="file">产出回流-组织架构.md</span>              新组件回流到🏗</span>
+<span class="tree-line">    ├── <span class="file">产出回流-AI 机制.md</span>                新 Skill 回流到🤖</span>
+<span class="tree-line">    └── <span class="file">产出回流-Design 基础.md</span>             新 Token 回流到🎨</span>
+    </div>
+
+    <div class="zone-info-bar">
+      <div class="zone-info">
+        <div class="zone-info-label">贡献场景</div>
+        <div class="zone-info-text">发起新治理 / 跟进进行中 / 归档已完成</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">文档模板</div>
+        <div class="zone-info-text">专项目录 (含多份资产)</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">谁贡献</div>
+        <div class="zone-info-text">专项发起人 + 跨部门代表 + 治理委员会</div>
+      </div>
+      <div class="zone-info">
+        <div class="zone-info-label">关联出口</div>
+        <div class="zone-info-text">产出可落到🏗 (新组件 DESIGN.md) 或 🤖 (新 Skill)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 03 · COMPONENT DIRECTORY ============ -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 03 · COMPONENT DIRECTORY</div>
+    <h2 class="section-title">组件目录 · multi-md 文件结构</h2>
+    <p class="section-desc">业务线设计师最常用的形态。每个组件 = 一个目录 = 多个独立 md 文件。每个 md 由对应角色独立 PR/Review,互不打架。点击文件名跳转到 <a href="./jd-design-wiki-master-diagram.html#tpl-readme" style="color:var(--accent);">架构大图的 Templates 章节</a> 看具体模板。</p>
+  </div>
+
+  <table class="skeleton-table">
+    <thead>
+      <tr>
+        <th class="num">#</th>
+        <th>md 文件</th>
+        <th>谁写</th>
+        <th>写什么</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-readme" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">README.md</a></td><td class="role">组件 owner</td><td class="depth">概述 + Meta (YAML frontmatter)</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-business" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">business.md</a></td><td class="role">PM / 产品</td><td class="depth">业务目标 / KPI / 商业载荷</td></tr>
+      <tr class="dim-row"><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-research" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">research.md</a> ★</td><td class="role">用研团队</td><td class="depth">用户画像 / 痛点 / 行为数据 (Why)</td></tr>
+      <tr class="dim-row"><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-experience" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">experience.md</a> ★</td><td class="role">体验设计师</td><td class="depth">用户旅程 / 决策点 / 家族 DNA / 跨场景同物种 (How)</td></tr>
+      <tr class="dim-row"><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-visual" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">visual.md</a> ★</td><td class="role">视觉设计师</td><td class="depth">Token 引用 / 变体 / 视觉层级 (What)</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-interaction" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">interaction.md</a></td><td class="role">交互设计师</td><td class="depth">状态机 / 动效 / 边界态</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-content" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">content.md</a></td><td class="role">内容运营</td><td class="depth">标题写法 / 用词 / 语气 / CTA 词</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-donts" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">donts.md</a></td><td class="role">协作收集</td><td class="depth">禁止用法 (视觉/体验/场景禁止)</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-ai-schema" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">ai-schema.md</a></td><td class="role">组件 owner</td><td class="depth">AI 消费字段 (给 Skill / agent 读)</td></tr>
+      <tr><td class="num">📄</td><td><a href="./jd-design-wiki-master-diagram.html#tpl-changelog" style="color:#4ade80;text-decoration:none;font-family:'SF Mono',monospace;font-weight:700">CHANGELOG.md</a></td><td class="role">自动生成</td><td class="depth">从 Git commit 自动维护 + 关键变更人工补</td></tr>
+      <tr><td class="num">📁</td><td style="font-family:'SF Mono',monospace;color:var(--muted)">variants/</td><td class="role">设计师</td><td class="depth">变体案例库 (子目录)</td></tr>
+      <tr><td class="num">📁</td><td style="font-family:'SF Mono',monospace;color:var(--muted)">examples/</td><td class="role">设计师</td><td class="depth">示例资源 / Figma 链接 / 实际截图</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============ SECTION 04 · DIMENSIONS ============ -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 04 · DIMENSIONS</div>
+    <h2 class="section-title">维度边界 · 用研 / 体验 / 视觉 不打架</h2>
+    <p class="section-desc">这是你最关心的:多角色写一份文档,字段归属如何分? <strong style="color:var(--accent);">用研管 Why · 体验管 How · 视觉管 What</strong>。</p>
+  </div>
+
+  <table class="dim-table">
+    <thead>
+      <tr>
+        <th>内容字段</th>
+        <th class="dim-col">用研 (Why)</th>
+        <th class="dim-col">体验 (How)</th>
+        <th class="dim-col">视觉 (What)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="field-name">用户画像 / 痛点</td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td></tr>
+      <tr><td class="field-name">AB 数据 / 转化</td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td><td class="dim-col"><span class="dim-icon-no">—</span></td></tr>
+      <tr><td class="field-name">用户旅程位置</td><td class="dim-col"><span class="dim-icon-ref">引用</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-no">—</span></td></tr>
+      <tr><td class="field-name">决策点 / 规则</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td></tr>
+      <tr><td class="field-name">跨场景同物种</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-no">—</span></td></tr>
+      <tr><td class="field-name">家族 DNA</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td></tr>
+      <tr><td class="field-name">Token 引用</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-ref">引用</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td></tr>
+      <tr><td class="field-name">字号 / 色值 / 圆角</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td></tr>
+      <tr><td class="field-name">变体 / 节奏</td><td class="dim-col"><span class="dim-icon-no">—</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td></tr>
+      <tr><td class="field-name">禁止用法 (Don'ts)</td><td class="dim-col"><span class="dim-icon-ref">引用</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td><td class="dim-col"><span class="dim-icon-main">★主写</span></td></tr>
+    </tbody>
+  </table>
+
+  <div style="background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: 0.92rem; color: var(--ink); line-height: 1.7;">
+    <strong style="color: var(--accent);">★ 主写</strong>: 这个字段由该角色作为主驱动方写;
+    <strong style="color: var(--green);">引用</strong>: 该角色在自己的段落里 link 到主写方,不重复内容;
+    <strong style="color: var(--muted);">—</strong>: 该角色不参与这个字段。
+  </div>
+
+  <!-- ============ SECTION 05 · LINK RULES ============ -->
+  <div class="section-head">
+    <div class="section-tag">SECTION 05 · LINKS</div>
+    <h2 class="section-title">跨 Zone · link 引用规则 (不重写)</h2>
+    <p class="section-desc">DESIGN.md 内部如何引用其他 Zone 资产 —— 永远 link,永远不复制。改源头,所有引用自动生效。</p>
+  </div>
+
+  <div class="route-wrap">
+    <div class="link-rule">
+      <div class="link-from"><span class="field">Visual 段</span> · Token 引用</div>
+      <div class="link-arrow">→</div>
+      <div><code class="link-to">/foundations/color.md#brand-primary</code></div>
+    </div>
+    <div class="link-rule">
+      <div class="link-from"><span class="field">Experience 段</span> · 体验原则引用</div>
+      <div class="link-arrow">→</div>
+      <div><code class="link-to">/wisdom/principles/cross-context-id.md</code></div>
+    </div>
+    <div class="link-rule">
+      <div class="link-from"><span class="field">Research 段</span> · 用研报告依据</div>
+      <div class="link-arrow">→</div>
+      <div><code class="link-to">/internal/{部门}/research/jd-user-trust.md</code></div>
+    </div>
+    <div class="link-rule">
+      <div class="link-from"><span class="field">关联</span> · 横向专项治理</div>
+      <div class="link-arrow">→</div>
+      <div><code class="link-to">/active/double-column-card/</code></div>
+    </div>
+    <div class="link-rule">
+      <div class="link-from"><span class="field">AI Schema 段</span> · 注册 AI Skill</div>
+      <div class="link-arrow">→</div>
+      <div><code class="link-to">/skills/double-column-card/SKILL.md</code></div>
+    </div>
+  </div>
+
+  <div style="background: var(--green-soft); border-left: 3px solid var(--green); padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: 0.9rem; color: var(--ink); line-height: 1.7;">
+    <strong style="color: var(--green);">关键原则</strong>: 引用,不复制。<br/>
+    改 Token 只在 <code style="color:var(--green);font-family:'SF Mono',monospace;">foundations/</code> 改一处,所有引用它的 DESIGN.md 自动生效。<br/>
+    这是 <strong style="color: var(--ink);">单一真相源</strong> + <strong style="color: var(--ink);">link 引用</strong> 双保险。
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>v0.1 · 综合业务设计组 · Shaka 牵引</div>
+    <div>配套阅读: <a href="./jd-design-wiki-master-diagram.html" style="color:var(--accent);text-decoration:none">架构大图</a> (演讲) · <a href="./jd-design-wiki-knowledge-tree.html" style="color:var(--accent);text-decoration:none">知识树</a> (导航)</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

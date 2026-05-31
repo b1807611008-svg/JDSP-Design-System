@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>底部导航栏 · Tabbar 组件规范 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-mask: rgba(0, 0, 0, 0.7);
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .doc {
+    max-width: 880px;
+    margin: 40px auto;
+    background: var(--c-bg);
+    padding: 64px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    line-height: 1.3;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+  }
+  h1 + .meta {
+    color: var(--c-text-3);
+    font-size: 13px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+  h1 + .meta code { font-size: 12px; }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background: var(--c-brand);
+    color: #fff;
+    border-radius: var(--r-base);
+    text-align: center;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--c-text);
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: var(--c-text-2);
+  }
+
+  p { margin: 12px 0; color: var(--c-text-2); }
+
+  strong { color: var(--c-text); font-weight: 600; }
+
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--c-code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--c-brand);
+  }
+
+  pre {
+    background: #1a1a1a;
+    color: #e8e8e8;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+  }
+  blockquote p { margin: 4px 0; }
+  blockquote.warn {
+    background: var(--c-warning-bg);
+    border-left-color: var(--c-warning);
+  }
+  blockquote.danger {
+    background: var(--c-danger-bg);
+    border-left-color: var(--c-danger);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--c-line);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--c-bg-sunken);
+    font-weight: 600;
+    color: var(--c-text);
+  }
+  td code { font-size: 12px; }
+
+  ul, ol { padding-left: 24px; color: var(--c-text-2); }
+  li { margin: 6px 0; }
+
+  /* Case blocks */
+  .case {
+    margin: 20px 0;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+  }
+  .case.good { background: var(--c-success-bg); border-color: var(--c-success); }
+  .case.bad { background: var(--c-danger-bg); border-color: var(--c-danger); }
+  .case h4 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+  .case .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .case.good .badge { background: var(--c-success); }
+  .case.bad .badge { background: var(--c-danger); }
+
+  /* Stage = visual sandbox where toasts are demoed inline */
+  .stage {
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px dashed var(--c-line);
+    margin: 12px 0;
+    padding: 40px 24px;
+    text-align: center;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .stage.dark { background: #1a1a1a; }
+  .stage.dark + .stage-label, .stage + .stage-label {
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+
+  /* ============================
+     TOAST COMPONENT (per Relay 15.0 spec, node 45:11576)
+     - 圆角 8px
+     - padding: 16px (上下/左右一致)
+     - 状态型 max 224px / min 92px
+     - 描述型 max 256px
+     - 状态提炼 15pt Medium #fff
+     - 描述文案 14pt Regular #fff
+     - 状态提炼 ↔ 描述 8px
+     - 图标 20×20
+     - 图标 ↔ 状态提炼 12px(纵向)
+     - 背景 #000000 70%
+     ============================ */
+
+  .toast {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--c-mask);
+    color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    min-width: 92px;
+    max-width: 224px;
+    text-align: center;
+    font-family: "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+  }
+  .toast.is-description { max-width: 256px; }
+  .toast__icon { width: 20px; height: 20px; margin-bottom: 12px; flex-shrink: 0; }
+  .toast__title {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .toast__desc {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-top: 8px;
+    color: rgba(255,255,255,0.9);
+    word-break: break-word;
+  }
+  .toast.is-description .toast__desc { margin-top: 0; }
+  .toast__loading {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 12px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: toast-spin 1s linear infinite;
+  }
+  @keyframes toast-spin { to { transform: rotate(360deg); } }
+
+  /* Live floating toast layer */
+  .toast-host {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+  }
+  .toast-host[data-pos="center"] { align-items: center; }
+  .toast-host[data-pos="top"] { align-items: flex-start; padding-top: 60px; }
+  .toast-host .toast {
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 200ms cubic-bezier(0,0,0,1), transform 200ms cubic-bezier(0,0,0,1);
+  }
+  .toast-host[data-pos="top"] .toast { transform: translateY(-12px); }
+  .toast-host .toast.is-show { opacity: 1; transform: translateY(0); }
+  .toast-host .toast.is-exit {
+    opacity: 0;
+    transform: translateY(0);
+    transition: opacity 150ms cubic-bezier(1,0,1,1);
+  }
+
+  /* Demo trigger buttons */
+  .demo-btn {
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--c-text);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 150ms;
+    line-height: 1.4;
+  }
+  .demo-btn:hover {
+    border-color: var(--c-brand);
+    color: var(--c-brand);
+  }
+  .demo-btn:active { transform: scale(0.98); }
+  .demo-btn[data-tone="success"]:hover { border-color: var(--c-success); color: var(--c-success); }
+  .demo-btn[data-tone="warning"]:hover { border-color: var(--c-warning); color: var(--c-warning); }
+  .demo-btn[data-tone="info"]:hover { border-color: var(--c-info); color: var(--c-info); }
+  .stage .demo-btn { font-size: 14px; padding: 10px 18px; }
+
+  a { color: var(--c-info); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--c-info); }
+
+  hr { border: none; border-top: 1px solid var(--c-line); margin: 40px 0; }
+
+  .toc {
+    background: var(--c-bg-sunken);
+    padding: 20px 28px;
+    border-radius: var(--r-base);
+    margin-bottom: 40px;
+  }
+  .toc h3 { margin: 0 0 8px; font-size: 14px; color: var(--c-text-3); font-weight: 500; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 4px 0; }
+  .toc a { color: var(--c-text-2); border: none; }
+  .toc a:hover { color: var(--c-brand); }
+
+  @media print {
+    body { background: #fff; }
+    .doc { box-shadow: none; margin: 0; padding: 24px 32px; max-width: none; border-radius: 0; }
+    h2 { page-break-after: avoid; }
+    .case, table, pre, blockquote, .stage { page-break-inside: avoid; }
+    pre { background: #f5f6fa; color: #171a26; border: 1px solid var(--c-line); }
+    .demo-btn { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    .doc { margin: 0; padding: 32px 20px; border-radius: 0; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+
+  /* ==========================================
+     v0.7 合并:interactive demo + Atom 真切图(默认 .pro-only)
+     ========================================== */
+  .demo {
+    margin: 24px 0;
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+    overflow: hidden;
+  }
+  .demo .demo-head {
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--c-line);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .demo .demo-title {
+    font-size: 12px; color: var(--c-text-3); font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .demo .demo-body {
+    padding: 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .demo .demo-caption {
+    font-size: 12px; color: var(--c-text-3); text-align: center; margin: 0;
+  }
+
+  /* segmented control */
+  .seg { display: inline-flex; background: var(--c-bg-sunken); border-radius: var(--r-base); padding: 2px; gap: 2px; }
+  .seg label { cursor: pointer; padding: 4px 10px; border-radius: 4px; font-size: 12px; color: var(--c-text-2); user-select: none; transition: 0.12s; }
+  .seg input { display: none; }
+  .seg input:checked + span { background: #fff; color: var(--c-text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.06); display: inline-block; padding: 4px 10px; margin: -4px -10px; border-radius: 4px; }
+  .seg span { display: inline-block; }
+
+  /* color swatches */
+  .sw { display: inline-flex; gap: 6px; }
+  .sw label { cursor: pointer; width: 24px; height: 24px; border-radius: 50%; }
+  .sw input { display: none; }
+  .sw input:checked + span { box-shadow: 0 0 0 2px var(--c-text); }
+  .sw span { display: block; width: 100%; height: 100%; border-radius: 50%; border: 1px solid var(--c-line); }
+
+  /* phone stage */
+  .phone {
+    width: 100%; max-width: 360px; height: 200px;
+    border-radius: 24px; border: 1px solid var(--c-line);
+    overflow: hidden; position: relative;
+    /* 默认背景:color_background_component #f5f6fa(跟 Relay 原稿大图一致,
+       保证选中态 gray_6 #f0f2f7 跟 Tabbar 容器有足够对比) */
+    background: #f5f6fa;
+  }
+  .phone.short { height: 130px; }
+  /* 液态玻璃 / 毛玻璃材质保留 backdrop-filter,在彩色背景下才能看出来,纯灰背景下 Tabbar 接近实色 */
+  .phone[data-material="liquid"] .tabbar { backdrop-filter: blur(28px) saturate(1.5); background: rgba(255,255,255,0.55); }
+  .phone[data-material="frost"] .tabbar { backdrop-filter: blur(12px); background: rgba(255,255,255,0.78); }
+  /* 章节 5 多端材质 demo 专用:彩色 / 实拍背景对照(显示液态玻璃 vs 毛玻璃材质差) */
+  .phone[data-bg="white"] { background: #fff; }
+  .phone[data-bg="gradient"] { background: linear-gradient(180deg, #ffd9e2 0%, #ffeaa0 25%, #c9ffa0 50%, #a0d4ff 75%, #d6a0ff 100%); }
+  .phone[data-bg="stripe"] { background: linear-gradient(90deg, #ff595e 0 20%, #ffca3a 20% 40%, #8ac926 40% 60%, #1982c4 60% 80%, #6a4c93 80% 100%); }
+  .phone[data-bg="photo"] { background: radial-gradient(ellipse 80% 60% at 20% 30%, #c19a72 0%, transparent 60%), radial-gradient(ellipse 90% 70% at 80% 70%, #d97757 0%, transparent 65%), linear-gradient(135deg, #f4a261 0%, #e76f51 100%); }
+
+  .tabbar-host { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 12px 8px; display: flex; align-items: flex-end; justify-content: center; gap: 8px; pointer-events: none; }
+
+  /* Joy Agent atom — 用京东正式 CDN 位图(URL 在 _assets-cdn.md / 对应 Relay 312:58236)
+     atom 是设计师手工创作的卡通图形资产,token 不可表达,必须用位图。
+     底部跟 .tabbar 同贴 .tabbar-host 底部(align-items: flex-end + padding-bottom: 8 已管距底);
+     不再加 margin-bottom — design.md 的「距 phone 底 17 DP」由 phone iOS 安全区承担,跟 tabbar 同位 */
+  .agent {
+    width: 52px; height: 52px;
+    /* 向外抽缩 16 DP = 狗头左缘越过屏幕边 16;margin-left 需额外吃掉 .tabbar-host 的 12 padding */
+    margin-left: -28px;
+    flex-shrink: 0; position: relative;
+    transition: margin-left 0.25s;
+  }
+  .agent.inflate-28 { margin-left: -40px; }
+  .agent img {
+    width: 100%; height: 100%;
+    display: block;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .agent .bubble {
+    position: absolute; bottom: calc(100% + 8px); right: -8px;
+    white-space: nowrap;
+    background: linear-gradient(90deg, #b794f4, #f687b3);
+    color: #fff; padding: 6px 12px;
+    border-radius: 14px 14px 14px 4px;
+    font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 3;
+  }
+
+  /* 容器描边:对应 Relay 第二层 color-dodge fill(导出丢层),液态玻璃边缘 hairline 高光 */
+  .tabbar { flex: 1; height: 52px; border-radius: 16px; display: flex; align-items: center; padding: 0 12px; transition: 0.2s; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6); }
+  .slots { display: flex; flex: 1; height: 44px; align-items: stretch; }
+  .slot {
+    flex: 1; height: 44px; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; color: #11141a; transition: 0.15s; position: relative;
+  }
+  .slot.selected { background: #f0f2f7; color: #ff0f23; }
+  .slot.selected.no-bg { background: transparent; }
+  .slot .icon-home {
+    display: inline-block; width: 20px; height: 20px;
+    background-color: #11141a; /* gray_1 默认态 */
+    -webkit-mask: url('https://img11.360buyimg.com/img/jfs/t1/435818/38/8886/1500/6a0c64ceFf9186b68/027603c0398a7c74.png') no-repeat center / contain;
+    mask: url('https://img11.360buyimg.com/img/jfs/t1/435818/38/8886/1500/6a0c64ceFf9186b68/027603c0398a7c74.png') no-repeat center / contain;
+  }
+  /* 选中态用设计师彩色切图(自带 jdred + 笑脸),不再走 mask 染色 */
+  .slot.selected .icon-home {
+    -webkit-mask: none; mask: none;
+    background: url('https://img14.360buyimg.com/img/jfs/t1/435193/37/14737/1001/6a0d284cF8944e60e/027603c03c327d14.png') no-repeat center / contain;
+  }
+  .slot .label-text { font-size: 10px; line-height: 14px; font-weight: 400; }
+  .slot.selected .label-text { font-weight: 600; }
+  .slot.marketing .icon-svg { display: none; }
+  .slot.marketing::before { content: ''; width: 38px; height: 38px; border-radius: 50%; background: url('https://img11.360buyimg.com/img/jfs/t1/437910/36/498/25382/6a0d4838Fd985a38b/0276072072721e5e.png') no-repeat center / cover; display: block; }
+  .slot.marketing .label-text { display: none; }
+
+  /* badge 样式 .slot 与 atom 矩阵共用 —— atom 矩阵不补 position:absolute 的话,
+     badge 会落进 .atom-slot 弹性列挤掉空的 .icon-home */
+  .slot .badge,
+  .atom-matrix .atom-cell .badge { position: absolute; pointer-events: none; z-index: 3; }
+  .slot .badge.red-dot,
+  .atom-matrix .atom-cell .badge.red-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff0f23; left: calc(50% + 5px); bottom: calc(50% + 4px); }
+  .slot .badge.number,
+  .atom-matrix .atom-cell .badge.number { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px 8px 8px 4px; background: #ff0f23; color: #fff; font-size: 10px; line-height: 16px; font-weight: 600; text-align: center; left: calc(50% + 1px); bottom: calc(50% + 0px); }
+  .slot .badge.text,
+  .atom-matrix .atom-cell .badge.text { padding: 0 6px; height: 16px; border-radius: 8px 8px 8px 4px; background: #ff0f23; color: #fff; font-size: 10px; line-height: 16px; font-weight: 500; white-space: nowrap; left: calc(50% + 1px); bottom: calc(50% + 0px); }
+
+  /* island */
+  .slot.island { flex: none; flex-direction: row; padding: 0 6px; gap: 6px; border-radius: 12px; }
+  .slot.island.normal { width: 131px; height: 44px; background: #f0f2f7; }
+  .slot.island.normal .ig-img { width: 32px; height: 32px; border-radius: 6px; background: radial-gradient(circle at 40% 30%, #fff, #f0f0f0), linear-gradient(180deg, #d4f1ff 0%, #74b9e8 100%); background-size: 60% 60%, 100% 100%; background-repeat: no-repeat; background-position: center 30%, center; flex-shrink: 0; }
+  .slot.island.normal .ig-text { font-size: 10px; line-height: 14px; color: #11141a; overflow: hidden; }
+  .slot.island.normal .ig-text strong { display: block; font-weight: 500; }
+  .slot.island.operation { width: 131px; height: 44px; background: linear-gradient(90deg, var(--ig-a, #ddffcc) 0%, var(--ig-b, #b7fa96) 100%); color: var(--ig-text, #019508); position: relative; overflow: hidden; }
+  .slot.island.operation::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%); pointer-events: none; border-radius: inherit; }
+  .slot.island.operation::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--ig-b, #b7fa96); border-radius: inherit; pointer-events: none; }
+  .slot.island.operation .ig-img { width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; position: relative; z-index: 1; }
+  .slot.island.operation .ig-text { position: relative; z-index: 1; line-height: 1.15; color: var(--ig-text, #019508); }
+  .slot.island.operation .ig-text strong { font-size: 12px; font-weight: 700; display: block; }
+  .slot.island.operation .ig-text span { font-size: 9px; display: block; }
+  .slot.island.promo { width: 144px; height: 52px; background: linear-gradient(90deg, #fef0ed 0%, #ffaea8 100%); padding: 4px 10px 4px 4px; position: relative; box-shadow: inset 0 0 0 1px rgba(255,15,35,0.16); overflow: hidden; }
+  .slot.island.promo .ig-img { width: 34px; height: 34px; border-radius: 8px; background: radial-gradient(circle at 40% 30%, #fff, #ffeae6), linear-gradient(180deg, #ff8a8a 0%, #ff0f23 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; position: relative; z-index: 1; }
+  .slot.island.promo .ig-text { line-height: 1.1; color: #c1273e; font-weight: 700; position: relative; z-index: 1; }
+  .slot.island.promo .ig-text strong { font-size: 13px; display: block; }
+  .slot.island.promo .ig-text .cta { display: inline-block; font-size: 9px; padding: 1px 6px; background: #ff0f23; color: #fff; border-radius: 8px; margin-top: 1px; font-weight: 500; }
+
+  /* compare grid */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .compare-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .compare-cell { background: #fff; border-radius: var(--r-base); border: 1px solid var(--c-line); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .compare-cell h5 { margin: 0; font-size: 13px; color: var(--c-text); font-weight: 600; }
+  .compare-cell .note { font-size: 11px; color: var(--c-text-3); margin: 0; text-align: center; }
+
+  /* Atom 矩阵 */
+  .atom-matrix { width: 100%; display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 8px 12px; align-items: center; }
+  .atom-matrix .atom-head { font-size: 11px; color: var(--c-text-3); font-weight: 500; text-align: center; padding-bottom: 6px; border-bottom: 1px solid var(--c-line); }
+  .atom-matrix .atom-label { font-size: 12px; color: var(--c-text-2); font-weight: 600; text-align: right; padding-right: 4px; }
+  .atom-matrix .atom-cell { display: flex; align-items: center; justify-content: center; min-height: 72px; background: #fff; border: 1px solid var(--c-line); border-radius: 8px; position: relative; }
+  .atom-matrix .atom-cell.marketing-bg::before { content: ''; width: 38px; height: 38px; border-radius: 50%; background: url('https://img11.360buyimg.com/img/jfs/t1/437910/36/498/25382/6a0d4838Fd985a38b/0276072072721e5e.png') no-repeat center / cover; }
+  .atom-matrix .atom-cell .badge.red-dot { left: calc(50% + 8px); bottom: calc(50% + 6px); }
+  .atom-matrix .atom-cell .badge.number, .atom-matrix .atom-cell .badge.text { left: calc(50% + 2px); bottom: calc(50% + 2px); }
+  .atom-matrix .atom-cell.marketing-bg .badge.red-dot { left: calc(50% + 14px); bottom: calc(50% + 14px); }
+  .atom-matrix .atom-cell.marketing-bg .badge.number, .atom-matrix .atom-cell.marketing-bg .badge.text { left: calc(50% + 10px); bottom: calc(50% + 10px); }
+  .atom-slot { width: 44px; height: 44px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #11141a; position: relative; }
+  .atom-slot.selected { background: #f0f2f7; color: #ff0f23; }
+  .atom-slot .icon-home {
+    display: inline-block; width: 20px; height: 20px;
+    background-color: #11141a;
+    -webkit-mask: url('https://img11.360buyimg.com/img/jfs/t1/435818/38/8886/1500/6a0c64ceFf9186b68/027603c0398a7c74.png') no-repeat center / contain;
+    mask: url('https://img11.360buyimg.com/img/jfs/t1/435818/38/8886/1500/6a0c64ceFf9186b68/027603c0398a7c74.png') no-repeat center / contain;
+  }
+  .atom-slot.selected .icon-home {
+    -webkit-mask: none; mask: none;
+    background: url('https://img14.360buyimg.com/img/jfs/t1/435193/37/14737/1001/6a0d284cF8944e60e/027603c03c327d14.png') no-repeat center / contain;
+  }
+  .atom-slot .label-text { font-size: 10px; line-height: 14px; }
+  .atom-slot.selected .label-text { font-weight: 600; }
+
+  /* swatch card */
+  .swatch-card { display: flex; gap: 12px; align-items: center; padding: 12px; background: #fff; border: 1px solid var(--c-line); border-radius: var(--r-base); }
+  .swatch-card .sq { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--c-line); flex-shrink: 0; }
+  .swatch-card .label-mini { font-size: 11px; color: var(--c-text-3); }
+  .swatch-card .hex { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--c-text); font-weight: 600; }
+
+  @media (max-width: 760px) {
+    .compare, .compare-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部 bar:左 brand + 5 大 Zone tab + 右视图密度切换(跨 V16 spec-page 一致) -->
+<div class="top-bar">
+  <a href="../../../../docs/jd-design-wiki-knowledge-tree.html" class="top-bar__brand">JD Design Wiki <small>· V16</small></a>
+  <nav class="top-bar__nav" aria-label="5 大分区导航">
+    <a href="../../../knowledge/spec-page.html" class="top-bar__nav-link">📚 Design 知识</a>
+    <a href="../../../foundations/spec-page.html" class="top-bar__nav-link is-current">🎨 Design 基础</a>
+    <a href="../../../ai-mechanism/spec-page.html" class="top-bar__nav-link">🤖 AI 机制</a>
+    <a href="../../../product-architecture/spec-page.html" class="top-bar__nav-link">🏗 组织架构</a>
+    <a href="../../../horizontal/spec-page.html" class="top-bar__nav-link">🚀 横向专项</a>
+  </nav>
+  <span class="top-bar__spacer"></span>
+  <div class="view-tabs" role="tablist" aria-label="视图密度切换">
+    <button class="view-tab is-active" role="tab" data-view="basic" aria-selected="true">常规版</button>
+    <button class="view-tab" role="tab" data-view="pro" aria-selected="false">专业版</button>
+  </div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar" aria-label="🎨 Design 基础 - 子目录">
+  <div class="sidebar__zone-tag">ZONE 02 · 🎨 Design 基础</div>
+
+  <div class="sidebar__group">
+    <a href="../../../foundations/spec-page.html" class="sidebar__link">Token 体系</a>
+  </div>
+
+  <div class="sidebar__group">
+    <span class="sidebar__link is-placeholder" title="原则守则:principles + guidelines,待录入">原则守则</span>
+  </div>
+
+  <div class="sidebar__group">
+    <span class="sidebar__link is-placeholder" title="原子组件:单一元素的基础变体,待录入">原子组件</span>
+  </div>
+
+  <div class="sidebar__group">
+    <a href="#" class="sidebar__link is-current">通用组件 <small style="color:rgba(255,255,255,0.55);font-weight:400;">shared/</small></a>
+    <div class="sidebar__sub">
+      <a href="./spec-page.html" class="sidebar__sub-link is-current">🧭 Tabbar 底部导航</a>
+      <a href="https://github.com/ShuaiMXu/jd-design-wiki-proposal/blob/main/jd-design-system-md-v16/horizontal/components-base/button/design.md" target="_blank" rel="noopener" class="sidebar__sub-link">🔘 Button (md only)</a>
+    </div>
+  </div>
+</aside>
+
+<div class="doc">
+
+<h1>底部导航栏 · Tabbar 组件规范</h1>
+<div class="meta">
+  适用范围:JD APP V16.0 全场景(横向 BG · 通用组件 component-base)<br>
+  样式来源:Relay V16.0 GUIDELINE 节点 <code>312:46893</code> · Token 版本:<code>tokens.json V16 / page-doc bundle v0.3</code><br>
+  关联 Foundation:<code>color</code> / <code>typography</code> / <code>radius</code> / <code>spacing</code> / <code>materials</code>
+</div>
+
+<div class="toc">
+  <h3>目录(对齐 Relay 章节结构)</h3>
+  <ol>
+    <li><a href="#ch-1">设计原则</a><span style="color:var(--c-text-3);font-size:12px;"> · 含 1.1 行为准则</span></li>
+    <li><a href="#ch-2">组件设计属性</a><span style="color:var(--c-text-3);font-size:12px;"> · 形态 / 结构 / 布局 / 形态原稿</span></li>
+    <li><a href="#ch-3">灵动岛运营资源位</a><span style="color:var(--c-text-3);font-size:12px;"> · 三型规范 + 原稿</span></li>
+    <li><a href="#ch-4">应用场景</a><span style="color:var(--c-text-3);font-size:12px;"> · 典型场景 + 正反案例</span></li>
+    <li><a href="#ch-5">多端适配</a><span style="color:var(--c-text-3);font-size:12px;"> · 材质 + 动效</span></li>
+  </ol>
+</div>
+
+<!-- 给基础版读者的入门暖场,常规版可见,专业版自动隐藏 -->
+<div class="basic-only summary" style="background:#fff5e6;border-left-color:#f59f00;">
+  <p style="margin:0 0 8px;"><strong>📖 这页文档怎么读?</strong></p>
+  <ul style="margin:0;">
+    <li><strong>第一次看</strong>(产品 / 跨职能 / 老板) → 当前是<strong>常规版</strong>,5 章节按 Relay 原稿结构组织,每节有「👉」开头的入门解读。重点关注 <a href="#ch-1">设计原则</a> + <a href="#ch-3">灵动岛</a> + <a href="#ch-4">应用场景(含正反案例)</a>。</li>
+    <li><strong>已经熟悉</strong>(资深设计师 / 工程师 / 走查) → 切到右上 <strong>专业版</strong>,展开 <a href="#ch-2">组件设计属性</a> 完整 token / DP 表 + 内部布局 ASCII + 底部 API 速查。</li>
+    <li><strong>想看原稿</strong> → <a href="#ch-2">章节 2.4(形态原稿)</a> / <a href="#ch-3">章节 3.2(灵动岛原稿)</a> / <a href="#ch-2">章节 2.2.5-2.2.6(实体预览)</a> / <a href="#ch-5">章节 5(多端适配)</a> 都有 Relay 切图,<strong>点图新 tab 看 1426px 原稿</strong>。</li>
+  </ul>
+</div>
+
+
+<!-- ==========================================
+     spec-page v0.2: 切图为主，反例 mockup 极简
+     切图来源: tabbar/_assets/ (skill 自动 export 自 Relay 节点)
+     ========================================== -->
+<style>
+  /* image-only stage：跟页面底色融合,无沙盒视觉装饰 */
+  .stage img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    cursor: zoom-in;
+  }
+  .stage--image {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-height: auto;
+    /* 让切图跳出 doc 64px+72px padding,占更宽显示区(880 → 1024)*/
+    margin-left: -48px;
+    margin-right: -48px;
+    margin-top: 16px;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 720px) {
+    .stage--image { margin-left: -8px; margin-right: -8px; }
+  }
+  /* case 容器内 stage 不要跨出 case 边界(否则溢出),保留小气息 */
+  .case .stage--image {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 12px 0;
+    background: transparent;
+  }
+  .case .stage img { max-width: 100%; height: auto; }
+  /* case 内的 stage--mini-mock(反例 D/E/H 用)收紧间距 */
+  .case .stage--mini-mock {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 16px;
+  }
+  .stage--image a.zoom-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    border-bottom: 1px dashed var(--c-line);
+  }
+  .stage--image a.zoom-link:hover { color: var(--c-brand); border-bottom-color: var(--c-brand); }
+  .stage--mini-mock {
+    padding: 24px;
+    background: var(--c-bg-sunken);
+    min-height: 100px;
+    border: 1px dashed var(--c-line);
+  }
+  /* 极简 mockup tokens（仅反例用，正例全切图） */
+  .m-bar {
+    width: 280px; height: 56px;
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    display: flex; align-items: center; justify-content: space-around;
+    font-size: 11px; color: var(--c-text-3);
+    padding: 0 8px;
+  }
+  .m-slot { flex: 1; text-align: center; line-height: 1.2; }
+  .m-slot--sel { color: var(--c-brand); font-weight: 600; }
+  .m-slot--bad { color: var(--c-danger); }
+
+  /* ========== v0.3: 视图切换 (Pro / Basic) — 标题旁紧凑 segmented ========== */
+  .title-row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+  }
+  .title-row h1 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin: 0;
+    flex: 1 1 auto;
+  }
+  .view-tabs {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px;
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    flex-shrink: 0;
+  }
+  .view-tab {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-text-2);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 150ms;
+    line-height: 1.4;
+  }
+  .view-tab:hover { color: var(--c-text); }
+  .view-tab.is-active {
+    background: var(--c-bg);
+    color: var(--c-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-weight: 600;
+  }
+  /* h1 已带下划线,这里取消;title-row 自己接管下划线 */
+  h1 { border-bottom: none !important; padding-bottom: 0 !important; }
+
+  /* ========== 统一顶部 bar(跨 V16 spec-page 一致):5 大 Zone tab + view-tabs ========== */
+  .top-bar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 24px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+  }
+  .top-bar__brand {
+    font-size: 13px; font-weight: 600;
+    color: var(--c-text); text-decoration: none;
+    letter-spacing: 0.02em; margin-right: 4px;
+  }
+  .top-bar__brand small { color: var(--c-text-3); font-weight: 500; margin-left: 6px; }
+  .top-bar__nav { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; }
+  /* ant design 风格 tab:无填充背景,选中态用下划线 */
+  .top-bar__nav-link {
+    padding: 14px 14px 12px; font-size: 13px;
+    color: var(--c-text-2); text-decoration: none;
+    font-weight: 500; line-height: 1.4;
+    white-space: nowrap; position: relative;
+    transition: color 150ms;
+  }
+  .top-bar__nav-link:hover { color: var(--c-text); }
+  .top-bar__nav-link.is-current { color: var(--c-text); font-weight: 600; }
+  .top-bar__nav-link.is-placeholder { color: var(--c-text-3); cursor: default; font-style: italic; }
+  .top-bar__nav-link.is-placeholder:hover { color: var(--c-text-3); }
+  .top-bar__spacer { flex: 1; }
+
+  /* 2 列 layout grid:左 sidebar(zone 子目录)+ 右 doc */
+  .layout {
+    max-width: 1400px; margin: 0 auto;
+    padding: 24px 24px 0;
+    display: grid; grid-template-columns: 240px 1fr;
+    gap: 24px; align-items: start;
+  }
+  .sidebar {
+    position: sticky; top: 64px;
+    align-self: start;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    background: var(--c-bg);
+    padding: 20px 12px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  }
+  .sidebar__zone-tag {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--c-text-3);
+    padding: 6px 12px 12px;
+    border-bottom: 1px solid var(--c-line);
+    margin-bottom: 12px;
+  }
+  .sidebar__group { margin-bottom: 14px; }
+  .sidebar__group:last-child { margin-bottom: 0; }
+  .sidebar__link {
+    display: block; padding: 7px 12px;
+    font-size: 13px; color: var(--c-text-2);
+    text-decoration: none; border-radius: var(--r-base);
+    font-weight: 500; line-height: 1.5;
+    transition: background 150ms, color 150ms;
+  }
+  .sidebar__link:hover { background: rgba(0, 0, 0, 0.04); color: var(--c-text); }
+  .sidebar__link.is-current { background: var(--c-text); color: var(--c-bg); }
+  .sidebar__link.is-current:hover { background: var(--c-text); }
+  .sidebar__link.is-placeholder { color: var(--c-text-3); cursor: default; font-style: italic; }
+  .sidebar__link.is-placeholder:hover { background: transparent; color: var(--c-text-3); }
+  .sidebar__sub {
+    margin: 4px 0 8px 12px; padding-left: 8px;
+    border-left: 1px solid var(--c-line);
+  }
+  .sidebar__sub-link {
+    display: block; padding: 4px 10px;
+    font-size: 12px; color: var(--c-text-3);
+    text-decoration: none; border-radius: 4px;
+    line-height: 1.6;
+    transition: background 150ms, color 150ms;
+  }
+  .sidebar__sub-link:hover { background: rgba(0, 0, 0, 0.03); color: var(--c-text-2); }
+  .sidebar__sub-link.is-current { background: var(--c-bg-sunken); color: var(--c-text); font-weight: 500; }
+
+  .layout .doc {
+    max-width: none;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; gap: 16px; padding: 16px 12px 0; }
+    .sidebar { position: static; max-height: none; }
+  }
+  @media (max-width: 720px) {
+    .top-bar { padding: 10px 12px; }
+  }
+  /* basic 模式隐藏 .pro-only,显示 .basic-only / 不带 class 的元素 */
+  body.mode-basic .pro-only { display: none !important; }
+  body.mode-pro .basic-only { display: none !important; }
+  /* 默认两版都不显示直到 JS 加 mode-* class,避免闪烁 */
+  body:not(.mode-basic):not(.mode-pro) .pro-only,
+  body:not(.mode-basic):not(.mode-pro) .basic-only {
+    display: none;
+  }
+  /* basic-only 段落用 info 蓝引用块包,容易认出 */
+  .basic-only.summary {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+    font-size: 14px;
+  }
+  .basic-only.summary strong { color: var(--c-text); }
+  /* pro 模式下,table 行内 token / atom code 等小标记继承字号 */
+  body.mode-pro .pro-inline { display: inline; }
+  .pro-inline { color: var(--c-text-3); font-size: 12px; margin-left: 6px; }
+</style>
+
+<!-- ==========================================
+     7 章节 — 切图为主版本（v0.2）
+     来源: jd-design-system-md-v16/horizontal/components-base/tabbar/
+           (design.md + spec.md + variants.md + behaviors.md bundle)
+           + _assets/*.png (Relay 节点 export)
+     ========================================== -->
+
+
+<!-- ============ ch-1 Relay 章节 01 设计原则 ============ -->
+<h2 id="ch-1"><span class="num">1</span>设计原则</h2>
+
+<div class="basic-only summary">
+  <p><strong>👉 一句话理解</strong>:打开 JD App,屏幕最底下永远在那条小条 —— 装着「首页 / 分类 / 购物车 / 消息 / 我的」这种最重要的几个图标 —— 这就是 Tabbar(底部导航栏)。</p>
+  <p style="margin-top:8px;"><strong>它解决什么</strong>:让用户在 App 里**几个最核心的功能之间一键切换**(无论你逛到第几层、看了什么内容,它永远在那等你回到一级页面)。新版还在它上面集成了 AI 助手入口(Joy Agent)和大促/活动的动态展示位(灵动岛)。</p>
+  <p style="margin-top:8px;"><strong>为什么有一套规范</strong>:Tabbar 是 App 的"门面" —— 用户每天看几十次,任何不一致(图标大小不一、文字超长、坑位数变来变去)都会让人觉得 App 廉价或迷路。所以 V16 制定了从尺寸、颜色、字号到禁止行为的全套规则。</p>
+</div>
+
+<p><strong>底部导航栏(Tabbar)</strong>是 JD APP 屏幕底部的<strong>全局导航组件</strong>,作为页面导航的<strong>最高层级</strong>管控全局,点击切换整页内容。</p>
+
+<p>它的核心边界是「<strong>切换整页内容</strong>」而非「<strong>承载子页面</strong>」:Tabbar 内的坑位是一级 Tab,各 Tab 之间无父子关系;二级及以下页面应由顶部 NavBar 或 SegmentControl 承担。当一级功能超过 5 个时,应在内容层重新组织而非给 Tabbar 加 Tab。</p>
+
+<table>
+<thead><tr><th>维度</th><th>Tabbar</th><th>NavBar(顶部)</th><th>Drawer / 侧抽屉</th></tr></thead>
+<tbody>
+<tr><td>层级</td><td>一级(全局)</td><td>二级及以下(页面内)</td><td>全局或二级</td></tr>
+<tr><td>承载交互</td><td>Tab 切换 + 灵动岛 + Joy Agent</td><td>返回 / 标题 / 操作按钮</td><td>账户 / 偏好 / 长尾入口</td></tr>
+<tr><td>典型坑位数</td><td><strong>2 ~ 5</strong></td><td>1 主标题 + ≤ 2 操作</td><td>无上限</td></tr>
+<tr><td>常驻可见</td><td>是</td><td>是(页面内)</td><td>否(收起态默认隐藏)</td></tr>
+<tr><td>位置</td><td>屏幕底部</td><td>屏幕顶部</td><td>左 / 右侧</td></tr>
+</tbody>
+</table>
+
+<blockquote>
+<p><strong>V16 立场</strong>:Tabbar 是 APP 唯一全局导航,不允许在底部并行存在其它常驻导航条;不允许超过 5 个一级 Tab(章节 01 建议上限);不允许定制坑位高度或图标尺寸偏离 44×44 / 20×20 规范。</p>
+</blockquote>
+
+
+
+<h3>1.1 行为准则</h3>
+
+<ol>
+  <li><strong>建议 2 ~ 5 坑位</strong>,超过 5 个时应在内容层重新组织<span class="pro-only pro-inline">(章节 01 设计原则)</span></li>
+  <li><strong>iOS 安全区不可放置任何操作</strong><span class="pro-only pro-inline"> — 17 DP(章节 02 基础布局 a)</span></li>
+  <li><strong>坑位文本最多 4 个汉字</strong>,超出截断或换设计<span class="pro-only pro-inline">(章节 02 默认态)</span></li>
+  <li><strong>Joy Agent 招手气泡最多 18 个汉字</strong><span class="pro-only pro-inline">(章节 01 b / 02 交互状态 b)</span></li>
+  <li><strong>同时仅 1 个灵动岛</strong>,展开期间对应坑位选中态背景消失<span class="pro-only pro-inline">,Joy Agent(若有)抽缩从 16 → 28 DP</span></li>
+  <li><strong>灵动岛红色区域禁止任何元素</strong><span class="pro-only pro-inline">(章节 03 三型布局通用 dont)</span></li>
+  <li><strong>营销态仅可替换图片,其它样式不可改</strong><span class="pro-only pro-inline"> — 图 38×38 DP(章节 02 交互状态 c)</span></li>
+  <li><strong>底导材质按 OS 版本差异化</strong><span class="basic-only">(液态玻璃 vs 毛玻璃)</span><span class="pro-only pro-inline">:iOS 26+ 液态玻璃 / iOS 26 以下 + Android 毛玻璃 fallback(章节 05)</span></li>
+</ol>
+
+
+<!-- ============ ch-1 末尾:形态对照 demo (Pro) ============ -->
+<div class="pro-only">
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">DEMO · 两种形态并列对照</span></div>
+  <div class="demo-body">
+    <div class="compare" style="width:100%;">
+      <div class="compare-cell">
+        <h5>常规底导</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host"><div class="tabbar"><div class="slots" id="def-regular"></div></div></div>
+        </div>
+        <p class="note">351 DP · 5 坑位均分</p>
+      </div>
+      <div class="compare-cell">
+        <h5>Joy Agent 组合底导</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="def-agent"></div></div>
+          </div>
+        </div>
+        <p class="note">319 DP · 左侧 Joy Agent 52×52 固定</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ ch-2 Relay 章节 02 组件设计属性 ============ -->
+<h2 id="ch-2"><span class="num">2</span>组件设计属性</h2>
+
+<p>本章覆盖 Tabbar 的<strong>形态分类</strong>、<strong>容器/坑位/文字结构</strong>,以及<strong>位置布局规则</strong>。灵动岛运营资源位单独成章,见 <a href="#ch-3">章节 3</a>。</p>
+
+<div class="basic-only summary">
+  <p><strong>👉 怎么选形态?</strong> 一张决策树:</p>
+  <p style="margin-top:8px;margin-left:8px;"><strong>这个页面需要 AI 助手入口吗?</strong></p>
+  <ul style="margin-top:0;">
+    <li>需要 → <strong>Joy Agent 组合底导</strong>(首页 / 大会场常用,左边固定一个 52×52 圆形 Agent 按钮)</li>
+    <li>不需要 → <strong>常规底导</strong>(其它所有业务页)</li>
+  </ul>
+  <p style="margin-top:12px;color:var(--c-text-3);">📐 完整 token / DP / 字号 表见 <strong>专业版</strong>。📖 下方 2.3 形态原稿展示直接看 2 张原图。</p>
+</div>
+<h3>2.1 形态维度</h3>
+
+<table>
+<thead><tr><th>形态</th><th>标识</th><th>宽度</th><th>组成</th><th>典型用途</th></tr></thead>
+<tbody>
+<tr><td>常规底导</td><td><code>regular</code></td><td>351 DP</td><td>2 ~ 5 坑位 + 可选灵动岛</td><td>普通业务页面全局导航</td></tr>
+<tr><td>Joy Agent 组合底导</td><td><code>agent_combo</code></td><td>319 DP(右侧 Tabbar)+ 8 DP 间距 + 52×52 DP Agent</td><td>Joy Agent + 2 ~ 5 坑位 + 可选灵动岛</td><td>需 AI 入口的首页/会场</td></tr>
+</tbody>
+</table>
+
+
+<h3>2.2 容器与坑位结构</h3>
+
+<p>Tabbar 由<strong>容器 + N 个坑位(可选 Joy Agent + 可选灵动岛)</strong>组成,其中<strong>容器和至少 2 个坑位为必要元素</strong>。</p>
+
+<div class="basic-only summary">
+  <p><strong>👉 一句话拆解</strong>:Tabbar = <strong>1 个外壳</strong>(底部那条)+ <strong>N 个坑位</strong>(图标按钮)+ 可选 <strong>左侧 Agent</strong> + 可选 <strong>嵌入灵动岛</strong>。</p>
+  <p style="margin-top:8px;"><strong>每个坑位是个 4 件套</strong>:</p>
+  <ul style="margin-top:4px;">
+    <li>① 图标(20×20)</li>
+    <li>② 文字标签(<strong>最多 4 个汉字</strong>,超了截断)</li>
+    <li>③ 三态切换(默认灰 / 选中红 / 营销态可换图)</li>
+    <li>④ 可选招手位(右上角红点 / 数字角标 / 短文字气泡)</li>
+  </ul>
+  <p style="margin-top:8px;"><strong>Joy Agent 是什么?</strong> 一个 52×52 的圆形 AI 助手按钮,固定在 Tabbar 左侧。点击进入对话弹层,头顶可以飘"问问我大促攻略"那种气泡(最多 18 个汉字)。</p>
+  <p style="margin-top:8px;"><strong>灵动岛是什么?</strong> 嵌在「消息」坑位上的一条宽资源展示位,3 种形态(常规商品 / 运营 / 大促),都是 131-144 宽的圆角矩形。展开时占用消息位,所以同时只能展示一条。</p>
+  <p style="margin-top:12px;color:var(--c-text-3);">📐 完整 token 名 / 精确 DP 数 / 字号字重表,见 <strong>专业版</strong>。📖 下方 4.5 / 4.6 直接看原稿对照。</p>
+</div>
+
+<div class="pro-only">
+
+<h4>2.2.1 容器</h4>
+
+<table>
+<thead><tr><th>属性</th><th>值</th><th>对应 Token</th></tr></thead>
+<tbody>
+<tr><td>总高度</td><td><code>69 DP</code>(含 iOS 安全区)</td><td>—(spacing 未绑定)</td></tr>
+<tr><td>导航实际高度</td><td><code>52 DP</code>(不含安全区)</td><td>—</td></tr>
+<tr><td>iOS 系统安全区</td><td><code>17 DP</code>(<strong>不可放置任何操作</strong>)</td><td>—</td></tr>
+<tr><td>圆角</td><td><code>16 DP</code></td><td><code>radius_xxl</code>(Atom: <code>Radius_16</code>)</td></tr>
+<tr><td>背景(iOS 26+)</td><td>液态玻璃</td><td><code>liquid-glass</code>(materials 待建)</td></tr>
+<tr><td>背景(Android / iOS 26 以下)</td><td>毛玻璃 fallback</td><td><code>frosted-glass</code></td></tr>
+<tr><td>常规底导宽度</td><td><code>351 DP</code></td><td>—</td></tr>
+<tr><td>Agent + 底导宽度</td><td><code>319 DP</code>(距 Agent 8 DP)</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h4>2.2.2 坑位</h4>
+
+<table>
+<thead><tr><th>属性</th><th>值</th><th>对应 Token</th></tr></thead>
+<tbody>
+<tr><td>坑位基础尺寸</td><td><code>44 × 44 DP</code></td><td>—</td></tr>
+<tr><td>图标尺寸</td><td><code>20 × 20 DP</code></td><td>—</td></tr>
+<tr><td>文本框</td><td><code>44 × 14 DP</code></td><td>—</td></tr>
+<tr><td>字符与图标间距</td><td><code>4 DP</code></td><td>—</td></tr>
+<tr><td>默认态色(图标 + 文本)</td><td>灰阶</td><td><code>gray_1</code></td></tr>
+<tr><td>选中态色(图标 + 文本)</td><td>品牌色</td><td><code>jdred</code> / <code>color_primary</code> (#ff0f23)</td></tr>
+<tr><td>选中态背景</td><td>灰阶</td><td><code>gray_6</code>(灵动岛展开期间消失)</td></tr>
+<tr><td>营销态图片</td><td><code>38 × 38 DP</code>,<strong>仅可替换图片,不可改其它样式</strong></td><td>—</td></tr>
+<tr><td>5 坑位左右间距</td><td><code>-4 DP</code>(均分布局,自动布局计算)</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h4>2.2.3 文字</h4>
+
+<table>
+<thead><tr><th>层级</th><th>字号</th><th>字重</th><th>行高</th><th>对应 Token</th></tr></thead>
+<tbody>
+<tr><td>底导标签默认态</td><td><code>10 PT</code></td><td>Regular (400)</td><td>14</td><td><code>pingfang_regular/font_size_10_400</code></td></tr>
+<tr><td>底导标签选中态</td><td><code>10 PT</code></td><td>Semibold (600)</td><td>14</td><td><code>pingfang_semibold/font_size_10_600</code></td></tr>
+<tr><td>灵动岛主字号 + 副字号</td><td><code>14 PT</code></td><td>Semibold (600)</td><td>20</td><td><code>pingfang_semibold/font_size_14_600</code></td></tr>
+<tr><td>灵动岛小字号</td><td><code>10 PT</code></td><td>Medium (500)</td><td>14</td><td><code>pingfang_medium/font_size_10_500</code></td></tr>
+<tr><td>大促灵动岛强调文字</td><td><code>14 PT</code></td><td>京东正黑 Bold</td><td>20</td><td><code>zhenghei_bold/font_size_14_600</code></td></tr>
+</tbody>
+</table>
+
+<h4>2.2.4 Joy Agent(仅 agent_combo 形态)</h4>
+
+<table>
+<thead><tr><th>属性</th><th>值</th></tr></thead>
+<tbody>
+<tr><td>模块尺寸</td><td><code>52 × 52 DP</code></td></tr>
+<tr><td>距底部</td><td><code>17 DP</code></td></tr>
+<tr><td>默认抽缩</td><td><code>16 DP</code>(向外)</td></tr>
+<tr><td>灵动岛展开期抽缩</td><td><code>28 DP</code>(向外)</td></tr>
+<tr><td>招手气泡距 Agent 模块</td><td><code>8 DP</code>(底部间距)</td></tr>
+<tr><td>招手气泡距页边距</td><td><code>16 DP</code>(右侧)</td></tr>
+<tr><td>招手气泡最大字符</td><td><strong>18 汉字</strong></td></tr>
+<tr><td>点击行为</td><td>进入对话中心场景弹层</td></tr>
+</tbody>
+</table>
+
+</div><!-- /pro-only 4.1-4.4 -->
+
+<!-- ============ ch-2 末尾:多个 Pro demo ============ -->
+<div class="pro-only">
+
+<h4>DEMO · 坑位数 2~5 切换</h4>
+<div class="demo">
+  <div class="demo-head">
+    <span class="demo-title">坑位均分(常规底导)</span>
+    <div class="seg" id="seg-2-2">
+      <label><input type="radio" name="cnt-2-2" value="2"><span>2 坑</span></label>
+      <label><input type="radio" name="cnt-2-2" value="3"><span>3 坑</span></label>
+      <label><input type="radio" name="cnt-2-2" value="4"><span>4 坑</span></label>
+      <label><input type="radio" name="cnt-2-2" value="5" checked><span>5 坑</span></label>
+    </div>
+  </div>
+  <div class="demo-body">
+    <div class="phone" id="phone-2-2" data-material="liquid">
+      <div class="tabbar-host"><div class="tabbar"><div class="slots" id="slots-2-2"></div></div></div>
+    </div>
+    <p class="demo-caption">容器宽 351 DP,坑位均分自适应。5 坑 -4 DP 重叠负间距。</p>
+  </div>
+</div>
+
+<h4>DEMO · Atom 基础状态 12 组合矩阵</h4>
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">原子-基础状态 · 3 行 × 4 列 · 节点 93:10967</span></div>
+  <div class="demo-body">
+    <div class="atom-matrix">
+      <div></div>
+      <div class="atom-head">无招手</div>
+      <div class="atom-head">红点</div>
+      <div class="atom-head">数字 8</div>
+      <div class="atom-head">文字「最多四字」</div>
+
+      <div class="atom-label">默认态</div>
+      <div class="atom-cell"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span></div></div>
+      <div class="atom-cell"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge red-dot"></div></div></div>
+      <div class="atom-cell"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge number">8</div></div></div>
+      <div class="atom-cell"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge text">最多四字</div></div></div>
+
+      <div class="atom-label">营销态</div>
+      <div class="atom-cell marketing-bg"></div>
+      <div class="atom-cell marketing-bg"><div class="badge red-dot"></div></div>
+      <div class="atom-cell marketing-bg"><div class="badge number">8</div></div>
+      <div class="atom-cell marketing-bg"><div class="badge text">最多四字</div></div>
+
+      <div class="atom-label">选中态</div>
+      <div class="atom-cell"><div class="atom-slot selected"><i class="icon-home"></i><span class="label-text">文案</span></div></div>
+      <div class="atom-cell"><div class="atom-slot selected"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge red-dot"></div></div></div>
+      <div class="atom-cell"><div class="atom-slot selected"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge number">8</div></div></div>
+      <div class="atom-cell"><div class="atom-slot selected"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge text">最多四字</div></div></div>
+    </div>
+    <p class="demo-caption">⚠️ 营销态可叠加招手,但与选中态互斥(图片占满 38×38,无背景层)</p>
+  </div>
+</div>
+
+<h4>DEMO · Joy Agent 抽缩 16 → 28 对照</h4>
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">灵动岛展开期 Agent 抽缩(节点 312:47431)</span></div>
+  <div class="demo-body">
+    <div class="compare" style="width:100%;">
+      <div class="compare-cell">
+        <h5>默认抽缩 16 DP</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="slots-2-6-a"></div></div>
+          </div>
+        </div>
+        <p class="note">无灵动岛 · 向外抽缩 16 DP</p>
+      </div>
+      <div class="compare-cell">
+        <h5>灵动岛展开 → 抽缩 28 DP</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent inflate-28"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="slots-2-6-b"></div></div>
+          </div>
+        </div>
+        <p class="note">灵动岛存在 · 向外抽缩 28 DP</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>DEMO · 招手 4 型对照</h4>
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">红点 / 数字 / 文字 / 灵动岛展开降级</span></div>
+  <div class="demo-body">
+    <div class="compare" style="width:100%; grid-template-columns: repeat(4, 1fr);">
+      <div class="compare-cell">
+        <h5>红点型</h5>
+        <div style="padding:30px;"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge red-dot"></div></div></div>
+        <p class="note">19 / 14 DP 偏移</p>
+      </div>
+      <div class="compare-cell">
+        <h5>数字型</h5>
+        <div style="padding:30px;"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge number">8</div></div></div>
+        <p class="note">15 / 14 DP 偏移</p>
+      </div>
+      <div class="compare-cell">
+        <h5>文字型</h5>
+        <div style="padding:30px;"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge text">最多四字</div></div></div>
+        <p class="note">15 / 14 DP · ≤4 字符</p>
+      </div>
+      <div class="compare-cell">
+        <h5>灵动岛存在时降级</h5>
+        <div style="padding:30px;"><div class="atom-slot"><i class="icon-home"></i><span class="label-text">文案</span><div class="badge red-dot"></div></div></div>
+        <p class="note">数字 / 文字 → 红点</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ch-2 pro demos -->
+
+
+<h3>2.3 布局位置 + 内部结构</h3>
+
+<h4>2.3.1 位置</h4>
+
+<table>
+<thead><tr><th>位置</th><th>用途</th><th>距屏幕底部</th></tr></thead>
+<tbody>
+<tr><td><strong>bottom</strong>(唯一)</td><td>全局一级导航,常驻底部</td><td>0 + iOS 安全区 17 DP</td></tr>
+</tbody>
+</table>
+
+<blockquote class="danger">
+<p><strong>不允许 center / top 位</strong>:Tabbar 是全局常驻导航,只能在屏幕底部。center / top 区域留给 Toast、NavBar、Banner 等其它组件。</p>
+</blockquote>
+
+<h3 class="pro-only">5.2 内部布局示意</h4>
+
+<pre class="pro-only"><code>常规底导:                              Joy Agent 组合底导:
+┌─────────────────────────────┐        ┌───┐  ┌──────────────────────┐
+│ [icon][icon][icon][icon][i] │  52    │ A │ 8│[icon][icon][icon][i] │ 52
+│  首页  分类  车   消息  我  │        │ g │  │ 首页 分类  车   我    │
+├─────────────────────────────┤        │ e │  ├──────────────────────┤
+│       iOS 安全区             │  17    │ n │  │     iOS 安全区        │ 17
+└─────────────────────────────┘        │ t │  └──────────────────────┘
+   ←──────  351 DP  ──────→            │52×│      ←──── 319 DP ────→
+                                        │52 │
+                                        └───┘
+                                        ↑ 距底 17, 默认抽缩 16(灵动岛展开 28)
+
+灵动岛在消息位嵌入,131×44 (日常/运营) 或 144×52 (大促)
+距底部安全区 4 DP</code></pre>
+
+
+<!-- ============ ch-3 Relay 章节 03 灵动岛运营资源位 ============ -->
+<h2 id="ch-3"><span class="num">3</span>灵动岛运营资源位</h2>
+
+<p>灵动岛是嵌入 Tabbar <strong>消息坑位</strong>的运营展示位,3 种形态承载日常 / 运营 / 大促不同诉求。同时只能展示 1 条,展开期间消息坑位选中态背景消失。</p>
+
+<div class="basic-only summary">
+  <p><strong>👉 想插一条运营资源位 / 大促展示位吗?</strong></p>
+  <ul style="margin-top:8px;">
+    <li>纯日常商品推荐 → <strong>常规型灵动岛</strong>(占消息位,纯色背景,简洁)</li>
+    <li>有运营会场要导流 → <strong>运营型灵动岛</strong>(同频色,有背景动效,灵活)</li>
+    <li>大促核心展示 → <strong>大促型灵动岛</strong>(尺寸更大、异型背板,最抓眼球)</li>
+  </ul>
+  <p style="margin-top:12px;color:var(--c-text-3);">📐 具体尺寸(131×44 / 144×52)/ 字号 / 材质规则,切到 <strong>专业版</strong> 看 3.1 完整表;<strong>下方 3.2</strong> 直接看 3 张原稿。</p>
+</div>
+<h3>3.1 灵动岛三型规范</h3>
+
+<table>
+<thead><tr><th>类型</th><th>标识</th><th>尺寸</th><th>商品/运营图</th><th>字号</th><th>材质</th><th>颜色规则</th><th>适用</th></tr></thead>
+<tbody>
+<tr><td>常规型</td><td><code>regular</code></td><td>131×44 DP</td><td>32 DP</td><td>主 14pt / 副 14pt / 小 10pt</td><td>纯色 <code>gray_6</code>,无描边</td><td>背景 <code>gray_6</code>,商品图底 <code>white</code>(PNG 透明底)</td><td>日常商品推荐</td></tr>
+<tr><td>运营型</td><td><code>operation</code></td><td>131×44 DP</td><td>32 DP</td><td>gif 文本按规范字号</td><td>渐变描边 100% + 85% 灰阶叠加</td><td>同频色 / 浅色背景 + 深色字</td><td>运营会场推广</td></tr>
+<tr><td>大促型</td><td><code>promotion</code></td><td>144×52 DP</td><td>34 DP</td><td>gif 文本 + 京东正黑强调</td><td>渐变描边 0~60% + 异型背板</td><td>同频色 / 浅色背景 + 深色字</td><td>重点大促活动</td></tr>
+</tbody>
+</table>
+
+<blockquote class="danger">
+<p><strong>不允许</strong>新增 Tabbar 形态。运营 / 大促诉求由灵动岛(占用消息位)承载,不允许新增第 5+ 坑位或将 Tabbar 整条改色。</p>
+</blockquote>
+
+<!-- ============ ch-3 末尾:Pro demos ============ -->
+<div class="pro-only">
+
+<h4>DEMO · 三型灵动岛并列</h4>
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">常规 / 运营 / 大促 · 节点 312:47480</span></div>
+  <div class="demo-body">
+    <div class="compare compare-3" style="width:100%;">
+      <div class="compare-cell">
+        <h5>常规 131×44</h5>
+        <div class="slot island normal" style="margin:0;">
+          <div class="ig-img"></div>
+          <div class="ig-text"><strong>鲜奶定期购</strong><span style="font-size:9px;">剩 1 期</span></div>
+        </div>
+        <p class="note">gray_6 底 / 商品图白底</p>
+      </div>
+      <div class="compare-cell">
+        <h5>运营 131×44</h5>
+        <div class="slot island operation" style="--ig-a:#ddffcc; --ig-b:#b7fa96; --ig-text:#019508; margin:0;">
+          <div class="ig-img">🌿</div>
+          <div class="ig-text"><strong>抢 5 折商品</strong><span>京东超市</span></div>
+        </div>
+        <p class="note">同频色渐变 + 100% 描边</p>
+      </div>
+      <div class="compare-cell">
+        <h5>大促 144×52</h5>
+        <div class="slot island promo" style="margin:0;">
+          <div class="ig-img">🧧</div>
+          <div class="ig-text"><strong>领取专属福利</strong><span class="cta">抢万元红包 ›</span></div>
+        </div>
+        <p class="note">异型背板 + 模糊 8</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>DEMO · 同频色 5 套切换 → 实时染色(运营 / 大促)</h4>
+<div class="demo">
+  <div class="demo-head">
+    <span class="demo-title">5 套推荐同频色 · 节点 312:47617</span>
+    <div class="sw" id="sw-3-3">
+      <label title="绿"><input type="radio" name="pal-3-3" value="green" checked><span style="background:linear-gradient(135deg,#ddffcc,#b7fa96)"></span></label>
+      <label title="橙"><input type="radio" name="pal-3-3" value="orange"><span style="background:linear-gradient(135deg,#fff2e0,#ffebcc)"></span></label>
+      <label title="红"><input type="radio" name="pal-3-3" value="red"><span style="background:linear-gradient(135deg,#fff1ef,#ffe3e0)"></span></label>
+      <label title="紫"><input type="radio" name="pal-3-3" value="purple"><span style="background:linear-gradient(135deg,#f1efff,#eee0ff)"></span></label>
+      <label title="蓝"><input type="radio" name="pal-3-3" value="blue"><span style="background:linear-gradient(135deg,#eff7ff,#e0f2ff)"></span></label>
+    </div>
+  </div>
+  <div class="demo-body">
+    <div class="phone short" data-material="liquid" style="height:120px;">
+      <div class="tabbar-host"><div class="tabbar"><div class="slots" id="slots-3-3"></div></div></div>
+    </div>
+    <div id="swatch-readout" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;"></div>
+    <p class="demo-caption">每套含 3 色:A 区背景 / B 区背景 / 文本</p>
+  </div>
+</div>
+
+</div><!-- /ch-3 pro demos -->
+
+
+<!-- ============ ch-4 Relay 章节 04 应用场景 ============ -->
+<h2 id="ch-4"><span class="num">4</span>应用场景</h2>
+
+<p>本章覆盖 Tabbar 的<strong>典型业务场景配置</strong>(典型场景表)+ <strong>正反案例</strong>(展示规范边界,违反时的视觉后果)。</p>
+
+<h3>4.1 典型场景</h3>
+
+<table>
+<thead><tr><th>场景</th><th>形态</th><th>坑位数</th><th>灵动岛</th><th>招手</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>JD 首页(无 Agent)</td><td><code>regular</code></td><td>5</td><td>常规型(消息位)</td><td>红点 / 数字</td><td>购物车 / 消息常驻角标</td></tr>
+<tr><td>JD 首页(Agent 组合)</td><td><code>agent_combo</code></td><td>4</td><td>常规型 / 运营型</td><td>红点 / 数字 / 文字</td><td>左侧 Joy Agent 入口</td></tr>
+<tr><td>会场页 / 大促首页</td><td><code>regular</code></td><td>4 / 5</td><td>大促型(144×52)</td><td>无 / 文字</td><td>大促灵动岛占用消息位</td></tr>
+<tr><td>京喜 / 极速版独立 BG</td><td><code>regular</code></td><td>3</td><td>常规型</td><td>红点</td><td>3 坑位精简结构</td></tr>
+<tr><td>消息中心展开态</td><td><code>regular</code> / <code>agent_combo</code></td><td>5 / 4</td><td>展开(选中态背景消失)</td><td>降级红点</td><td>灵动岛展开期间招手降级</td></tr>
+<tr><td>客服 / Agent 入口</td><td><code>agent_combo</code></td><td>4</td><td>—</td><td>气泡(≤ 18 汉字)</td><td>点击进入对话中心场景弹层</td></tr>
+<tr><td>沉浸式视频 / 详情</td><td><code>regular</code></td><td>5</td><td>—</td><td>—</td><td>深底材质(iOS 26+ 液态 / 老系统毛玻璃)</td></tr>
+<tr><td>购物车数字提醒</td><td><code>regular</code></td><td>5</td><td>—</td><td>数字(≤ 99+)</td><td>购物车角标</td></tr>
+</tbody>
+</table>
+
+<h4>4.1.1 不该用 Tabbar 的场景</h4>
+
+<table>
+<thead><tr><th>反场景</th><th>应改用</th></tr></thead>
+<tbody>
+<tr><td>二级页面导航(详情页 Tab)</td><td>页面内 SegmentControl / TabBar(轻量)</td></tr>
+<tr><td>账户 / 偏好 / 长尾入口</td><td>Drawer / 「我的」二级页</td></tr>
+<tr><td>临时操作反馈(成功 / 失败)</td><td>Toast(center / top 位)</td></tr>
+<tr><td>跨页内容浮窗</td><td>Banner / Sheet</td></tr>
+<tr><td>需要超过 5 个一级功能的场景</td><td>在内容层重新组织(并入 / 拆 BG)</td></tr>
+<tr><td>临时强提醒</td><td>Dialog / Modal</td></tr>
+</tbody>
+</table>
+
+
+<h3>4.2 正反案例</h3>
+
+<div class="case good">
+  <h4><span class="badge">✓ 正例 A</span> 标准 5 坑位常规底导</h4>
+  <ul>
+    <li>形态 <code>regular</code>,5 坑位均分,坑位文本 ≤ 4 汉字</li>
+    <li>选中态 <code>jdred</code>,默认态 <code>gray_1</code>,符合所有规则</li>
+    <li>📖 见 <a href="#ch-2">章节 2.4 形态原稿展示</a> 看完整细节</li>
+  </ul>
+</div>
+
+<div class="case good">
+  <h4><span class="badge">✓ 正例 B</span> Agent 组合 4 坑位</h4>
+  <ul>
+    <li>形态 <code>agent_combo</code>,Joy Agent 52×52,右侧 319 DP</li>
+    <li>距 Agent 间距 8 DP,Agent 距底部 17 DP</li>
+    <li>📖 完整 Joy Agent 行为见 <a href="#ch-2">章节 2.2.6 Joy Agent 实体预览</a></li>
+  </ul>
+</div>
+
+<div class="case good">
+  <h4><span class="badge">✓ 正例 C</span> 大促灵动岛展开态</h4>
+  <ul>
+    <li>大促型灵动岛 144×52,占用消息坑位</li>
+    <li>异型背板 + 渐变描边 0~60% + 85% 灰阶叠加</li>
+    <li>展开期间该坑位选中态背景消失;同形态如有 Joy Agent,Agent 抽缩 16 → 28 DP</li>
+  </ul>
+</div>
+
+<div class="case bad">
+  <h4><span class="badge">✗ 反例 D</span> 6 坑位超出建议上限</h4>
+  <div class="stage stage--mini-mock">
+    <div class="m-bar" style="width:340px;">
+      <div class="m-slot m-slot--sel">首页</div><div class="m-slot">分类</div><div class="m-slot">车</div><div class="m-slot">消息</div><div class="m-slot m-slot--bad">动态</div><div class="m-slot">我</div>
+    </div>
+  </div>
+  <p><strong>问题</strong>:章节 01 设计原则建议 2 ~ 5 坑位,超出会导致坑位宽 / 文本可读性下降,且决策成本上升。应在内容层重新组织(如将"动态"并入"消息")。</p>
+</div>
+
+<div class="case bad">
+  <h4><span class="badge">✗ 反例 E</span> 坑位文本超 4 汉字</h4>
+  <div class="stage stage--mini-mock">
+    <div class="m-bar">
+      <div class="m-slot m-slot--sel m-slot--bad">首页推荐</div><div class="m-slot m-slot--bad">商品分类</div><div class="m-slot">购物车</div><div class="m-slot m-slot--bad">消息中心</div><div class="m-slot m-slot--bad">个人中心</div>
+    </div>
+  </div>
+  <p><strong>问题</strong>:章节 02 默认态规定底导标签最多 4 汉字。"首页推荐"5 字应改为"推荐","个人中心"应改为"我的"。多字会导致文本框 44×14 DP 截断或缩字。</p>
+</div>
+
+<div class="case bad">
+  <h4><span class="badge">✗ 反例 F</span> 营销态修改图片以外样式</h4>
+  <p><strong>问题</strong>:章节 02 营销态明确"<strong>仅可替换图片,不可做其它样式更改</strong>"。常见错误包括:① 给营销态加自定义边框/动画;② 改文本颜色为非品牌色;③ 调整图片尺寸偏离 38×38 DP。这些都违反规范。应保留 38×38 图片本身的视觉表达,不改文本/背景/边框。</p>
+</div>
+
+<div class="case bad">
+  <h4><span class="badge">✗ 反例 G</span> 灵动岛红色禁区出现元素</h4>
+  <p><strong>问题</strong>:章节 03 三型布局规定"<strong>红色区域禁止出现任何元素</strong>"。常见错误包括:① 在灵动岛右上角加 NEW 角标;② 在灵动岛左侧加额外图标。应将所有附加标识合并到主文本中,或改用 gif 素材内嵌(运营/大促型灵动岛文本走 gif 渲染)。</p>
+</div>
+
+<div class="case bad">
+  <h4><span class="badge">✗ 反例 H</span> 中部留空 / 一级 Tab 不齐</h4>
+  <div class="stage stage--mini-mock">
+    <div class="m-bar">
+      <div class="m-slot m-slot--sel">首页</div><div class="m-slot">分类</div><div class="m-slot" style="opacity:0.2;">—</div><div class="m-slot">消息</div><div class="m-slot">我</div>
+    </div>
+  </div>
+  <p><strong>问题</strong>:坑位均分布局是 V16 强约束(章节 02 各坑位均分)。中部留空破坏均分。如要嵌入灵动岛,应使用灵动岛占用消息位规则(见 sec-3),不要直接留白。</p>
+</div>
+
+
+<!-- ============ ch-4 末尾:4 类典型场景缩略 demo (Pro) ============ -->
+<div class="pro-only">
+<h4>DEMO · 4 类典型场景并列(自动归纳)</h4>
+<div class="demo">
+  <div class="demo-head"><span class="demo-title">形态 × 灵动岛 × 招手 · 节点 312:47792</span></div>
+  <div class="demo-body">
+    <div class="compare" style="grid-template-columns: repeat(2, 1fr); width:100%; gap:16px;">
+      <div class="compare-cell">
+        <h5>A · 默认形态</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="slots-4-a"></div></div>
+          </div>
+        </div>
+        <p class="note"><strong>Joy Agent + 4-5 坑</strong><br>无招手 / 无灵动岛</p>
+      </div>
+      <div class="compare-cell">
+        <h5>B · 常规灵动岛</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent inflate-28"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="slots-4-b"></div></div>
+          </div>
+        </div>
+        <p class="note"><strong>日常商品复购</strong><br>鲜奶定期购</p>
+      </div>
+      <div class="compare-cell">
+        <h5>C · 运营 / 大促</h5>
+        <div class="phone short" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent inflate-28"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"></div>
+            <div class="tabbar"><div class="slots" id="slots-4-c"></div></div>
+          </div>
+        </div>
+        <p class="note"><strong>运营会场 / 大促</strong><br>抢 5 折 / 领福利</p>
+      </div>
+      <div class="compare-cell">
+        <h5>D · 招手气泡</h5>
+        <div class="phone" style="height:200px;" data-material="liquid">
+          <div class="tabbar-host">
+            <div class="agent"><img src="https://img13.360buyimg.com/img/jfs/t1/434027/27/16417/14829/6a0c6236F67e0986e/027609c09c2c80cd.png" alt="Joy Agent"><div class="bubble">来聊聊新款手机推荐</div></div>
+            <div class="tabbar"><div class="slots" id="slots-4-d"></div></div>
+          </div>
+        </div>
+        <p class="note"><strong>主动 onboarding</strong><br>新用户 / 长期未点击</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /ch-4 pro demos -->
+
+
+<!-- ============ ch-5 Relay 章节 05 多端适配 ============ -->
+<h2 id="ch-5"><span class="num">5</span>多端适配</h2>
+
+<p>底导背景材质按 <strong>OS 端 + 版本</strong>差异化适配,保证跨平台视觉一致性。同时记录组件动效规范(motion / transition)。</p>
+<h3>5.1 多端材质适配</h3>
+
+
+<!-- ============ ch-5 末尾:多端材质 + 4 种背景切换 demo (Pro) ============ -->
+<div class="pro-only">
+<h4>DEMO · 切换背景验证材质可读性</h4>
+<div class="demo">
+  <div class="demo-head">
+    <span class="demo-title">液态玻璃 vs 毛玻璃 · 4 种壁纸</span>
+    <div class="seg" id="seg-5">
+      <label><input type="radio" name="bg-5" value="gradient" checked><span>渐变</span></label>
+      <label><input type="radio" name="bg-5" value="white"><span>纯白</span></label>
+      <label><input type="radio" name="bg-5" value="stripe"><span>彩条</span></label>
+      <label><input type="radio" name="bg-5" value="photo"><span>实拍</span></label>
+    </div>
+  </div>
+  <div class="demo-body">
+    <div class="compare" style="width:100%;">
+      <div class="compare-cell">
+        <h5>液态玻璃 · iOS 26+</h5>
+        <div class="phone short" id="phone-5-a" data-bg="gradient" data-material="liquid">
+          <div class="tabbar-host"><div class="tabbar"><div class="slots" id="slots-5-a"></div></div></div>
+        </div>
+      </div>
+      <div class="compare-cell">
+        <h5>毛玻璃 · 老系统</h5>
+        <div class="phone short" id="phone-5-b" data-bg="gradient" data-material="frost">
+          <div class="tabbar-host"><div class="tabbar"><div class="slots" id="slots-5-b"></div></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="demo-caption">切换上方背景,观察两种材质在不同壁纸下的可读性差异</p>
+  </div>
+</div>
+</div><!-- /ch-5 pro demos -->
+
+
+<h3>5.2 动效</h3>
+
+<blockquote class="warn">
+<p>⚠️ <strong>TBD</strong>:本组件 design.md 暂未提供 motion / transition 参数。建议补充:
+  ① Tab 切换的内容入场动效(<code>page-transition</code>?)
+  ② 选中态色 + 背景的过渡时长 / easing
+  ③ 灵动岛展开/收起动效参数(对应 V16 motion token <code>role.island-expand</code> / <code>role.island-collapse</code>)
+  ④ Joy Agent 抽缩(16 → 28 DP)的过渡参数</p>
+</blockquote>
+
+<hr>
+
+<h3 class="pro-only">API 速查</h3>
+
+<pre class="pro-only"><code>// 全局 API(规范草案,基于 design.md AI Schema)
+JDTabbar.config({
+  form: 'regular' | 'agent_combo',         // 默认 regular
+  slots: [                                  // 2 ~ 5 个
+    { key: 'home',    icon: 'home',    label: '首页',   selected: true },
+    { key: 'cat',     icon: 'cat',     label: '分类' },
+    { key: 'cart',    icon: 'cart',    label: '购物车', badge: { type: 'red-dot' } },
+    { key: 'msg',     icon: 'msg',     label: '消息',   badge: { type: 'number', value: 99 } },
+    { key: 'profile', icon: 'profile', label: '我的' },
+  ],
+  agent: {                                  // 仅 agent_combo 形态
+    size: 52,
+    bubble: { text: '试试问我大促攻略', maxChars: 18 },
+    onClick: () => router.openAgentSheet(),
+  },
+  island: {                                 // 可选,占用消息位
+    type: 'regular' | 'operation' | 'promotion',
+    image: 'asset://...',
+    title: '鲜奶续订有礼',
+    onClick: () => router.go('/island-target'),
+  },
+  material: 'auto'                          // auto 按 OS 版本切液态/毛玻璃
+});
+
+JDTabbar.select('home');                    // 切换 Tab
+JDTabbar.setBadge('msg', { type: 'number', value: 5 });
+JDTabbar.expandIsland({ /* island config */ });
+JDTabbar.dismissIsland();</code></pre>
+
+<h3>引用</h3>
+
+<ul>
+  <li>Relay 节点 — <a href="https://relay.jd.com/file/design?id=2029484645871009793&page_id=31:1&node_id=312:46893">JD APP V16.0 GUIDELINE · 导航类-底部导航栏设计规范</a></li>
+  <li>Bundle 源 — <a href="./design.md">design.md</a> · <a href="./spec.md">spec.md</a> · <a href="./variants.md">variants.md</a> · <a href="./behaviors.md">behaviors.md</a></li>
+  <li>位图 CDN — <a href="./_assets-cdn.md">_assets-cdn.md</a>(11 张清单:2 atom + 9 Relay 章节大图 · 当前 jsdelivr,长期迁京东 CDN)</li>
+  <li><code>foundations/tokens/color.md</code> — <code>color_primary</code> / <code>gray_1</code> / <code>gray_6</code> / <code>jdred</code> / <code>white</code></li>
+  <li><code>foundations/tokens/typography.md</code> — <code>pingfang_regular/font_size_10_400</code> / <code>pingfang_semibold/font_size_10_600</code> / <code>pingfang_semibold/font_size_14_600</code> / <code>pingfang_medium/font_size_10_500</code></li>
+  <li><code>foundations/tokens/radius.md</code> — <code>radius_xxl</code>(底导容器,16px) / <code>radius_xl</code>(灵动岛容器,12px)</li>
+  <li><code>foundations/tokens/spacing.md</code> — <code>spacing token 未绑定</code>(25+ DP 标注待回填)</li>
+  <li><code>foundations/tokens/materials.md</code> — <code>liquid-glass</code> / <code>frosted-glass</code>(待建)</li>
+  <li>关联子组件:Joy Agent(<code>horizontal/components-business/joy-agent/</code>,待录入)</li>
+</ul>
+
+<div style="margin-top:60px; padding-top:20px; border-top:1px solid var(--c-line); color:var(--c-text-3); font-size:12px; text-align:center;">
+  JD APP V16.0 Design System · 底部导航栏(Tabbar) 规范 · 生成于 2026-05-14 · 样式 = Relay 节点 312:46893 · skill design-md-to-spec-page v0.2(切图增强)
+</div>
+
+</div><!-- /doc -->
+</div><!-- /layout -->
+
+<!-- v0.3: 视图切换 JS (轻量,无依赖) -->
+<script>
+(function () {
+  var STORAGE_KEY = 'spec-page-view-mode';
+  var body = document.body;
+  var tabs = document.querySelectorAll('.view-tab');
+
+  function setMode(mode) {
+    body.classList.remove('mode-basic', 'mode-pro');
+    body.classList.add('mode-' + mode);
+    tabs.forEach(function (t) {
+      var on = t.dataset.view === mode;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) {}
+  }
+
+  // 默认 basic;若 localStorage 有偏好则用偏好
+  var initial = 'basic';
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'pro' || saved === 'basic') initial = saved;
+  } catch (e) {}
+  setMode(initial);
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { setMode(t.dataset.view); });
+  });
+
+  // ========== 切图点击在新 tab 看原图(原稿 1426px+ 宽,doc 容器缩到 880px 后字会小)==========
+  document.querySelectorAll('.stage--image img').forEach(function (img) {
+    img.addEventListener('click', function () {
+      window.open(img.src, '_blank', 'noopener');
+    });
+    // 加链接 fallback,无 JS / 想右键复制链接的也能点
+    var label = img.parentElement.nextElementSibling;
+    if (label && label.classList.contains('stage-label')) {
+      var link = document.createElement('a');
+      link.className = 'zoom-link';
+      link.href = img.src;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = '🔍 点图或本链接看原稿(' + (img.naturalWidth || '?') + '×' + (img.naturalHeight || '?') + ')';
+      img.parentElement.appendChild(link);
+    }
+  });
+})();
+
+// ==========================================
+// v0.7 合并:interactive demo 渲染脚本
+// ==========================================
+(function() {
+  const SVG_HOME = '<i class="icon-home"></i>';
+  const LABELS = ['文案', '文案', '文案', '文案', '文案'];
+  const PALETTES = {
+    green:  { a: '#DDFFCC', b: '#B7FA96', text: '#019508', emoji: '🌿' },
+    orange: { a: '#FFF2E0', b: '#FFEBCC', text: '#7D3600', emoji: '🍊' },
+    red:    { a: '#FFF1EF', b: '#FFE3E0', text: '#FF0F23', emoji: '🍓' },
+    purple: { a: '#F1EFFF', b: '#EEE0FF', text: '#713290', emoji: '🍇' },
+    blue:   { a: '#EFF7FF', b: '#E0F2FF', text: '#2D6AA6', emoji: '🫐' },
+  };
+
+  function buildSlot(opts) {
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    if (opts.state === 'selected') {
+      slot.classList.add('selected');
+      if (opts.islandActive) slot.classList.add('no-bg');
+    }
+    if (opts.state === 'marketing') {
+      slot.classList.add('marketing');
+      const txt = document.createElement('span'); txt.className = 'label-text';
+      slot.appendChild(txt);
+    } else {
+      slot.innerHTML = SVG_HOME + '<span class="label-text">' + (opts.label || '文案') + '</span>';
+    }
+    if (opts.badge && opts.badge !== 'none') {
+      const b = document.createElement('div');
+      b.className = 'badge ' + opts.badge;
+      if (opts.badge === 'number') b.textContent = '8';
+      if (opts.badge === 'text') b.textContent = '最多四字';
+      slot.appendChild(b);
+    }
+    return slot;
+  }
+
+  function buildIsland(type, palette) {
+    const s = document.createElement('div');
+    s.className = 'slot island ' + type;
+    if (type === 'normal') {
+      s.innerHTML = '<div class="ig-img"></div><div class="ig-text"><strong>鲜奶定期购</strong><span style="font-size:9px; line-height:14px;">剩 1 期</span></div>';
+    } else if (type === 'operation') {
+      const p = PALETTES[palette || 'green'];
+      s.style.setProperty('--ig-a', p.a);
+      s.style.setProperty('--ig-b', p.b);
+      s.style.setProperty('--ig-text', p.text);
+      s.innerHTML = '<div class="ig-img">' + p.emoji + '</div><div class="ig-text"><strong>抢 5 折商品</strong><span>京东超市</span></div>';
+    } else if (type === 'promo') {
+      s.innerHTML = '<div class="ig-img">🧧</div><div class="ig-text"><strong>领取专属福利</strong><span class="cta">抢万元红包 ›</span></div>';
+    }
+    return s;
+  }
+
+  function fillSlots(container, count, opts) {
+    opts = opts || {};
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const slot = buildSlot({
+        label: LABELS[i] || '文案',
+        state: opts.selectedIndex === i ? (opts.selectedState || 'selected') : 'default',
+        badge: opts.badgeIndex === i ? opts.badge : null,
+        islandActive: opts.islandActive,
+      });
+      container.appendChild(slot);
+    }
+  }
+
+  function fillSlotsWithIsland(container, count, islandType, palette, opts) {
+    opts = opts || {};
+    container.innerHTML = '';
+    const islandIdx = Math.min(2, count - 1);
+    for (let i = 0; i < count; i++) {
+      if (i === islandIdx && islandType) {
+        container.appendChild(buildIsland(islandType, palette));
+      } else {
+        container.appendChild(buildSlot({
+          label: LABELS[i] || '文案',
+          state: opts.selectedIndex === i ? 'selected' : 'default',
+          islandActive: !!islandType,
+          badge: opts.badgeIndex === i ? opts.badge : null,
+        }));
+      }
+    }
+  }
+
+  // ---- DEMO 形态对照(章节 1 末) ----
+  const defR = document.getElementById('def-regular');
+  const defA = document.getElementById('def-agent');
+  if (defR) fillSlots(defR, 5, { selectedIndex: 1 });
+  if (defA) fillSlots(defA, 4, { selectedIndex: 1 });
+
+  // ---- DEMO 坑位 2-5 切换(章节 2 末) ----
+  function render22() {
+    const radio = document.querySelector('input[name="cnt-2-2"]:checked');
+    if (!radio) return;
+    const cnt = +radio.value;
+    fillSlots(document.getElementById('slots-2-2'), cnt, { selectedIndex: Math.min(1, cnt - 1) });
+  }
+  document.querySelectorAll('input[name="cnt-2-2"]').forEach(el => el.addEventListener('change', render22));
+  if (document.getElementById('slots-2-2')) render22();
+
+  // ---- DEMO Joy Agent 抽缩对照(章节 2 末) ----
+  if (document.getElementById('slots-2-6-a')) fillSlots(document.getElementById('slots-2-6-a'), 4, { selectedIndex: 1 });
+  if (document.getElementById('slots-2-6-b')) fillSlotsWithIsland(document.getElementById('slots-2-6-b'), 4, 'normal', null, { selectedIndex: 0 });
+
+  // ---- DEMO 同频色切换(章节 3 末) ----
+  function render33() {
+    const radio = document.querySelector('input[name="pal-3-3"]:checked');
+    if (!radio) return;
+    const pal = radio.value;
+    fillSlotsWithIsland(document.getElementById('slots-3-3'), 5, 'operation', pal, { selectedIndex: 0 });
+    const p = PALETTES[pal];
+    const readout = document.getElementById('swatch-readout');
+    readout.innerHTML = '';
+    [
+      { label: 'A 区背景', hex: p.a },
+      { label: 'B 区背景', hex: p.b },
+      { label: '文本', hex: p.text },
+    ].forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'swatch-card';
+      div.innerHTML = '<div class="sq" style="background:' + item.hex + '"></div><div><div class="label-mini">' + item.label + '</div><div class="hex">' + item.hex + '</div></div>';
+      readout.appendChild(div);
+    });
+  }
+  document.querySelectorAll('input[name="pal-3-3"]').forEach(el => el.addEventListener('change', render33));
+  if (document.getElementById('slots-3-3')) render33();
+
+  // ---- DEMO 4 类应用场景(章节 4 末) ----
+  if (document.getElementById('slots-4-a')) fillSlots(document.getElementById('slots-4-a'), 4, { selectedIndex: 1 });
+  if (document.getElementById('slots-4-b')) fillSlotsWithIsland(document.getElementById('slots-4-b'), 4, 'normal', null, { selectedIndex: 0 });
+  if (document.getElementById('slots-4-c')) fillSlotsWithIsland(document.getElementById('slots-4-c'), 4, 'operation', 'green', { selectedIndex: 0 });
+  if (document.getElementById('slots-4-d')) fillSlots(document.getElementById('slots-4-d'), 4, { selectedIndex: 1, badgeIndex: 3, badge: 'red-dot' });
+
+  // ---- DEMO 多端材质 + 背景切换(章节 5 末) ----
+  if (document.getElementById('slots-5-a')) fillSlotsWithIsland(document.getElementById('slots-5-a'), 5, 'normal', null, { selectedIndex: 0 });
+  if (document.getElementById('slots-5-b')) fillSlotsWithIsland(document.getElementById('slots-5-b'), 5, 'normal', null, { selectedIndex: 0 });
+  function render5() {
+    const radio = document.querySelector('input[name="bg-5"]:checked');
+    if (!radio) return;
+    const bg = radio.value;
+    if (document.getElementById('phone-5-a')) document.getElementById('phone-5-a').dataset.bg = bg;
+    if (document.getElementById('phone-5-b')) document.getElementById('phone-5-b').dataset.bg = bg;
+  }
+  document.querySelectorAll('input[name="bg-5"]').forEach(el => el.addEventListener('change', render5));
+})();
+</script>
+
+</body>
+</html>

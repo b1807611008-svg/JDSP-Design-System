@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JD APP 16.0 GUIDELINE · 设计系统</title>
+  <meta name="description" content="JD APP 16.0 设计系统对外公开规范。设计与用研部 - AI 核心产品设计部。" />
+  <style>
+    :root {
+      --color-text: #11141A;
+      --color-text-help: #6B6F7A;
+      /* banner 底色：V16 token color_background_component (= gray.6 = #F5F6FA) */
+      --color-banner-bg: #F5F6FA;
+      --color-divider: rgba(17, 20, 26, 0.08);
+      /* 范式色板（来自 PDF），TBD 后续换成 V16 真 token */
+      --color-tips-bg: #F0F7FF;
+      --color-tips-border: #B3D4FC;
+      --color-must: #E94B5A;
+      --color-optional: #5BAA5F;
+      --color-example-bg: #FFF8DC;
+      --color-link: #1976D2;
+      --color-bullet: #1976D2;
+      --font-display: 'Intro', 'Helvetica Neue', Arial, sans-serif;
+      --font-cjk: 'PingFang SC', 'PingFang-SC', 'Microsoft YaHei', sans-serif;
+      --max-width: 1666px;
+      --page-max-width: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #fff; color: var(--color-text); font-family: var(--font-cjk); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    .wrap { max-width: var(--max-width); margin: 0 auto; }
+
+    /* ─── 顶部唯一 banner ────────────────────────────────────── */
+    /* banner 底色用纯白：panda PNG 透明区不再透出灰色，玻璃质感清爽。
+       --color-banner-bg (#F5F6FA) 留给表头等其它用途。 */
+    .banner {
+      position: relative;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1fr 548px;
+      min-height: 240px;
+    }
+    .banner__text { padding: 54px 60px; display: flex; flex-direction: column; gap: 28px; grid-column: 1; min-width: 0; }
+    .banner__tag { font-family: var(--font-display); font-size: 20px; line-height: 20px; letter-spacing: 0.04em; }
+    .banner__title { font-family: var(--font-cjk); font-size: 40px; font-weight: 600; line-height: 1.1; margin: 0; word-break: break-word; }
+    .banner__subtitle { font-family: var(--font-cjk); font-size: 16px; line-height: 16px; margin: 0; }
+    .banner__art {
+      grid-column: 2;
+      width: 548px;
+      height: 240px;
+      /* 白底 banner 下 multiply 无作用，移除让 PNG 玻璃质感清爽渲染 */
+      background-image:
+        url('assets/banner-art.png'),
+        radial-gradient(circle at 30% 50%, #FFB8C5 0%, #FFE0E6 28%, transparent 62%),
+        radial-gradient(circle at 68% 48%, #E8DDFF 0%, transparent 52%);
+      background-size: cover, auto, auto;
+      background-position: center, center, center;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+    }
+
+    /* ─── 正文限宽容器 ──────────────────────────────────────── */
+    .page { max-width: var(--page-max-width); margin: 0 auto; padding: 60px; }
+    .page__h2 { font-size: 28px; font-weight: 600; margin: 0 0 40px; letter-spacing: 0.5px; }
+    .page__h2 .num { color: var(--color-link); font-weight: 600; margin-right: 8px; }
+
+    /* ─── 规范要素参考蓝框 ──────────────────────────────────── */
+    .guideline-tips { border: 1px solid var(--color-tips-border); background: var(--color-tips-bg); padding: 28px 36px; border-radius: 8px; margin: 0 0 56px; }
+    .guideline-tips__title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+    .guideline-tips ol { margin: 0; padding-left: 24px; font-size: 15px; line-height: 1.85; }
+    .guideline-tips ol li { margin-bottom: 4px; }
+    .guideline-tips .must { color: var(--color-must); font-weight: 500; }
+    .guideline-tips .optional { color: var(--color-optional); font-weight: 500; }
+    .guideline-tips strong { font-weight: 600; }
+
+    /* ─── 示意黄色标题 ──────────────────────────────────────── */
+    .example-header { background: var(--color-example-bg); padding: 10px 16px; margin: 0 0 36px; font-size: 15px; border-radius: 4px; display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; }
+    .example-tag { color: var(--color-must); font-weight: 600; }
+    .example-name { font-weight: 600; }
+    .example-link { color: var(--color-link); text-decoration: none; }
+    .example-link:hover { text-decoration: underline; }
+
+    /* ─── 圆点章节 ──────────────────────────────────────────── */
+    .bullet-section { margin: 0 0 56px; }
+    .bullet-section__title { position: relative; padding-left: 24px; font-size: 18px; font-weight: 500; margin: 0 0 20px; letter-spacing: 0.3px; }
+    .bullet-section__title::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-bullet); }
+    .bullet-section p,
+    .bullet-section ol,
+    .bullet-section ul { font-size: 15px; line-height: 1.8; margin: 0 0 16px; }
+    .bullet-section ol,
+    .bullet-section ul { padding-left: 24px; }
+    .bullet-section ol li,
+    .bullet-section ul li { margin-bottom: 6px; }
+
+    /* ─── 章节内插表格 ──────────────────────────────────────── */
+    .section-table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 14px; }
+    .section-table th,
+    .section-table td { text-align: left; padding: 12px 16px; border: 1px solid var(--color-divider); vertical-align: top; }
+    .section-table th { background: var(--color-banner-bg); font-weight: 600; }
+
+    /* ─── 章节内图示 ────────────────────────────────────────── */
+    .section-figure { margin: 16px 0 24px; }
+    .section-figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--color-divider); border-radius: 4px; }
+    .section-figure figcaption { font-size: 13px; color: var(--color-text-help); margin-top: 8px; }
+
+    /* ─── 页脚 ──────────────────────────────────────────────── */
+    .site-footer { padding: 40px 60px; border-top: 1px solid var(--color-divider); font-size: 13px; color: var(--color-text-help); }
+    .site-footer a { color: inherit; }
+
+    /* ─── 移动端 ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .banner { grid-template-columns: 1fr; grid-template-rows: auto auto; min-height: 0; }
+      .banner__art { grid-column: 1; width: 100%; height: 120px; }
+      .banner__text, .page, .site-footer { padding: 32px 20px; }
+      .banner__title { font-size: 28px; line-height: 1.2; }
+      .page__h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- 顶部唯一 banner -->
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__tag">JD APP 16.0&nbsp;&nbsp;GUIDELINE</span>
+        <h1 class="banner__title">设计系统</h1>
+        <p class="banner__subtitle">设计与用研部 - AI 核心产品设计部</p>
+      </div>
+      <div class="banner__art" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+
+      <h2 class="page__h2"><span class="num">1.</span>业务组件库（业务型组件）</h2>
+
+      <!-- 规范要素参考蓝框（固定，对所有 spec 通用） -->
+      <aside class="guideline-tips">
+        <h3 class="guideline-tips__title">🌟 规范要素参考：</h3>
+        <ol>
+          <li><strong>组件定义</strong><span class="must">（必写）</span>：组件的目的或用途</li>
+          <li><strong>行为准则</strong><span class="optional">（选写）</span>：和用户约定好的行为规则</li>
+          <li><strong>组件类型</strong><span class="optional">（选写）</span>：根据不同交互/视觉形态或功能模式的分类</li>
+          <li><strong>组件结构</strong><span class="must">（必写）</span>：组件的骨架说明，包括组件的内部组成、层级关系、必需和可选元素，需明确每个元素的使用场景及使用上下限，包括是否为必配置项、文本字数限制、按钮数量等</li>
+          <li><strong>组件属性</strong><span class="must">（必写）</span>：元素的空间关系、对齐方式、间距、颜色、在不同尺寸下的适配规则等</li>
+          <li><strong>典型场景示意</strong><span class="must">（必写）</span>：组件的使用场景举例，需尽可能覆盖全部典型场景</li>
+          <li><strong>错误示例</strong><span class="optional">（选写）</span>：组件"千万别这么做"的反面案例，尽量避免滥用或误用</li>
+        </ol>
+      </aside>
+
+      <!-- spec 们逐份铺开（每份是示意头 + 7 圆点章节） -->
+
+      <!-- level: component-base -->
+
+      <p class="example-header" id="button">
+        <span class="example-tag">*示意：</span>
+        <span class="example-name">样式=主要操作（红色填充）, 状态=默认（Button） · draft v0.1</span>
+        <a class="example-link" href="../jd-design-system-md-v16/horizontal/components-base/button/design.md">design.md →</a>
+      </p>
+
+      <section class="bullet-section" id="button-definition">
+        <h3 class="bullet-section__title">样式=主要操作（红色填充）, 状态=默认 定义</h3>
+        <p><!-- TBD --> 待补充。</p>
+      </section>
+
+      <section class="bullet-section" id="button-behavior">
+        <h3 class="bullet-section__title">行为准则</h3>
+        <p><!-- TBD --> 待补充。</p>
+      </section>
+
+      <section class="bullet-section" id="button-types">
+        <h3 class="bullet-section__title">样式=主要操作（红色填充）, 状态=默认 类型</h3>
+        <p>同属 ↘️ 按钮 Button (page 33:5) 下的相关变体（INSTANCE 命名暗示）： 样式=主要操作（红色填充）, 状态=默认（本节点 608:1031） 样式=主要操作（红色填充）, 状态=禁用（608:1082）</p>
+      </section>
+
+      <section class="bullet-section" id="button-structure">
+        <h3 class="bullet-section__title">样式=主要操作（红色填充）, 状态=默认 结构</h3>
+        <p>预览</p>
+      </section>
+
+      <section class="bullet-section" id="button-attributes">
+        <h3 class="bullet-section__title">设计属性</h3>
+        <table class="section-table"><thead><tr><th>用途</th><th>Token</th><th>实际 hex</th></tr></thead><tbody><tr><td>按钮底</td><td>color_primary</td><td>#FF0F23</td></tr><tr><td>文字 + 图标</td><td>color_primary_text</td><td>#FFFFFF</td></tr><tr><td>点击高亮态 overlay</td><td>⚠️ rgba-suggestion: white-at-90</td><td>#FFFFFF@90%（V16 atom 缺，若高频建议加 atom.white_90）</td></tr></tbody></table>
+        <p>关联组件：<code>horizontal/components-base/icon-home</code></p>
+      </section>
+
+      <section class="bullet-section" id="button-scenarios">
+        <h3 class="bullet-section__title">典型场景示意</h3>
+        <figure class="section-figure">
+          <img src="../jd-design-system-md-v16/horizontal/components-base/button/preview.png" alt="样式=主要操作（红色填充）, 状态=默认 截图" />
+          <figcaption>来源：<a href="https://relay.jd.com/file/design?id=2029484645871009793&amp;page_id=33%3A5&amp;node_id=608%3A1031">Relay frame</a></figcaption>
+        </figure>
+        <p><!-- TBD --> 待补充。</p>
+      </section>
+
+      <section class="bullet-section" id="button-donts">
+        <h3 class="bullet-section__title">错误示例</h3>
+        <p><!-- TBD --> 待补充。</p>
+      </section>
+
+      <p class="example-header" id="tabbar">
+        <span class="example-tag">*示意：</span>
+        <span class="example-name">底部导航栏（Tabbar） · draft v0.6</span>
+        <a class="example-link" href="../jd-design-system-md-v16/horizontal/components-base/tabbar/design.md">design.md →</a>
+      </p>
+
+      <section class="bullet-section" id="tabbar-definition">
+        <h3 class="bullet-section__title">底部导航栏 定义</h3>
+        <p>底部导航栏(Tabbar)位于屏幕底部,作为页面导航的最高层级,管控全局,点击切换整页内容。它分为常规底导和 Joy Agent 组合底导两种形态,支持 2~5 个坑位 + 可选灵动岛运营资源位,并在不同 OS 端/版本下选择不同材质(iOS 26+ 液态玻璃 / Android 与 iOS 老系统毛玻璃)。</p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-behavior">
+        <h3 class="bullet-section__title">行为准则</h3>
+        <p>基础切换:点击坑位,切换整页内容(章节 01) 状态切换:默认态 ↔ 选中态(图标 + 文本变 jdred,背景变 gray_6) 灵动岛激活:对应坑位选中态背景消失;同时 Joy Agent(若存在)向外抽缩 16 → 28 DP</p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-types">
+        <h3 class="bullet-section__title">底部导航栏 类型</h3>
+        <p><!-- TBD --> 待补充。</p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-structure">
+        <h3 class="bullet-section__title">底部导航栏 结构</h3>
+        <p>Tabbar 在 Relay 中按「原子 → 组件」两层组织。Atom 是不可拆的视觉单位,组件层只做布局组合,不修改 atom 内部规则。理解层级有助于复用和约束。</p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-attributes">
+        <h3 class="bullet-section__title">设计属性</h3>
+        <table class="section-table"><thead><tr><th>项</th><th>取值</th><th>备注</th></tr></thead><tbody><tr><td>底导总高</td><td>69 DP</td><td>含 iOS 系统安全区</td></tr><tr><td>导航实际高度</td><td>52 DP</td><td>真正可用区</td></tr><tr><td>iOS 系统安全区</td><td>17 DP</td><td>❌ 不可放置任何操作</td></tr><tr><td>内容距导航内间距</td><td>4 DP</td><td>顶</td></tr><tr><td>内容高度</td><td>44 DP</td><td>即坑位高度</td></tr></tbody></table>
+        <p>关联组件：<code>horizontal/components-business/joy-agent</code></p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-scenarios">
+        <h3 class="bullet-section__title">典型场景示意</h3>
+        <figure class="section-figure" aria-label="底部导航栏 占位图">
+          <div style="height:180px;border:1px solid var(--color-divider);border-radius:4px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:var(--color-text-help);font-size:14px;">preview.png 待补充</div>
+          <figcaption>来源：<a href="https://relay.jd.com/file/design?id=2029484645871009793&amp;page_id=31%3A1&amp;node_id=312%3A46893">Relay frame</a></figcaption>
+        </figure>
+        <p>Relay 节点 312:47792,1426×3864。本章节由 18 个真实首页 + Tabbar 样张 + 230+ 子 frame 组成,无独立 description 文本节点。下方按「形态 × 灵动岛 × 招手」组合自动归纳为 4 类典型场景(v0.7 由 outline Q1(b) 自动生成,设计师 review 后可调整)。</p>
+      </section>
+
+      <section class="bullet-section" id="tabbar-donts">
+        <h3 class="bullet-section__title">错误示例</h3>
+        <p>抽取自 Relay 真实描述文本中的禁止规则(pattern:含「禁止 / 不可 / 不要 / 避免 / 最多 / 支持最大 / 必须」)。</p>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      生成于 <time datetime="2026-05-24T13:05:55.757Z">2026-05-24T13:05:55.757Z</time> ·
+      源：<a href="https://github.com/ShuaiMXu/jd-design-wiki-proposal">jd-design-wiki-proposal</a>
+      <!-- TBD: 战略 HTML footer 互链 -->
+    </footer>
+
+  </div>
+</body>
+</html>

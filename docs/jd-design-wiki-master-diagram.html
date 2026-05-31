@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京东 Design Wiki · 架构大图</title>
+<style>
+@page { size: landscape; margin: 0; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #0a0a0c;
+  --ink: #f8f4ec;
+  --muted: #6b6862;
+  --line: rgba(248,244,236,0.08);
+  --accent: #fa2c19;
+  --accent-soft: rgba(250,44,25,0.12);
+  --accent-glow: rgba(250,44,25,0.25);
+  --surface: rgba(255,255,255,0.03);
+  --zone-blue: #5b9eff;
+  --zone-purple: #b794f6;
+  --zone-cyan: #4fd1c5;
+  --zone-yellow: #f6ad55;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: flex; flex-direction: column;
+  position: relative;
+  background:
+    radial-gradient(ellipse 60vw 60vh at 50% 55%, rgba(250,44,25,0.08), transparent 60%),
+    radial-gradient(ellipse 50vw 50vh at 0% 0%, rgba(91,158,255,0.04), transparent 50%),
+    radial-gradient(ellipse 50vw 50vh at 100% 100%, rgba(250,44,25,0.04), transparent 50%);
+  overflow: hidden;
+}
+.slide::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: 0.5;
+  pointer-events: none;
+}
+
+.container {
+  position: relative; z-index: 1;
+  flex: 1;
+  display: flex; flex-direction: column;
+  padding: clamp(1.2rem, 3vw, 2.4rem) clamp(1.5rem, 4vw, 3rem);
+  gap: clamp(0.6rem, 1.4vw, 1.2rem);
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* HEADER */
+.header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 1rem;
+}
+.eyebrow {
+  font-size: clamp(0.65rem, 0.8vw, 0.78rem);
+  letter-spacing: 0.3em; color: var(--muted);
+  font-weight: 500; text-transform: uppercase;
+  margin-bottom: 0.4em;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+h1 {
+  font-size: clamp(1.4rem, 2.6vw, 2.4rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -0.02em; margin: 0;
+}
+h1 .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.tagline {
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  color: rgba(248,244,236,0.7);
+  margin-top: 0.4em;
+  font-weight: 400;
+  max-width: 60ch;
+  line-height: 1.5;
+}
+.meta-info {
+  text-align: right;
+  font-size: clamp(0.65rem, 0.78vw, 0.78rem);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ============ 5 ZONES TOP ROW ============ */
+.zones-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(0.5rem, 1vw, 0.9rem);
+  margin-top: clamp(0.4rem, 1vw, 0.8rem);
+}
+.zone-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: clamp(0.7rem, 1.2vw, 1.1rem);
+  display: flex; flex-direction: column; gap: 0.3rem;
+  position: relative;
+  transition: transform 0.25s, border-color 0.25s;
+}
+.zone-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(250,44,25,0.3);
+}
+.zone-card.focal {
+  background: linear-gradient(135deg, rgba(250,44,25,0.18) 0%, rgba(250,44,25,0.04) 100%);
+  border-color: rgba(250,44,25,0.5);
+  box-shadow: 0 0 30px rgba(250,44,25,0.15);
+}
+.zone-emoji { font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1; }
+.zone-num {
+  font-family: "SF Mono", monospace;
+  font-size: clamp(0.6rem, 0.7vw, 0.7rem);
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.zone-card.focal .zone-num { color: var(--accent); }
+.zone-name {
+  font-size: clamp(0.85rem, 1.05vw, 1rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.zone-desc {
+  font-size: clamp(0.66rem, 0.78vw, 0.78rem);
+  color: var(--muted);
+  line-height: 1.45;
+}
+.zone-arrow-down {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "SF Mono", monospace;
+  font-size: 0.85rem;
+  color: rgba(250,44,25,0.3);
+  opacity: 0.6;
+}
+.zone-card.focal .zone-arrow-down {
+  color: var(--accent);
+  opacity: 1;
+  font-weight: 900;
+  font-size: 1.2rem;
+  bottom: -1.7rem;
+}
+
+/* ============ CENTRAL DESIGN.md ============ */
+.center-wrap {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: clamp(0.6rem, 1.5vw, 1.4rem);
+  align-items: center;
+  margin-top: clamp(0.6rem, 1.6vw, 1.4rem);
+}
+
+/* Left side annotation */
+.left-anno, .right-anno {
+  display: flex; flex-direction: column; gap: 0.7rem;
+}
+.anno-block {
+  font-size: clamp(0.7rem, 0.85vw, 0.82rem);
+  color: rgba(248,244,236,0.85);
+  line-height: 1.55;
+  padding: 0.7rem 0.9rem;
+  background: rgba(0,0,0,0.3);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+}
+.anno-label {
+  font-family: "SF Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.4em;
+  display: block;
+}
+
+/* Center DESIGN.md card */
+.design-md {
+  background: linear-gradient(135deg, rgba(250,44,25,0.15) 0%, rgba(250,44,25,0.02) 60%, rgba(0,0,0,0.4) 100%);
+  border: 2px solid rgba(250,44,25,0.5);
+  border-radius: 18px;
+  padding: clamp(1rem, 2vw, 1.6rem) clamp(1rem, 2.2vw, 1.8rem);
+  box-shadow: 0 0 60px rgba(250,44,25,0.2);
+  position: relative;
+}
+.design-md::before {
+  content: "";
+  position: absolute; inset: -2px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgba(250,44,25,0.6), rgba(250,44,25,0.1)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.design-md-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: clamp(0.7rem, 1.4vw, 1rem);
+}
+.design-md-title {
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.design-md-title .ext { color: var(--accent); }
+.design-md-meta {
+  font-size: clamp(0.66rem, 0.78vw, 0.78rem);
+  color: var(--muted);
+  font-family: "SF Mono", monospace;
+  letter-spacing: 0.05em;
+}
+
+.segs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.3rem, 0.6vw, 0.55rem);
+}
+.seg {
+  display: grid;
+  grid-template-columns: 1.3rem 1fr auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: clamp(0.7rem, 0.82vw, 0.8rem);
+  line-height: 1.3;
+}
+.seg.dim {
+  background: rgba(250,44,25,0.08);
+  border-color: rgba(250,44,25,0.3);
+}
+.seg-num {
+  font-family: "SF Mono", monospace;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+.seg.dim .seg-num { color: var(--accent); font-weight: 700; }
+.seg-name { color: var(--ink); font-weight: 500; }
+.seg.dim .seg-name { font-weight: 700; }
+.seg-role {
+  font-family: "SF Mono", monospace;
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+.seg.dim .seg-role { color: var(--accent); font-weight: 600; }
+a.seg { text-decoration: none; color: inherit; cursor: pointer; transition: all 0.2s; }
+a.seg:hover {
+  border-color: rgba(250,44,25,0.5);
+  transform: translateY(-1px);
+  background: rgba(250,44,25,0.08);
+}
+a.seg:hover .seg-name { color: var(--accent); }
+
+/* ============ BOTTOM LINK ROW ============ */
+.link-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(0.5rem, 1.1vw, 1rem);
+  padding: clamp(0.7rem, 1.4vw, 1.1rem);
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-top: clamp(0.5rem, 1.2vw, 1rem);
+  position: relative;
+}
+.link-row::before {
+  content: "▲";
+  position: absolute;
+  top: -0.7rem; left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  color: var(--accent);
+}
+.link-row-label {
+  position: absolute;
+  top: -0.55rem; left: calc(50% + 1rem);
+  background: var(--bg);
+  padding: 0 0.7rem;
+  font-family: "SF Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.link-item {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  align-items: flex-start;
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
+}
+.link-segment {
+  font-family: "SF Mono", monospace;
+  font-size: 0.62rem;
+  background: rgba(91,158,255,0.12);
+  color: var(--zone-blue);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+.link-arrow-mid {
+  font-family: "SF Mono", monospace;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.link-target {
+  color: var(--ink);
+  font-weight: 600;
+}
+.link-zone {
+  color: var(--muted);
+  font-size: 0.72em;
+  font-family: "SF Mono", monospace;
+}
+
+/* FOOTER */
+footer {
+  margin-top: clamp(0.4rem, 1vw, 0.8rem);
+  padding-top: clamp(0.4rem, 1vw, 0.8rem);
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: clamp(0.62rem, 0.74vw, 0.74rem);
+  color: var(--muted);
+  font-family: "SF Mono", monospace;
+  letter-spacing: 0.04em;
+}
+
+/* ============ DEEP SECTIONS (附在主图下面) ============ */
+.deep-wrap {
+  background: var(--bg);
+  position: relative;
+  z-index: 1;
+}
+.deep-wrap::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: 0.4;
+  pointer-events: none;
+}
+.deep-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 4vw, 3rem);
+  position: relative;
+  z-index: 1;
+}
+.deep-section-head {
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+.deep-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+}
+.deep-title {
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+.deep-title .accent {
+  background: linear-gradient(135deg, #fa2c19 0%, #ff8c69 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.deep-desc {
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 760px;
+  line-height: 1.6;
+}
+.zone-deep {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  margin: 1.2rem 0;
+}
+.zone-deep.focal {
+  background: linear-gradient(135deg, rgba(250,44,25,0.1) 0%, rgba(250,44,25,0.02) 100%);
+  border-color: rgba(250,44,25,0.3);
+  box-shadow: 0 0 60px rgba(250,44,25,0.05);
+}
+.zone-deep-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 1rem;
+  margin-bottom: 1.2rem; flex-wrap: wrap;
+}
+.zone-deep-title-group {
+  display: flex; align-items: center; gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.zone-deep-emoji-big { font-size: 2rem; line-height: 1; }
+.zone-deep-title-text {
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.01em; margin: 0;
+}
+.zone-deep-tag {
+  font-size: 0.7rem; color: var(--accent);
+  font-family: "SF Mono", ui-monospace, monospace;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgba(250,44,25,0.4);
+  border-radius: 6px;
+}
+.zone-deep-tag.featured {
+  background: rgba(250,44,25,0.15);
+}
+.zone-deep-meta-line {
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+}
+.zone-deep-meta-line .label {
+  color: var(--ink); font-weight: 600;
+}
+.tree {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  line-height: 1.85;
+  overflow-x: auto;
+}
+.tree-line { white-space: pre; }
+.tree-line .dept {
+  background: rgba(91,158,255,0.15);
+  color: var(--zone-blue);
+  padding: 0.05rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+.tree-line .biz { color: var(--accent); font-weight: 600; }
+.tree-line .file { color: #4ade80; }
+.tree-line .comment { color: var(--muted); font-style: italic; }
+.tree-line .star { color: var(--accent); font-weight: 700; }
+.tree-line a.file {
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(74,222,128,0.3);
+  transition: all 0.2s;
+}
+.tree-line a.file:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ============ TEMPLATES SECTION ============ */
+.tpl-section {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 2px solid var(--accent);
+}
+.tpl-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: clamp(1.2rem, 2vw, 1.6rem);
+  margin: 1.2rem 0;
+  scroll-margin-top: 2rem;
+}
+.tpl-card.dim {
+  border-color: rgba(250,44,25,0.3);
+  background: linear-gradient(135deg, rgba(250,44,25,0.06) 0%, rgba(0,0,0,0.3) 100%);
+}
+.tpl-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.tpl-name {
+  font-family: "SF Mono", "JetBrains Mono", monospace;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  color: #4ade80;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.tpl-name .file-emoji { color: var(--accent); margin-right: 0.4em; }
+.tpl-role-pill {
+  font-family: "SF Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.15em;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--zone-blue);
+  border-radius: 6px;
+  color: var(--zone-blue);
+  background: rgba(91,158,255,0.12);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tpl-role-pill.feat {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(250,44,25,0.12);
+}
+.tpl-purpose {
+  color: rgba(248,244,236,0.85);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+.tpl-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 1.2rem;
+  margin: 0.8rem 0;
+}
+.tpl-field {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(248,244,236,0.8);
+}
+.tpl-field code {
+  font-family: "SF Mono", monospace;
+  background: rgba(91,158,255,0.15);
+  color: var(--zone-blue);
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.82em;
+  margin-right: 0.3em;
+}
+.tpl-example {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  font-family: "SF Mono", "JetBrains Mono", monospace;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: rgba(248,244,236,0.85);
+  white-space: pre-wrap;
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+.tpl-example .ex-key { color: var(--zone-blue); }
+.tpl-example .ex-str { color: #4ade80; }
+.tpl-example .ex-comment { color: var(--muted); font-style: italic; }
+.tpl-back {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-family: "SF Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tpl-back:hover { text-decoration: underline; }
+
+/* ============ ZONE SWITCH (5 个 Zone 切换) ============ */
+.zone-card { cursor: pointer; user-select: none; }
+.zone-card.active {
+  background: linear-gradient(135deg, rgba(250,44,25,0.18) 0%, rgba(250,44,25,0.04) 100%);
+  border-color: rgba(250,44,25,0.5);
+  box-shadow: 0 0 30px rgba(250,44,25,0.15);
+}
+.zone-card.active .zone-num { color: var(--accent); }
+.zone-card.active .zone-arrow-down {
+  display: block;
+  color: var(--accent);
+  opacity: 1;
+  font-weight: 900;
+  font-size: 1.2rem;
+  bottom: -1.7rem;
+}
+.zone-card .zone-arrow-down { display: none; }
+.zone-card:not(.active) {
+  background: var(--surface);
+  border-color: var(--line);
+  box-shadow: none;
+}
+.zone-card:not(.active) .zone-num { color: var(--muted); }
+
+/* zone-design-md 切换显示 */
+.zone-design-md { display: none; }
+.zone-design-md.active { display: block; }
+
+/* zone-tpls 切换显示 */
+.zone-tpls { display: none; }
+.zone-tpls.active { display: block; }
+
+/* RESPONSIVE for short viewports */
+@media (max-height: 800px) {
+  .container { padding: clamp(1rem, 2vw, 1.6rem); gap: 0.5rem; }
+  .anno-block { padding: 0.5rem 0.7rem; }
+}
+@media (max-height: 700px) {
+  .zone-desc { display: none; }
+  .anno-block { font-size: 0.7rem; }
+}
+@media (max-width: 1100px) {
+  .center-wrap { grid-template-columns: 1fr; }
+  .left-anno, .right-anno { flex-direction: row; }
+  .anno-block { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div>
+        <div class="eyebrow">JD Design Wiki · Master Diagram · v0.1</div>
+        <h1>京东 <span class="accent">Design Wiki</span> 架构大图</h1>
+        <div class="tagline">5 大 Zone · 1 个核心文档 · 4 条 link 引用关系 — 一图看懂全局</div>
+      </div>
+      <div class="meta-info">
+        2026-04-27<br/>综合业务设计组<br/>Shaka 牵引
+      </div>
+    </header>
+
+    <!-- 5 ZONES TOP ROW · 可点击切换 -->
+    <div class="zones-row">
+      <div class="zone-card" data-zone="1" onclick="switchZone(1)">
+        <div class="zone-emoji">📚</div>
+        <div class="zone-num">ZONE 1</div>
+        <h3 class="zone-name">Design 知识</h3>
+        <div class="zone-desc">内部研究 / 通识原则 / 索引</div>
+        <div class="zone-arrow-down">▼</div>
+      </div>
+      <div class="zone-card" data-zone="2" onclick="switchZone(2)">
+        <div class="zone-emoji">🎨</div>
+        <div class="zone-num">ZONE 2</div>
+        <h3 class="zone-name">Design 基础</h3>
+        <div class="zone-desc">Token / 原子组件 / 系统原则</div>
+        <div class="zone-arrow-down">▼</div>
+      </div>
+      <div class="zone-card" data-zone="3" onclick="switchZone(3)">
+        <div class="zone-emoji">🤖</div>
+        <div class="zone-num">ZONE 3</div>
+        <h3 class="zone-name">AI 机制</h3>
+        <div class="zone-desc">Skill / META / 协议 / 守则</div>
+        <div class="zone-arrow-down">▼</div>
+      </div>
+      <div class="zone-card active" data-zone="4" onclick="switchZone(4)">
+        <div class="zone-emoji">🏗</div>
+        <div class="zone-num">ZONE 4 ★ 主战场</div>
+        <h3 class="zone-name">组织架构</h3>
+        <div class="zone-desc">部门 → 业务 → 组件目录</div>
+        <div class="zone-arrow-down">▼</div>
+      </div>
+      <div class="zone-card" data-zone="5" onclick="switchZone(5)">
+        <div class="zone-emoji">🚀</div>
+        <div class="zone-num">ZONE 5</div>
+        <h3 class="zone-name">横向专项</h3>
+        <div class="zone-desc">跨部门治理 / 协议 / 反哺</div>
+        <div class="zone-arrow-down">▼</div>
+      </div>
+    </div>
+
+    <!-- CENTER: DESIGN.md + ANNOTATIONS -->
+    <div class="center-wrap">
+
+      <!-- LEFT ANNOTATION -->
+      <div class="left-anno">
+        <div class="anno-block">
+          <span class="anno-label">业务线设计师</span>
+          做完工作 → 嵌套到 <strong style="color:var(--accent);">🏗 组织架构</strong> 下的部门-业务-组件 三级目录
+        </div>
+        <div class="anno-block">
+          <span class="anno-label">完整一份</span>
+          一份 DESIGN.md = 一个完整文档 = 一个 Git 文件 = 一个 PR
+        </div>
+      </div>
+
+      <!-- CENTRAL CARDS · 5 个 Zone,默认 Zone 4 active -->
+
+      <!-- Zone 1 · 📚 Design 知识 -->
+      <div class="design-md zone-design-md" data-zone="1">
+        <div class="design-md-head">
+          <div class="design-md-title">{知识文档}/<span class="ext">  知识库</span></div>
+          <div class="design-md-meta">multi-format · 知识/研究/案例 · 按类型分独立 md ↓</div>
+        </div>
+        <div class="segs">
+          <a href="#tpl-1-research" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">research-report.md</span><span class="seg-role">用研 ★</span></a>
+          <a href="#tpl-1-case" class="seg"><span class="seg-num">📄</span><span class="seg-name">case-study.md</span><span class="seg-role">资深设计师</span></a>
+          <a href="#tpl-1-adr" class="seg"><span class="seg-num">📄</span><span class="seg-name">adr.md</span><span class="seg-role">owner</span></a>
+          <a href="#tpl-1-note" class="seg"><span class="seg-num">📄</span><span class="seg-name">note.md</span><span class="seg-role">任何设计师</span></a>
+          <a href="#tpl-1-principle" class="seg"><span class="seg-num">📄</span><span class="seg-name">principle.md</span><span class="seg-role">资深/委员会</span></a>
+        </div>
+      </div>
+
+      <!-- Zone 2 · 🎨 Design 基础 -->
+      <div class="design-md zone-design-md" data-zone="2">
+        <div class="design-md-head">
+          <div class="design-md-title">{基础规范}/<span class="ext">  Foundation</span></div>
+          <div class="design-md-meta">Token / 原子组件 / 系统原则 · 全公司公共 ↓</div>
+        </div>
+        <div class="segs">
+          <a href="#tpl-2-token" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">token.md</span><span class="seg-role">视觉负责人 ★</span></a>
+          <a href="#tpl-2-atom" class="seg"><span class="seg-num">📄</span><span class="seg-name">atom.md</span><span class="seg-role">基础组件 owner</span></a>
+          <a href="#tpl-2-principle" class="seg"><span class="seg-num">📄</span><span class="seg-name">system-principle.md</span><span class="seg-role">视觉总监</span></a>
+          <a href="#tpl-2-migration" class="seg"><span class="seg-num">📄</span><span class="seg-name">migration.md</span><span class="seg-role">视觉团队</span></a>
+        </div>
+      </div>
+
+      <!-- Zone 3 · 🤖 AI 机制 -->
+      <div class="design-md zone-design-md" data-zone="3">
+        <div class="design-md-head">
+          <div class="design-md-title">{AI 资产}/<span class="ext">  AI Layer</span></div>
+          <div class="design-md-meta">Skill / 协议 / 守则 · agentskills.io 标准 ↓</div>
+        </div>
+        <div class="segs">
+          <a href="#tpl-3-skill" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">SKILL.md</span><span class="seg-role">AI 团队 ★</span></a>
+          <a href="#tpl-3-protocol" class="seg"><span class="seg-num">📄</span><span class="seg-name">protocol.md</span><span class="seg-role">AI 团队</span></a>
+          <a href="#tpl-3-guard" class="seg"><span class="seg-num">📄</span><span class="seg-name">guard.md</span><span class="seg-role">系统 maintainer</span></a>
+          <a href="#tpl-3-meta" class="seg"><span class="seg-num">📄</span><span class="seg-name">meta-rule.md</span><span class="seg-role">委员会</span></a>
+          <a href="#tpl-3-registry" class="seg"><span class="seg-num">📄</span><span class="seg-name">registry-entry.md</span><span class="seg-role">自动</span></a>
+        </div>
+      </div>
+
+      <!-- Zone 4 · 🏗 组织架构(默认 active) -->
+      <div class="design-md zone-design-md active" data-zone="4">
+        <div class="design-md-head">
+          <div class="design-md-title">{组件}/<span class="ext">  组件目录</span></div>
+          <div class="design-md-meta">multi-md · 文件级独立 · 点击查看模板 ↓</div>
+        </div>
+        <div class="segs">
+          <a href="#tpl-readme" class="seg"><span class="seg-num">📄</span><span class="seg-name">README.md</span><span class="seg-role">owner</span></a>
+          <a href="#tpl-business" class="seg"><span class="seg-num">📄</span><span class="seg-name">business.md</span><span class="seg-role">PM</span></a>
+          <a href="#tpl-research" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">research.md</span><span class="seg-role">用研 ★</span></a>
+          <a href="#tpl-experience" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">experience.md</span><span class="seg-role">体验 ★</span></a>
+          <a href="#tpl-visual" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">visual.md</span><span class="seg-role">视觉 ★</span></a>
+          <a href="#tpl-interaction" class="seg"><span class="seg-num">📄</span><span class="seg-name">interaction.md</span><span class="seg-role">交互</span></a>
+          <a href="#tpl-content" class="seg"><span class="seg-num">📄</span><span class="seg-name">content.md</span><span class="seg-role">内容</span></a>
+          <a href="#tpl-donts" class="seg"><span class="seg-num">📄</span><span class="seg-name">donts.md</span><span class="seg-role">协作</span></a>
+          <a href="#tpl-ai-schema" class="seg"><span class="seg-num">📄</span><span class="seg-name">ai-schema.md</span><span class="seg-role">owner</span></a>
+          <a href="#tpl-changelog" class="seg"><span class="seg-num">📄</span><span class="seg-name">CHANGELOG.md</span><span class="seg-role">自动</span></a>
+        </div>
+      </div>
+
+      <!-- Zone 5 · 🚀 横向专项 -->
+      <div class="design-md zone-design-md" data-zone="5">
+        <div class="design-md-head">
+          <div class="design-md-title">{专项}/<span class="ext">  治理项目</span></div>
+          <div class="design-md-meta">立项/设计语言/决策/反哺 · 跨部门治理 ↓</div>
+        </div>
+        <div class="segs">
+          <a href="#tpl-5-proposal" class="seg dim"><span class="seg-num">📄</span><span class="seg-name">proposal.md</span><span class="seg-role">发起人 ★</span></a>
+          <a href="#tpl-5-readme" class="seg"><span class="seg-num">📄</span><span class="seg-name">README.md</span><span class="seg-role">专项 owner</span></a>
+          <a href="#tpl-5-design" class="seg"><span class="seg-num">📄</span><span class="seg-name">design-language.md</span><span class="seg-role">体验/视觉</span></a>
+          <a href="#tpl-5-adr" class="seg"><span class="seg-num">📄</span><span class="seg-name">adr.md</span><span class="seg-role">委员会</span></a>
+          <a href="#tpl-5-handoff" class="seg"><span class="seg-num">📄</span><span class="seg-name">handoff.md</span><span class="seg-role">专项 owner</span></a>
+        </div>
+      </div>
+
+      <!-- RIGHT ANNOTATION -->
+      <div class="right-anno">
+        <div class="anno-block">
+          <span class="anno-label">3 个核心维度</span>
+          用研 (Why) · 体验 (How) · 视觉 (What) · 三段同源不打架
+        </div>
+        <div class="anno-block">
+          <span class="anno-label">link 引用 ↓</span>
+          其他 4 个 Zone 的资产 · 引用,不复制 · 单一真相源
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM LINK ROW -->
+    <div class="link-row">
+      <span class="link-row-label">CROSS-ZONE LINKS</span>
+      <div class="link-item">
+        <span class="link-segment">Visual 段</span>
+        <span class="link-arrow-mid">→</span>
+        <span class="link-target">Token / 颜色 / 字号</span>
+        <span class="link-zone">🎨 Design 基础</span>
+      </div>
+      <div class="link-item">
+        <span class="link-segment">Research / Exp 段</span>
+        <span class="link-arrow-mid">→</span>
+        <span class="link-target">用研报告 / 设计原则</span>
+        <span class="link-zone">📚 Design 知识</span>
+      </div>
+      <div class="link-item">
+        <span class="link-segment">AI Schema 段</span>
+        <span class="link-arrow-mid">→</span>
+        <span class="link-target">SKILL.md / agent 守则</span>
+        <span class="link-zone">🤖 AI 机制</span>
+      </div>
+      <div class="link-item">
+        <span class="link-segment">关联标签</span>
+        <span class="link-arrow-mid">→</span>
+        <span class="link-target">治理专项 / 反哺接口</span>
+        <span class="link-zone">🚀 横向专项</span>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>v0.2 · 综合业务设计组 · Shaka 牵引</div>
+      <div>↓ 向下滚动看 5 大 Zone 细拆 · 配套: <a href="./jd-design-wiki-knowledge-tree.html" style="color:var(--accent);text-decoration:none">知识树</a> · <a href="./jd-design-wiki-contributor-guide.html" style="color:var(--accent);text-decoration:none">贡献指南</a></div>
+    </footer>
+
+  </div>
+</section>
+
+<!-- ============ DEEP DIVE: 5 大 Zone 完整目录 ============ -->
+<div class="deep-wrap">
+  <div class="deep-container">
+
+    <div class="deep-section-head">
+      <div class="deep-eyebrow">DEEP DIVE · ZONES INTERIOR</div>
+      <h2 class="deep-title">5 大 Zone · <span class="accent">完整目录展开</span></h2>
+      <p class="deep-desc">演讲讲完上面的总图后,需要细看时往下滚。每个 Zone 都展开到具体文件名级别,呈现部门-业务-组件-文件的完整层级。</p>
+    </div>
+
+    <!-- ZONE 1 · 📚 Design 知识 -->
+    <div class="zone-deep">
+      <div class="zone-deep-header">
+        <div class="zone-deep-title-group">
+          <span class="zone-deep-emoji-big">📚</span>
+          <h3 class="zone-deep-title-text">Design 知识</h3>
+          <span class="zone-deep-tag">ZONE 1 / 5</span>
+        </div>
+        <div class="zone-deep-meta-line"><span class="label">收纳</span>:知识/研究/案例 · <span class="label">谁贡献</span>:用研团队 + 资深设计师</div>
+      </div>
+
+      <div class="tree">
+<span class="tree-line">📚 Design 知识/</span>
+<span class="tree-line"><span class="comment"># 知识 / 研究 / 案例 (内部按部门切 + 公共通识)</span></span>
+<span class="tree-line"> </span>
+<span class="tree-line">├── <span class="biz">internal/</span></span>
+<span class="tree-line">│   <span class="comment"># 部门内部知识库 (按部门切)</span></span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-综合业务设计部/</span></span>
+<span class="tree-line">│   │   ├── research/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 本部门用研报告</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">用户视频消费习惯调研-2026Q2.md</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播用户行为路径分析.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">圈子用户画像研究.md</span></span>
+<span class="tree-line">│   │   ├── cases/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 本部门案例研究</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">双列卡治理案例.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">短视频卡迭代案例.md</span></span>
+<span class="tree-line">│   │   ├── notes/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 设计师笔记</span></span>
+<span class="tree-line">│   │   └── decisions/</span>
+<span class="tree-line">│   │       <span class="comment"># ADR 决策记录</span></span>
+<span class="tree-line">│   │       ├── <span class="file">ADR-001-双列卡家族体系.md</span></span>
+<span class="tree-line">│   │       └── <span class="file">ADR-002-跨场景同物种识别.md</span></span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-XX 设计部/</span></span>
+<span class="tree-line">│   └── ...</span>
+<span class="tree-line">├── <span class="biz">wisdom/</span></span>
+<span class="tree-line">│   <span class="comment"># 通识设计原则 (公共)</span></span>
+<span class="tree-line">│   ├── principles/</span>
+<span class="tree-line">│   │   <span class="comment"># 行业通用原则</span></span>
+<span class="tree-line">│   │   ├── <span class="file">cross-context-id.md</span></span>
+<span class="tree-line">│   │   │   <span class="comment"># 跨场景同物种识别</span></span>
+<span class="tree-line">│   │   ├── <span class="file">structure-over-content.md</span></span>
+<span class="tree-line">│   │   │   <span class="comment"># 结构优先内容无涉</span></span>
+<span class="tree-line">│   │   └── <span class="file">anti-ai-slop.md</span></span>
+<span class="tree-line">│   │       <span class="comment"># 反 AI slop 守则</span></span>
+<span class="tree-line">│   └── philosophy/</span>
+<span class="tree-line">│       <span class="comment"># 设计哲学</span></span>
+<span class="tree-line">│       ├── <span class="file">家族 DNA 哲学.md</span></span>
+<span class="tree-line">│       └── <span class="file">设计师作为 AI 协作者.md</span></span>
+<span class="tree-line">└── <span class="biz">index/</span></span>
+<span class="tree-line">    <span class="comment"># 资源索引 (公共)</span></span>
+<span class="tree-line">    ├── external/</span>
+<span class="tree-line">    │   <span class="comment"># 外部参考链接</span></span>
+<span class="tree-line">    │   ├── <span class="file">claude-design-philosophy.md</span></span>
+<span class="tree-line">    │   └── <span class="file">material-design-3-bench.md</span></span>
+<span class="tree-line">    └── benchmarks/</span>
+<span class="tree-line">        <span class="comment"># 友商对标</span></span>
+<span class="tree-line">        ├── <span class="file">小红书内容卡.md</span></span>
+<span class="tree-line">        └── <span class="file">抖音视频卡.md</span></span>
+      </div>
+    </div>
+
+    <!-- ZONE 2 · 🎨 Design 基础 -->
+    <div class="zone-deep">
+      <div class="zone-deep-header">
+        <div class="zone-deep-title-group">
+          <span class="zone-deep-emoji-big">🎨</span>
+          <h3 class="zone-deep-title-text">Design 设计基础</h3>
+          <span class="zone-deep-tag">ZONE 2 / 5</span>
+        </div>
+        <div class="zone-deep-meta-line"><span class="label">收纳</span>:基础规范 (Token) · <span class="label">谁贡献</span>:视觉负责人 + 基础组件 owner</div>
+      </div>
+
+      <div class="tree">
+<span class="tree-line">🎨 Design 基础/</span>
+<span class="tree-line"><span class="comment"># 全公司公共 (不按部门切)</span></span>
+<span class="tree-line"> </span>
+<span class="tree-line">├── <span class="biz">foundations/</span></span>
+<span class="tree-line">│   <span class="comment"># 基础 Token (15.0 迁移)</span></span>
+<span class="tree-line">│   ├── <span class="file">color.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 颜色 token: brand-primary / text-primary / bg-primary ...</span></span>
+<span class="tree-line">│   ├── <span class="file">typography.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 字号 / 字重 / 行高 · h1/h2/body/caption · 字号阶梯</span></span>
+<span class="tree-line">│   ├── <span class="file">spacing.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 栅格 / 间距 · 4-base 阶梯: 4/8/12/16/24/32</span></span>
+<span class="tree-line">│   ├── <span class="file">radius.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 圆角值域: 0/4/8/12/16</span></span>
+<span class="tree-line">│   ├── <span class="file">motion.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 动效规格: 250ms ease / 350ms ease-out</span></span>
+<span class="tree-line">│   └── <span class="file">voice.md</span></span>
+<span class="tree-line">│       <span class="comment"># 文案语气</span></span>
+<span class="tree-line">├── <span class="biz">principles-system/</span></span>
+<span class="tree-line">│   <span class="comment"># 系统级设计原则</span></span>
+<span class="tree-line">│   ├── <span class="file">15.0-design-tone.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 15.0 整体调性</span></span>
+<span class="tree-line">│   ├── <span class="file">accessibility.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 可访问性原则</span></span>
+<span class="tree-line">│   └── <span class="file">responsive-rules.md</span></span>
+<span class="tree-line">│       <span class="comment"># 响应式规则</span></span>
+<span class="tree-line">└── <span class="biz">atoms/</span></span>
+<span class="tree-line">    <span class="comment"># 原子组件 spec</span></span>
+<span class="tree-line">    ├── <span class="file">button.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 按钮 (主 / 次 / 幽灵 各变体)</span></span>
+<span class="tree-line">    ├── <span class="file">icon.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 图标系统</span></span>
+<span class="tree-line">    ├── <span class="file">input.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 输入框</span></span>
+<span class="tree-line">    ├── <span class="file">tag.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 标签 / 胶囊</span></span>
+<span class="tree-line">    └── <span class="file">avatar.md</span></span>
+<span class="tree-line">        <span class="comment"># 头像规格</span></span>
+      </div>
+    </div>
+
+    <!-- ZONE 3 · 🤖 AI 机制 -->
+    <div class="zone-deep">
+      <div class="zone-deep-header">
+        <div class="zone-deep-title-group">
+          <span class="zone-deep-emoji-big">🤖</span>
+          <h3 class="zone-deep-title-text">AI 机制</h3>
+          <span class="zone-deep-tag">ZONE 3 / 5</span>
+        </div>
+        <div class="zone-deep-meta-line"><span class="label">收纳</span>:Skill / 协议 / 守则 · <span class="label">谁贡献</span>:AI/Agent 团队 + 系统 maintainer</div>
+      </div>
+
+      <div class="tree">
+<span class="tree-line">🤖 AI 机制/</span>
+<span class="tree-line"><span class="comment"># 全公司公共 (不按部门切)</span></span>
+<span class="tree-line"> </span>
+<span class="tree-line">├── <span class="biz">skills/</span></span>
+<span class="tree-line">│   <span class="comment"># Skill 库 (按 agentskills.io 标准)</span></span>
+<span class="tree-line">│   ├── <span class="file">double-column-card/</span> <span class="star">★</span></span>
+<span class="tree-line">│   │   <span class="comment"># 已开源样本</span></span>
+<span class="tree-line">│   │   ├── <span class="file">SKILL.md</span></span>
+<span class="tree-line">│   │   │   <span class="comment"># agent 入口契约</span></span>
+<span class="tree-line">│   │   ├── references/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 详细规则参考</span></span>
+<span class="tree-line">│   │   ├── examples/</span>
+<span class="tree-line">│   │   │   <span class="comment"># gold-standard 样例</span></span>
+<span class="tree-line">│   │   └── prompts/</span>
+<span class="tree-line">│   │       <span class="comment"># PE 模板</span></span>
+<span class="tree-line">│   ├── <span class="file">视频卡治理-skill/</span></span>
+<span class="tree-line">│   │   <span class="comment"># (待建)</span></span>
+<span class="tree-line">│   ├── <span class="file">直播卡治理-skill/</span></span>
+<span class="tree-line">│   │   <span class="comment"># (待建)</span></span>
+<span class="tree-line">│   └── <span class="file">[其他组件 skill]/</span></span>
+<span class="tree-line">├── <span class="biz">meta/</span></span>
+<span class="tree-line">│   <span class="comment"># 元规范</span></span>
+<span class="tree-line">│   ├── <span class="file">META.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 如何写 SKILL</span></span>
+<span class="tree-line">│   ├── <span class="file">skill-registry.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># Skill 索引</span></span>
+<span class="tree-line">│   └── <span class="file">version-protocol.md</span></span>
+<span class="tree-line">│       <span class="comment"># 版本协议</span></span>
+<span class="tree-line">├── <span class="biz">protocols/</span></span>
+<span class="tree-line">│   <span class="comment"># 消费协议</span></span>
+<span class="tree-line">│   ├── <span class="file">figma-接入.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># Figma AI 消费</span></span>
+<span class="tree-line">│   ├── <span class="file">stitch-接入.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># Google Stitch 消费</span></span>
+<span class="tree-line">│   ├── <span class="file">cursor-接入.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># Cursor / Claude Code</span></span>
+<span class="tree-line">│   ├── <span class="file">v0-接入.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># Vercel v0</span></span>
+<span class="tree-line">│   └── <span class="file">自研 agent-接入.md</span></span>
+<span class="tree-line">└── <span class="biz">guards/</span></span>
+<span class="tree-line">    <span class="comment"># Agent 守则</span></span>
+<span class="tree-line">    ├── <span class="file">反 AI slop.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 避免塌缩到平庸</span></span>
+<span class="tree-line">    ├── <span class="file">自检环路.md</span></span>
+<span class="tree-line">    │   <span class="comment"># fork_verifier 模式</span></span>
+<span class="tree-line">    ├── <span class="file">IP 边界.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 不复刻竞品 UI</span></span>
+<span class="tree-line">    └── <span class="file">上下文优先.md</span></span>
+<span class="tree-line">        <span class="comment"># 先读现有规范再生成</span></span>
+      </div>
+    </div>
+
+    <!-- ZONE 4 · 🏗 组织架构 (focal) -->
+    <div class="zone-deep focal">
+      <div class="zone-deep-header">
+        <div class="zone-deep-title-group">
+          <span class="zone-deep-emoji-big">🏗</span>
+          <h3 class="zone-deep-title-text">组织架构</h3>
+          <span class="zone-deep-tag featured">★ 业务线设计师主战场</span>
+        </div>
+        <div class="zone-deep-meta-line"><span class="label">收纳</span>:业务/组件文档 (DESIGN.md 主家) · <span class="label">谁贡献</span>:业务线设计师</div>
+      </div>
+
+      <div class="tree">
+<span class="tree-line">🏗 组织架构/</span>
+<span class="tree-line"><span class="comment"># 业务线设计师主战场 (★)</span></span>
+<span class="tree-line"> </span>
+<span class="tree-line">├── <span class="biz">domains/</span></span>
+<span class="tree-line">│   <span class="comment"># 部门-业务-组件 三级结构 ★</span></span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-综合业务设计部/</span></span>
+<span class="tree-line">│   │   <span class="comment"># 你所在的部门</span></span>
+<span class="tree-line">│   │   ├── 视频/</span>
+<span class="tree-line">│   │   │   ├── <span class="file">视频卡-基础/</span> <span class="star">★</span></span>
+<span class="tree-line">│   │   │   │   <span class="comment"># multi-md 结构</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-readme" class="file">README.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 概述 + Meta</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-business" class="file">business.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 业务视角 (PM)</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-research" class="file">research.md</a> <span class="star">★</span></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 用研视角</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-experience" class="file">experience.md</a> <span class="star">★</span></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 体验视角</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-visual" class="file">visual.md</a> <span class="star">★</span></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 视觉视角</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-interaction" class="file">interaction.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 交互</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-content" class="file">content.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 文案规范</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-donts" class="file">donts.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 禁止用法</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-ai-schema" class="file">ai-schema.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># AI 消费字段</span></span>
+<span class="tree-line">│   │   │   │   ├── <a href="#tpl-changelog" class="file">CHANGELOG.md</a></span>
+<span class="tree-line">│   │   │   │   │   <span class="comment"># 变更记录</span></span>
+<span class="tree-line">│   │   │   │   ├── variants/</span>
+<span class="tree-line">│   │   │   │   └── examples/</span>
+<span class="tree-line">│   │   │   └── <span class="file">视频卡-沉浸式/</span></span>
+<span class="tree-line">│   │   ├── 直播/</span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播卡-基础/DESIGN.md</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">直播卡-红包雨变体/DESIGN.md</span></span>
+<span class="tree-line">│   │   │   └── ...</span>
+<span class="tree-line">│   │   ├── 内容/</span>
+<span class="tree-line">│   │   ├── 圈子/</span>
+<span class="tree-line">│   │   └── 个人中心/</span>
+<span class="tree-line">│   ├── <span class="dept">设计与用研部-XX 设计部/</span></span>
+<span class="tree-line">│   │   ├── 业务 A/</span>
+<span class="tree-line">│   │   └── 业务 B/</span>
+<span class="tree-line">│   └── <span class="dept">设计与用研部-XXX 设计部/</span></span>
+<span class="tree-line">├── <span class="biz">shared/</span></span>
+<span class="tree-line">│   <span class="comment"># 跨部门通用组件</span></span>
+<span class="tree-line">│   ├── <span class="file">视频卡-通用/DESIGN.md</span></span>
+<span class="tree-line">│   └── ...</span>
+<span class="tree-line">├── <span class="biz">pages/</span></span>
+<span class="tree-line">│   <span class="comment"># 核心页面</span></span>
+<span class="tree-line">│   ├── 详情页/</span>
+<span class="tree-line">│   ├── 搜索结果/</span>
+<span class="tree-line">│   └── 个人中心/</span>
+<span class="tree-line">└── <span class="biz">relations/</span></span>
+<span class="tree-line">    <span class="comment"># 引用关系图</span></span>
+<span class="tree-line">    ├── 跨部门复用/</span>
+<span class="tree-line">    └── 跨业务依赖/</span>
+      </div>
+    </div>
+
+    <!-- ZONE 5 · 🚀 横向专项 -->
+    <div class="zone-deep">
+      <div class="zone-deep-header">
+        <div class="zone-deep-title-group">
+          <span class="zone-deep-emoji-big">🚀</span>
+          <h3 class="zone-deep-title-text">横向专项</h3>
+          <span class="zone-deep-tag">ZONE 5 / 5</span>
+        </div>
+        <div class="zone-deep-meta-line"><span class="label">收纳</span>:跨部门治理 · <span class="label">谁贡献</span>:专项发起人 + 跨业务代表 + 治理委员会</div>
+      </div>
+
+      <div class="tree">
+<span class="tree-line">🚀 横向专项/</span>
+<span class="tree-line"><span class="comment"># 跨部门 (按专项名切)</span></span>
+<span class="tree-line"> </span>
+<span class="tree-line">├── <span class="biz">active/</span></span>
+<span class="tree-line">│   <span class="comment"># 进行中</span></span>
+<span class="tree-line">│   ├── <span class="file">double-column-card/</span> <span class="star">★</span></span>
+<span class="tree-line">│   │   <span class="comment"># 已跑通样本</span></span>
+<span class="tree-line">│   │   ├── README.md</span>
+<span class="tree-line">│   │   │   <span class="comment"># 专项概述</span></span>
+<span class="tree-line">│   │   ├── DESIGN.md</span>
+<span class="tree-line">│   │   │   <span class="comment"># 专项设计语言</span></span>
+<span class="tree-line">│   │   ├── variants/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 变体案例库</span></span>
+<span class="tree-line">│   │   ├── skill/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 对应 AI Skill</span></span>
+<span class="tree-line">│   │   ├── ADR/</span>
+<span class="tree-line">│   │   │   <span class="comment"># 决策记录</span></span>
+<span class="tree-line">│   │   │   ├── <span class="file">ADR-001-五大家族.md</span></span>
+<span class="tree-line">│   │   │   └── <span class="file">ADR-002-跨场景识别.md</span></span>
+<span class="tree-line">│   │   └── screenshots/</span>
+<span class="tree-line">│   │       <span class="comment"># 真实样本</span></span>
+<span class="tree-line">│   ├── <span class="file">视频卡治理/</span></span>
+<span class="tree-line">│   │   <span class="comment"># (规划中)</span></span>
+<span class="tree-line">│   └── <span class="file">直播卡治理/</span></span>
+<span class="tree-line">│       <span class="comment"># (规划中)</span></span>
+<span class="tree-line">├── <span class="biz">archive/</span></span>
+<span class="tree-line">│   <span class="comment"># 已完成归档</span></span>
+<span class="tree-line">│   ├── <span class="file">2024-Q4/</span></span>
+<span class="tree-line">│   ├── <span class="file">2025-Q1/</span></span>
+<span class="tree-line">│   └── <span class="file">2025-Q2/</span></span>
+<span class="tree-line">├── <span class="biz">protocols/</span></span>
+<span class="tree-line">│   <span class="comment"># 治理协议</span></span>
+<span class="tree-line">│   ├── <span class="file">怎么发起.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 专项立项流程</span></span>
+<span class="tree-line">│   ├── <span class="file">Review 流程.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 评审协议</span></span>
+<span class="tree-line">│   ├── <span class="file">落地协议.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 推广路径</span></span>
+<span class="tree-line">│   ├── <span class="file">反哺机制.md</span></span>
+<span class="tree-line">│   │   <span class="comment"># 产出回流规则</span></span>
+<span class="tree-line">│   └── <span class="file">跨部门协调.md</span></span>
+<span class="tree-line">│       <span class="comment"># 多部门冲突解决</span></span>
+<span class="tree-line">└── <span class="biz">handoff/</span></span>
+<span class="tree-line">    <span class="comment"># 反哺接口</span></span>
+<span class="tree-line">    ├── <span class="file">产出回流-组织架构.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 新组件回流到 🏗</span></span>
+<span class="tree-line">    ├── <span class="file">产出回流-AI 机制.md</span></span>
+<span class="tree-line">    │   <span class="comment"># 新 Skill 回流到 🤖</span></span>
+<span class="tree-line">    └── <span class="file">产出回流-Design 基础.md</span></span>
+<span class="tree-line">        <span class="comment"># 新 Token 回流到 🎨</span></span>
+      </div>
+    </div>
+
+    <!-- ============ TEMPLATES SECTION ============ -->
+    <div class="tpl-section">
+      <div class="deep-section-head" style="margin-top:0">
+        <div class="deep-eyebrow" id="tpl-eyebrow">TEMPLATES · ZONE 4 · 10 个 md 文件模板</div>
+        <h2 class="deep-title">每个 md <span class="accent">怎么写</span></h2>
+        <p class="deep-desc">点击上面任意 Zone 卡 → 中央卡和这里的模板会切换到对应 Zone。每个 md 都有:角色、用途、字段、示范填写。</p>
+      </div>
+
+      <!-- ============ Zone 4 · 组织架构(默认 active)============ -->
+      <div class="zone-tpls active" data-zone="4">
+
+      <!-- README.md -->
+      <div class="tpl-card" id="tpl-readme">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>README.md</div>
+          <span class="tpl-role-pill">OWNER</span>
+        </div>
+        <div class="tpl-purpose">概述 + Meta 元数据。组件目录的入口,用 YAML frontmatter 写元信息,正文一句话说明。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>component</code> 组件英文名</div>
+          <div class="tpl-field"><code>version</code> Semver 版本号</div>
+          <div class="tpl-field"><code>status</code> draft / stable / deprecated</div>
+          <div class="tpl-field"><code>owner</code> 组件 owner</div>
+          <div class="tpl-field"><code>business_lines</code> 服务的业务线</div>
+          <div class="tpl-field"><code>figma_link</code> Figma 链接</div>
+        </div>
+        <div class="tpl-example">---
+<span class="ex-key">component</span>: <span class="ex-str">video-card-basic</span>
+<span class="ex-key">version</span>: <span class="ex-str">1.2.0</span>
+<span class="ex-key">status</span>: <span class="ex-str">stable</span>
+<span class="ex-key">owner</span>: <span class="ex-str">@shaka</span>
+<span class="ex-key">business_lines</span>: [<span class="ex-str">视频, 直播</span>]
+<span class="ex-key">figma_link</span>: <span class="ex-str">https://figma.com/...</span>
+---
+
+<span class="ex-comment"># 视频卡-基础</span>
+
+短视频流中的基础视频卡组件,用于内容浏览场景。</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- business.md -->
+      <div class="tpl-card" id="tpl-business">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>business.md</div>
+          <span class="tpl-role-pill">PM / 产品</span>
+        </div>
+        <div class="tpl-purpose">业务视角 — 这个组件要达成什么商业目标 / 关键 KPI 是什么 / 商业载荷限制。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>primary_goal</code> 主要商业目标</div>
+          <div class="tpl-field"><code>kpi_metrics</code> 核心 KPI (含基线/目标)</div>
+          <div class="tpl-field"><code>commercial_cost</code> 商业载荷限制</div>
+          <div class="tpl-field"><code>seasonal_variance</code> 季节/活动变体</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 业务视角</span>
+
+## 主要商业目标
+触发点击 + 提升停留时长
+
+## 核心 KPI
+| 指标 | 基线 | 目标 |
+|---|---|---|
+| CTR | 5.2% | 7.0% |
+| 平均停留 | 12s | 18s |
+
+## 商业载荷
+每张卡承载 0-1 个商品挂载,挂载高度 ≤ 卡高 20%</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- research.md -->
+      <div class="tpl-card dim" id="tpl-research">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>research.md</div>
+          <span class="tpl-role-pill feat">用研团队 ★</span>
+        </div>
+        <div class="tpl-purpose">用研视角 (Why) — 用户是谁、痛在哪、关键场景数据。解释"这组件为什么该存在"。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>target_personas</code> 目标用户画像</div>
+          <div class="tpl-field"><code>core_pain_points</code> 核心痛点</div>
+          <div class="tpl-field"><code>key_scenarios</code> 关键场景</div>
+          <div class="tpl-field"><code>research_references</code> 用研报告 link</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 用研视角</span>
+
+## 目标用户
+18-35 岁短视频活跃用户 (60%+) / 内容消费偏好
+
+## 核心痛点
+1. 信息过载,需要快速识别"这是什么内容"
+2. 跨流跳转后心智断裂
+
+## 关键场景数据
+- AB 实验:统一卡片样式后 CTR +12% [link]
+- 用研访谈:80% 用户希望封面+标题 1 秒内能扫完 [link]
+
+## 用研报告引用
+- /knowledge/internal/.../research/视频用户行为.md</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- experience.md -->
+      <div class="tpl-card dim" id="tpl-experience">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>experience.md</div>
+          <span class="tpl-role-pill feat">体验设计师 ★</span>
+        </div>
+        <div class="tpl-purpose">体验视角 (How) — 用户旅程位置 / 决策点 / 规则 / 家族 DNA / 跨场景同物种识别。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>user_journey</code> 用户旅程位置</div>
+          <div class="tpl-field"><code>decision_points</code> 决策点</div>
+          <div class="tpl-field"><code>family_dna</code> 家族 DNA 不变量</div>
+          <div class="tpl-field"><code>rules</code> 体验规则 (L1/L2)</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 体验视角</span>
+
+## 用户旅程
+浏览阶段(扫视) → 决策阶段(0.5s 识别)
+
+## 决策点
+1. 用户在 0.5 秒内识别"这是视频卡"(L1-1 媒介标识)
+2. 标题钩子决定"是不是我要看的"(2 行内,加粗)
+
+## 家族 DNA (L1-5)
+底部不变量:头像 + 昵称 + 互动数据
+封面可变,底部不变 → 家族不变
+
+## 跨场景同物种识别
+从首页 → 详情页 → 个人页,同物种保持识别一致</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- visual.md -->
+      <div class="tpl-card dim" id="tpl-visual">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>visual.md</div>
+          <span class="tpl-role-pill feat">视觉设计师 ★</span>
+        </div>
+        <div class="tpl-purpose">视觉视角 (What) — Token 引用 / 变体清单 / 视觉层级 / 节奏与留白。落地"长什么样"。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>tokens</code> 引用的 foundations token</div>
+          <div class="tpl-field"><code>variants</code> 变体清单</div>
+          <div class="tpl-field"><code>hierarchy</code> 视觉层级</div>
+          <div class="tpl-field"><code>spacing</code> 节奏与留白</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 视觉视角</span>
+
+## Token 引用
+- 卡宽: 176dp ← /foundations/spacing.md#card-width
+- 圆角: 12px ← /foundations/radius.md#card
+- 标题: 13px / 加粗 / 黑色 ← /foundations/typography.md#h3
+- 间距: 8px ← /foundations/spacing.md#card-gap
+
+## 变体清单
+- 基础态 (默认)
+- 沉浸式 (大封面+减少元数据)
+
+## 视觉层级
+封面(80%) > 标题(15%) > 元数据(5%)</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- interaction.md -->
+      <div class="tpl-card" id="tpl-interaction">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>interaction.md</div>
+          <span class="tpl-role-pill">交互设计师</span>
+        </div>
+        <div class="tpl-purpose">交互视角 — 状态机 / 动效 / 操作反馈。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>states</code> 状态(默认/hover/active/disabled)</div>
+          <div class="tpl-field"><code>animations</code> 动效规格</div>
+          <div class="tpl-field"><code>feedback</code> 操作反馈</div>
+          <div class="tpl-field"><code>edge_cases</code> 边界态(loading/error/empty)</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 交互视角</span>
+
+## 状态
+- default: 静态展示
+- hover (PC): 卡微微上浮 4px,阴影加深
+- press (mobile): 卡缩放 0.98
+- disabled: 灰度 50%,不响应点击
+
+## 动效
+- 上浮 / 缩放: 200ms ease-out ← /foundations/motion.md
+- 列表加载: 骨架屏 → 渐显 350ms
+
+## 边界态
+- loading: skeleton 占位
+- error: 灰底 + "加载失败 重试"
+- empty: 占位插画 + 提示</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- content.md -->
+      <div class="tpl-card" id="tpl-content">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>content.md</div>
+          <span class="tpl-role-pill">内容运营</span>
+        </div>
+        <div class="tpl-purpose">文案规范 — 标题写法 / 用词 / 语气 / 中文电商场景特化。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>title_rules</code> 标题写法 / 字数</div>
+          <div class="tpl-field"><code>vocabulary</code> 用词偏好</div>
+          <div class="tpl-field"><code>tone</code> 语气</div>
+          <div class="tpl-field"><code>cta_words</code> 行动召唤词</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 文案规范</span>
+
+## 标题写法
+- ≤ 24 字
+- 加粗 / 黑色 / 主语前置
+- 避免疑问句堆砌
+
+## 用词偏好
+✅ 用: 立即购买 · 加入购物车 · 收藏
+❌ 避免: 马上抢 · 速速下单 (过度营销感)
+
+## 语气
+克制 + 信息优先,不喧哗</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- donts.md -->
+      <div class="tpl-card" id="tpl-donts">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>donts.md</div>
+          <span class="tpl-role-pill">协作收集</span>
+        </div>
+        <div class="tpl-purpose">禁止用法 — 不要做什么(比"做什么"更有约束力)。多角色协作填,owner 收集。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>visual_donts</code> 视觉禁止</div>
+          <div class="tpl-field"><code>experience_donts</code> 体验禁止</div>
+          <div class="tpl-field"><code>scenario_donts</code> 场景禁止</div>
+          <div class="tpl-field"><code>reasons</code> 为什么不能</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 禁止用法</span>
+
+## 视觉禁止
+- ❌ 圆角 ≠ 12px
+- ❌ 卡片间距 ≠ 8px
+- ❌ 自定义紫色渐变背景
+
+## 体验禁止
+- ❌ 标题超 2 行 (违反信息层级)
+- ❌ 封面文字叠加 > 30% 面积 (违反呼吸感)
+
+## 场景禁止
+- ❌ 在购物车页面使用 (会和商品卡混淆)</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- ai-schema.md -->
+      <div class="tpl-card" id="tpl-ai-schema">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>ai-schema.md</div>
+          <span class="tpl-role-pill">OWNER</span>
+        </div>
+        <div class="tpl-purpose">AI 消费字段 — 给 Skill / agent 读的结构化数据,不是给人读的。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>component_id</code> 组件唯一 id</div>
+          <div class="tpl-field"><code>family</code> 物种家族</div>
+          <div class="tpl-field"><code>identification_signals</code> 识别信号</div>
+          <div class="tpl-field"><code>variants_machine</code> 变体机器可读</div>
+        </div>
+        <div class="tpl-example"><span class="ex-key">component_id</span>: <span class="ex-str">video-card-basic</span>
+<span class="ex-key">family</span>: <span class="ex-str">content-card</span>
+<span class="ex-key">identification_signals</span>:
+  - <span class="ex-key">bottom_invariant</span>: <span class="ex-str">avatar+name+interaction</span>
+  - <span class="ex-key">media_indicator</span>: <span class="ex-str">play_icon</span>
+<span class="ex-key">variants_machine</span>:
+  - <span class="ex-key">id</span>: <span class="ex-str">basic</span>
+    <span class="ex-key">trigger</span>: <span class="ex-str">default</span>
+  - <span class="ex-key">id</span>: <span class="ex-str">immersive</span>
+    <span class="ex-key">trigger</span>: <span class="ex-str">scroll_velocity > 800</span></div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <!-- CHANGELOG.md -->
+      <div class="tpl-card" id="tpl-changelog">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>CHANGELOG.md</div>
+          <span class="tpl-role-pill">自动生成</span>
+        </div>
+        <div class="tpl-purpose">变更记录 — 自动从 Git commit 生成 + 关键变更人工补充。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>version</code> Semver 版本</div>
+          <div class="tpl-field"><code>date</code> 变更日期</div>
+          <div class="tpl-field"><code>changes</code> 变更内容</div>
+          <div class="tpl-field"><code>migration</code> 迁移指南 (Major)</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># Changelog</span>
+
+## [1.2.0] - 2026-04-27
+
+### Changed
+- 调整封面比例从 4:3 → 3:4 (响应用研报告)
+- 标题字号 12px → 13px 提升可读性
+
+### Migration
+受影响业务线:视频 / 直播
+旧版本 1.1.x 兼容期: 30 天
+
+## [1.1.0] - 2026-03-15
+...</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      </div><!-- /zone 4 tpls -->
+
+      <!-- ============ Zone 1 · 📚 Design 知识 ============ -->
+      <div class="zone-tpls" data-zone="1">
+
+      <div class="tpl-card dim" id="tpl-1-research">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>research-report.md</div>
+          <span class="tpl-role-pill feat">用研团队 ★</span>
+        </div>
+        <div class="tpl-purpose">用研报告 — 一次完整的用户研究产出。问题 → 方法 → 受访者 → 发现 → 结论。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>study_question</code> 研究问题</div>
+          <div class="tpl-field"><code>methodology</code> 研究方法</div>
+          <div class="tpl-field"><code>participants</code> 受访者画像</div>
+          <div class="tpl-field"><code>findings</code> 关键发现</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 用户视频消费习惯调研 - 2026 Q2</span>
+
+## 研究问题
+用户在短视频流中如何识别"这是不是我要看的视频"?
+
+## 方法
+- 用户访谈 (n=30)
+- 行为日志分析 (n=10000)
+- 眼动追踪 (n=5)
+
+## 关键发现
+1. 用户平均 0.8 秒决定是否点击 (P95)
+2. 封面缩略图 + 标题前 12 字决定 90% 的判断
+3. 跨场景跳转后,识别时间 +35%</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-1-case">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>case-study.md</div>
+          <span class="tpl-role-pill">资深设计师</span>
+        </div>
+        <div class="tpl-purpose">案例研究 — 一次设计实践的复盘。背景 → 挑战 → 方案 → 结果 → 反思。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>context</code> 业务背景</div>
+          <div class="tpl-field"><code>challenge</code> 设计挑战</div>
+          <div class="tpl-field"><code>solution</code> 采取方案</div>
+          <div class="tpl-field"><code>outcome</code> 量化结果</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 双列卡治理案例</span>
+
+## 背景
+6 个业务线各自迭代双列卡,体验割裂。
+
+## 挑战
+跨业务统一识别 + 各业务线独特性如何平衡。
+
+## 方案
+"五大家族 + 跨场景同物种"治理模型。
+
+## 结果 (3 个月)
+- CTR +12%
+- 设计师 onboarding 时间缩短 40%
+- AI 工具识别准确率 95% → 99%</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-1-adr">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>adr.md</div>
+          <span class="tpl-role-pill">owner</span>
+        </div>
+        <div class="tpl-purpose">决策记录 (Architecture Decision Record) — 重要决策留痕,可追溯。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>status</code> proposed/accepted/deprecated</div>
+          <div class="tpl-field"><code>context</code> 决策背景</div>
+          <div class="tpl-field"><code>decision</code> 决策内容</div>
+          <div class="tpl-field"><code>consequences</code> 影响和权衡</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># ADR-001: 采用五大家族体系</span>
+
+## Status
+Accepted (2026-04-15)
+
+## Context
+组件治理需要平衡"业务多样性"和"用户认知一致性"。
+
+## Decision
+按"商业/内容/圈子/点评/新品"5 个家族切分,每个家族有独特 DNA。
+
+## Consequences
++ 新人 onboarding 心智模型清晰
++ AI 识别准确度提升
+- 边界场景需要明确归属规则</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-1-note">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>note.md</div>
+          <span class="tpl-role-pill">任何设计师</span>
+        </div>
+        <div class="tpl-purpose">设计师笔记 — 个人观察/灵感/想法。自由格式,不强求结构。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>topic</code> 笔记主题</div>
+          <div class="tpl-field"><code>observations</code> 个人观察</div>
+          <div class="tpl-field"><code>open_questions</code> 待解决问题</div>
+          <div class="tpl-field"><code>tags</code> 标签 (便于检索)</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 关于卡片留白节奏的观察</span>
+
+刷小红书时注意到:
+- 标题与封面之间留白 8px,非 16px
+- 但他们的字号比我们大 1px
+
+我们是不是也可以试试?
+
+## Tags
+#留白 #节奏 #小红书</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-1-principle">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>principle.md</div>
+          <span class="tpl-role-pill">资深 / 委员会</span>
+        </div>
+        <div class="tpl-purpose">通识设计原则 — 提炼一条可复用的设计原则,带正反例。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>principle</code> 一句话原则</div>
+          <div class="tpl-field"><code>rationale</code> 为什么</div>
+          <div class="tpl-field"><code>examples</code> 正例</div>
+          <div class="tpl-field"><code>anti_examples</code> 反例</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 跨场景同物种识别</span>
+
+## 原则
+同一个组件,在不同场景中,用户应能在 0.5 秒内识别为"同一物种"。
+
+## 为什么
+- 减少认知切换成本
+- 强化品牌一致性
+- 让 AI 工具能准确归类
+
+## 正例
+✓ 双列卡的家族 DNA 在所有场景一致
+
+## 反例
+✗ 推荐场景的卡片使用红色 CTA,点评场景用蓝色 CTA</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      </div><!-- /zone 1 tpls -->
+
+      <!-- ============ Zone 2 · 🎨 Design 基础 ============ -->
+      <div class="zone-tpls" data-zone="2">
+
+      <div class="tpl-card dim" id="tpl-2-token">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>token.md</div>
+          <span class="tpl-role-pill feat">视觉负责人 ★</span>
+        </div>
+        <div class="tpl-purpose">一种 Token 的定义 — 名称、值、适用范围、设计依据。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>name</code> Token 名称</div>
+          <div class="tpl-field"><code>value</code> 具体值 (含 W3C DTCG 格式)</div>
+          <div class="tpl-field"><code>scope</code> 适用范围</div>
+          <div class="tpl-field"><code>rationale</code> 选择依据</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># color-brand-primary</span>
+
+<span class="ex-key">name</span>: <span class="ex-str">color.brand.primary</span>
+<span class="ex-key">value</span>: <span class="ex-str">"#fa2c19"</span>
+<span class="ex-key">type</span>: <span class="ex-str">color</span>
+<span class="ex-key">scope</span>: 全局品牌色,所有 CTA / accent / focal element
+
+<span class="ex-key">rationale</span>:
+- 京东品牌色,品牌识别度 95%
+- 在白底/深底对比度均达到 WCAG AA
+- 与 15.0 之前版本兼容
+
+<span class="ex-key">deprecated</span>: <span class="ex-str">false</span></div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-2-atom">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>atom.md</div>
+          <span class="tpl-role-pill">基础组件 owner</span>
+        </div>
+        <div class="tpl-purpose">原子组件 — 一个不可再分的基础组件,如 button/icon/input。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>name</code> 组件名</div>
+          <div class="tpl-field"><code>variants</code> 变体清单</div>
+          <div class="tpl-field"><code>states</code> 状态(default/hover/active/disabled)</div>
+          <div class="tpl-field"><code>usage</code> 使用规则</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># Button</span>
+
+## 变体
+- primary    主要操作 (CTA)
+- secondary  次要操作
+- ghost      第三级操作
+- destructive 危险操作
+
+## 状态
+- default → hover → active → disabled
+- loading 状态(异步操作)
+
+## 使用规则
+- 一个页面 ≤ 1 个 primary button
+- destructive 必须配二次确认
+- ghost 不应嵌套使用</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-2-principle">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>system-principle.md</div>
+          <span class="tpl-role-pill">视觉总监 / 委员会</span>
+        </div>
+        <div class="tpl-purpose">系统级原则 — 跨组件适用的设计原则,如可访问性 / 响应式。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>principle</code> 一句话原则</div>
+          <div class="tpl-field"><code>when_to_apply</code> 何时适用</div>
+          <div class="tpl-field"><code>examples</code> 应用示例</div>
+          <div class="tpl-field"><code>compliance</code> 合规要求</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 可访问性优先 (Accessibility First)</span>
+
+## 原则
+所有组件默认满足 WCAG 2.1 AA,不依赖后续补丁。
+
+## 何时适用
+- 新组件设计
+- 现有组件迭代
+
+## 示例
+- 文字对比度 ≥ 4.5:1
+- 交互区域 ≥ 44x44px
+- 所有图标必有 aria-label
+
+## 合规要求
+PR 必须通过自动化 a11y 测试才能合并。</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-2-migration">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>migration.md</div>
+          <span class="tpl-role-pill">视觉团队</span>
+        </div>
+        <div class="tpl-purpose">15.0 迁移记录 — 从旧版本迁移到新版本的变更说明。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>from_version</code> 起始版本</div>
+          <div class="tpl-field"><code>to_version</code> 目标版本</div>
+          <div class="tpl-field"><code>breaking_changes</code> 破坏性变更</div>
+          <div class="tpl-field"><code>migration_path</code> 迁移路径</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 14.x → 15.0 Token 迁移</span>
+
+## 破坏性变更
+- spacing 阶梯从 4-base → 8-base
+- color-brand 从 #e1251b → #fa2c19
+- font-stack 删除回退到系统字体
+
+## 迁移路径
+1. Token 自动替换工具: scripts/migrate-tokens.js
+2. 受影响组件: 全部 (兼容期 30 天)
+3. 视觉 review: 新版样式回归测试</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      </div><!-- /zone 2 tpls -->
+
+      <!-- ============ Zone 3 · 🤖 AI 机制 ============ -->
+      <div class="zone-tpls" data-zone="3">
+
+      <div class="tpl-card dim" id="tpl-3-skill">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>SKILL.md</div>
+          <span class="tpl-role-pill feat">AI 团队 ★</span>
+        </div>
+        <div class="tpl-purpose">一个 Skill 定义 — 按 agentskills.io 标准,给 AI agent 消费。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>name</code> Skill 名称</div>
+          <div class="tpl-field"><code>description</code> 功能描述</div>
+          <div class="tpl-field"><code>allowed-tools</code> 允许的工具</div>
+          <div class="tpl-field"><code>instructions</code> 行为指令</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment">--- frontmatter ---</span>
+<span class="ex-key">name</span>: <span class="ex-str">double-column-card</span>
+<span class="ex-key">description</span>: <span class="ex-str">京东双列卡识别和评估</span>
+<span class="ex-key">allowed-tools</span>: [<span class="ex-str">Read, Grep</span>]
+<span class="ex-key">version</span>: <span class="ex-str">1.0.0</span>
+<span class="ex-comment">--- end ---</span>
+
+<span class="ex-comment"># 双列卡 Skill</span>
+
+## 触发条件
+当用户提到"双列卡"/"内容卡"时激活。
+
+## 核心能力
+1. 识别卡片所属的家族(5 大家族)
+2. 评估变体合理性
+3. 输出"跨场景同物种识别"判断</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-3-protocol">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>protocol.md</div>
+          <span class="tpl-role-pill">AI 团队</span>
+        </div>
+        <div class="tpl-purpose">工具接入协议 — 如何让 Figma / Cursor / v0 等工具消费京东设计系统。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>tool</code> 工具名称</div>
+          <div class="tpl-field"><code>version</code> 兼容版本</div>
+          <div class="tpl-field"><code>interface</code> 接入接口</div>
+          <div class="tpl-field"><code>examples</code> 调用示例</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># Figma AI 接入协议</span>
+
+## 工具
+Figma Desktop App ≥ 124.0
+
+## 接入方式
+1. 安装 JD Design Plugin (内部分发)
+2. 在 Figma 内打开 wiki sidebar
+3. 自动同步当前 Token 库
+
+## 调用示例
+- 选中元素 → 右键 → "Apply JD Token"
+- AI 推荐 → 列出 5 个合规变体</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-3-guard">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>guard.md</div>
+          <span class="tpl-role-pill">系统 maintainer</span>
+        </div>
+        <div class="tpl-purpose">Agent 守则 — agent 行为约束,防止"AI slop"或越界。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>name</code> 守则名</div>
+          <div class="tpl-field"><code>when_to_apply</code> 何时启用</div>
+          <div class="tpl-field"><code>behavior</code> 期望行为</div>
+          <div class="tpl-field"><code>rationale</code> 设立依据</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 反 AI slop 守则</span>
+
+## 何时启用
+所有生成视觉资产的 agent。
+
+## 期望行为
+- 拒绝默认 stock photo
+- 禁止 lorem ipsum 占位文本
+- 禁止默认渐变 / 默认阴影
+
+## 设立依据
+"AI slop"会让团队丧失对生成质量的信任,
+长期会让 wiki 沦为 AI 垃圾场。</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-3-meta">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>meta-rule.md</div>
+          <span class="tpl-role-pill">AI 总监 / 委员会</span>
+        </div>
+        <div class="tpl-purpose">元规范条目 — 跨 Skill 的元级规则,如版本协议 / 安全协议。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>rule</code> 规则一句话</div>
+          <div class="tpl-field"><code>why</code> 为什么</div>
+          <div class="tpl-field"><code>how_to_apply</code> 如何应用</div>
+          <div class="tpl-field"><code>scope</code> 适用范围</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 自检环路</span>
+
+## 规则
+所有 agent 在输出前,必须经过 fork_verifier 自检。
+
+## 为什么
+- 防止单点错误传播
+- 提高可靠性
+
+## 如何应用
+- agent 输出 → fork 子 agent 验证 → 主 agent 整合
+- 验证失败 → 重新生成 (最多 3 次)
+
+## 适用范围
+所有可能影响线上数据的 agent。</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-3-registry">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>registry-entry.md</div>
+          <span class="tpl-role-pill">自动生成</span>
+        </div>
+        <div class="tpl-purpose">Skill registry 条目 — 自动从 SKILL.md 提取的索引信息。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>skill_id</code> Skill 唯一 ID</div>
+          <div class="tpl-field"><code>version</code> 版本</div>
+          <div class="tpl-field"><code>status</code> 状态</div>
+          <div class="tpl-field"><code>consumers</code> 已接入的工具</div>
+        </div>
+        <div class="tpl-example"><span class="ex-key">skill_id</span>: <span class="ex-str">double-column-card</span>
+<span class="ex-key">version</span>: <span class="ex-str">1.2.0</span>
+<span class="ex-key">status</span>: <span class="ex-str">stable</span>
+<span class="ex-key">last_updated</span>: <span class="ex-str">2026-04-27</span>
+
+<span class="ex-key">consumers</span>:
+  - <span class="ex-str">claude-code v2.5+</span>
+  - <span class="ex-str">cursor v0.42+</span>
+  - <span class="ex-str">figma-plugin v1.0</span>
+
+<span class="ex-key">stats</span>:
+  <span class="ex-key">invocations_30d</span>: <span class="ex-str">12345</span>
+  <span class="ex-key">accuracy</span>: <span class="ex-str">98.7%</span></div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      </div><!-- /zone 3 tpls -->
+
+      <!-- ============ Zone 5 · 🚀 横向专项 ============ -->
+      <div class="zone-tpls" data-zone="5">
+
+      <div class="tpl-card dim" id="tpl-5-proposal">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>proposal.md</div>
+          <span class="tpl-role-pill feat">专项发起人 ★</span>
+        </div>
+        <div class="tpl-purpose">立项方案 — 专项启动时提交。问题 → 假设 → 成功标准 → sponsor。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>scope</code> 治理范围</div>
+          <div class="tpl-field"><code>problem</code> 解决什么问题</div>
+          <div class="tpl-field"><code>hypothesis</code> 治理假设</div>
+          <div class="tpl-field"><code>success_criteria</code> 成功标准</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 双列卡治理专项 - 立项方案</span>
+
+## 范围
+全 6 业务线的双列卡组件。
+
+## 问题
+各业务线独立迭代,体验割裂,
+设计师 onboarding 高,AI 工具难统一识别。
+
+## 假设
+建立"5 家族 + 跨场景同物种"模型可统一,
+预计 CTR +10%,onboarding 时间 -30%。
+
+## 成功标准
+- CTR ≥ +5% (3 个月)
+- 跨业务复用率 ≥ 60%
+- AI 识别准确率 ≥ 95%
+
+## Sponsor
+设计总监 + 各业务线 Owner</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-5-readme">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>README.md</div>
+          <span class="tpl-role-pill">专项 owner</span>
+        </div>
+        <div class="tpl-purpose">专项概述 — 整个专项目录的入口,状态/时间线/参与方。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>status</code> active/completed/archived</div>
+          <div class="tpl-field"><code>timeline</code> 关键节点</div>
+          <div class="tpl-field"><code>participants</code> 参与方</div>
+          <div class="tpl-field"><code>goals</code> 当前目标</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 双列卡治理专项</span>
+
+## 状态
+🟢 Active (Phase 2: 落地)
+
+## 时间线
+- 2026-01: 立项 ✓
+- 2026-02: 设计语言定稿 ✓
+- 2026-03-04: 跨业务推广 (进行中)
+- 2026-05: 全量上线
+
+## 参与方
+- 主导: 综合业务设计组 (Shaka)
+- 参与: 推荐 / 点评 / 直播 / 圈子 / 新品 / 个人中心</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-5-design">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>design-language.md</div>
+          <span class="tpl-role-pill">体验 / 视觉设计师</span>
+        </div>
+        <div class="tpl-purpose">专项设计语言 — 治理产出的核心:原则 + 家族 DNA + 变体评估。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>principles</code> 设计原则</div>
+          <div class="tpl-field"><code>family_dna</code> 家族 DNA 不变量</div>
+          <div class="tpl-field"><code>variant_evaluation</code> 变体评估标准</div>
+          <div class="tpl-field"><code>cross_context_id</code> 跨场景识别</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 双列卡设计语言 v1.2</span>
+
+## 5 大家族
+- 商业 / 内容 / 圈子 / 点评 / 新品
+
+## 家族 DNA (不变量)
+| 家族 | 标志元素 | 行为模式 |
+|---|---|---|
+| 商业 | 价格/CTA | 直接转化 |
+| 内容 | 封面/标题 | 浏览消费 |
+
+## 变体评估
+新增变体须满足:
+- DNA 完整性 (3/3)
+- 跨场景同物种 (用户测试 ≥ 90%)</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-5-adr">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>adr.md</div>
+          <span class="tpl-role-pill">委员会</span>
+        </div>
+        <div class="tpl-purpose">专项决策记录 — 治理过程中的重大决策留痕。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>status</code> proposed/accepted/deprecated</div>
+          <div class="tpl-field"><code>context</code> 决策背景</div>
+          <div class="tpl-field"><code>decision</code> 决策内容</div>
+          <div class="tpl-field"><code>consequences</code> 影响</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># ADR-007: 圈子家族独立 vs 合并到内容</span>
+
+## Status
+Accepted (2026-03-15)
+
+## Context
+圈子卡是否应该独立成 1 个家族?
+- 圈子有独特互动机制 (关注/打赏)
+- 内容家族已经过载
+
+## Decision
+独立成"圈子家族",有自己的 DNA。
+
+## Consequences
++ 治理粒度更精细
++ 圈子运营有专属设计语言
+- 跨家族转换成本(用户从内容→圈子)增加</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      <div class="tpl-card" id="tpl-5-handoff">
+        <div class="tpl-head">
+          <div class="tpl-name"><span class="file-emoji">📄</span>handoff.md</div>
+          <span class="tpl-role-pill">专项 owner</span>
+        </div>
+        <div class="tpl-purpose">反哺接口 — 专项产出如何回流到其他 Zone(基础/AI 机制等)。</div>
+        <div class="tpl-fields">
+          <div class="tpl-field"><code>outputs</code> 专项产出清单</div>
+          <div class="tpl-field"><code>target_zone</code> 反哺到哪个 Zone</div>
+          <div class="tpl-field"><code>migration_path</code> 迁移路径</div>
+          <div class="tpl-field"><code>owner_after</code> 反哺后的 owner</div>
+        </div>
+        <div class="tpl-example"><span class="ex-comment"># 双列卡专项 - 反哺接口</span>
+
+## 产出 → 目标 Zone
+
+| 产出 | 反哺到 | 路径 |
+|---|---|---|
+| 5 家族 DNA | 📚 知识 - principle | wisdom/families.md |
+| 卡片基础 token | 🎨 基础 - foundation | foundations/card.md |
+| 双列卡 SKILL | 🤖 AI 机制 - skills | skills/double-column-card/ |
+
+## 反哺后 owner
+- principle: 设计委员会
+- foundation: 视觉负责人
+- skill: AI 团队</div>
+        <a href="#" class="tpl-back">↑ 返回主图</a>
+      </div>
+
+      </div><!-- /zone 5 tpls -->
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ ZONE SWITCH JS ============ -->
+<script>
+function switchZone(n) {
+  // 切换 Zone 卡 active 状态
+  document.querySelectorAll('.zone-card[data-zone]').forEach(c => {
+    c.classList.toggle('active', c.dataset.zone === String(n));
+  });
+  // 切换 中央卡 显示
+  document.querySelectorAll('.zone-design-md').forEach(d => {
+    d.classList.toggle('active', d.dataset.zone === String(n));
+  });
+  // 切换 Templates 显示
+  document.querySelectorAll('.zone-tpls').forEach(t => {
+    t.classList.toggle('active', t.dataset.zone === String(n));
+  });
+  // 更新 Templates 章节 eyebrow
+  const labels = {
+    1: 'TEMPLATES · ZONE 1 · 5 种知识文档形态',
+    2: 'TEMPLATES · ZONE 2 · 4 种基础规范文档',
+    3: 'TEMPLATES · ZONE 3 · 5 种 AI 机制文档',
+    4: 'TEMPLATES · ZONE 4 · 10 个组件 md 文件',
+    5: 'TEMPLATES · ZONE 5 · 5 种专项治理文档'
+  };
+  const eyebrow = document.getElementById('tpl-eyebrow');
+  if (eyebrow && labels[n]) eyebrow.textContent = labels[n];
+}
+</script>
+
+</body>
+</html>

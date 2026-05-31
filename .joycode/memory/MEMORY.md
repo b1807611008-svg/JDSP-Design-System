@@ -1,0 +1,1 @@
+- [规范复现HTML的输出路径](feedback_output_path.md) — 规范复现 HTML、组件 spec、私有 icon 等新建产物统一输出到 JDSPzujianku/（组件：`JDSPzujianku/foundations/components/<slug>/`），不写入 docs/ 或 jd-design-system-md-v16/horizontal/
