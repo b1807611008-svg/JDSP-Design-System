@@ -1,0 +1,146 @@
+{
+  "page_name": "VideoFeedPage",
+  "page_name_zh": "视频信息流页面",
+  "source_files": [
+    "JDSPzujianku/pages/video-feed/design.md",
+    "JDSPzujianku/horizontal/components/video-top-tab/design.md",
+    "JDSPzujianku/horizontal/components/info-layer/design.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/design.md",
+    "JDSPzujianku/horizontal/components/bottom-tab/design.md"
+  ],
+  "relay_source": {
+    "source_file_id": "1958051135088508929",
+    "source_page_id": "291:5329",
+    "source_scope_node": "2075:224",
+    "reference_application_node": "513:2089",
+    "target_file_id": "2054381889128513537",
+    "target_page_id": "7:3"
+  },
+  "canvas": {
+    "name": "VideoFeedPage / complete / immersive",
+    "width_dp": 375,
+    "height_dp": 812,
+    "background_layer": "Video Content base layer",
+    "state": "playing + immersive",
+    "safe_area": {
+      "top": "SystemSafeArea owned by page runtime",
+      "bottom": "SystemSafeArea / Home Indicator owned by page runtime"
+    }
+  },
+  "layer_priority": [
+    "bottom-tab",
+    "video-top-tab",
+    "InteractiveArea2",
+    "info-layer",
+    "Video Content"
+  ],
+  "components": [
+    {
+      "name": "video-top-tab",
+      "frame_name": "video-top-tab / immersive / default",
+      "position": "top-fixed",
+      "x_dp": 6,
+      "y_dp": 44,
+      "width_dp": 363,
+      "height_dp": 44,
+      "source": "JDSPzujianku/horizontal/components/video-top-tab/design.md",
+      "notes": "Immersive flow: menu + 275dp TabList + search; no back slot."
+    },
+    {
+      "name": "InteractiveArea2",
+      "frame_name": "InteractiveArea2 / without_grass / default",
+      "position": "right-center",
+      "x_dp": 313,
+      "y_dp": 250,
+      "width_dp": 50,
+      "height_dp": 319,
+      "source": "JDSPzujianku/horizontal/components/InteractiveArea2/design.md",
+      "notes": "Default rail: avatar, like, comment, share, muted volume."
+    },
+    {
+      "name": "info-layer",
+      "frame_name": "info-layer / text-only / html-current / no-tag-no-card",
+      "position": "bottom-left",
+      "x_dp": 11,
+      "y_dp": 672,
+      "width_dp": 274,
+      "height_dp": 46,
+      "source": "JDSPzujianku/horizontal/components/info-layer/design.md",
+      "html_source": "JDSPzujianku/pages/video-feed/index.html .info-layer",
+      "notes": "Current HTML first-screen state: nickname + description row only. Tag, product card, and chapter modules are valid info-layer variants but must not be emitted for this page state unless the HTML/feed payload includes them."
+    },
+    {
+      "name": "bottom-tab",
+      "frame_name": "bottom-tab / Type A / comment entry",
+      "position": "bottom-fixed",
+      "x_dp": 0,
+      "y_dp": 730,
+      "width_dp": 375,
+      "height_dp": 82,
+      "source": "JDSPzujianku/horizontal/components/bottom-tab/design.md",
+      "notes": "Default Type A comment input; includes safe-area background."
+    }
+  ],
+  "asset_requirements": {
+    "ready_assets": [
+      "video-top-tab/assets/icons/icon-menu-video.svg",
+      "video-top-tab/assets/icons/icon-search-video.svg",
+      "src/assets/icons/icon-like-default.svg",
+      "src/assets/icons/icon-comment-default.svg",
+      "src/assets/icons/icon-share-default.svg",
+      "src/assets/icons/icon-volume-mute-fill.svg",
+      "src/assets/icons/icon-add.svg",
+      "src/assets/icons/icon-comment-check-brand.svg",
+      "src/assets/icons/icon-happy.svg"
+    ],
+    "todo_assets": [
+      "real video frame / cover",
+      "author avatar image",
+      "product image only for a later info-layer product-card variant",
+      "info-layer tag icon only for a later tag variant",
+      "chapter waveform icon only for a later chapter variant"
+    ]
+  },
+  "tokens": {
+    "color": [
+      "color/title_immerse",
+      "color/text_immerse",
+      "color/primary",
+      "color/background 5",
+      "color/text_immerse_help"
+    ],
+    "typography": [
+      "font_size_body_sm + font_weight_medium",
+      "font_size_11_500 proposal",
+      "info-layer nickname 16/500",
+      "info-layer copy 14/400",
+      "bottom-tab placeholder 12/400"
+    ],
+    "radius": [
+      "radius_md",
+      "radius_xs",
+      "radius.full"
+    ],
+    "shadow": [
+      "shadow_interactive",
+      "info-layer text shadow 0 0 2 rgba(0,0,0,.30)"
+    ]
+  },
+  "mcp_supported_items": [
+    "Create a full 375x812 page frame",
+    "Create video background placeholder",
+    "Create top tab, interaction rail, info layer, and bottom comment entry",
+    "Import available SVG icons",
+    "Create TODO_ASSET placeholders for missing imagery",
+    "Use semantic layer names from design.md"
+  ],
+  "manual_check_items": [
+    "Replace video placeholder with real video frame or imported bitmap",
+    "Replace avatar placeholder with real avatar",
+    "Replace product image placeholder",
+    "Confirm page-level safe-area values on device",
+    "Confirm exact z-index tokens once page priority tokens are defined",
+    "Confirm keyboard-visible and BottomSheet states in a later state page",
+    "Compare against Relay source node 2075:224 if pixel-level parity is required"
+  ]
+}

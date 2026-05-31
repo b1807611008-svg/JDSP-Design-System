@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视频信息流页面 · VideoFeedPage 页面规范 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+  }
+
+  .top-bar__brand {
+    padding: 14px 0;
+    margin-right: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  .top-bar__brand small {
+    color: var(--c-text-3);
+    font-weight: 500;
+    margin-left: 6px;
+  }
+
+  .top-bar__nav {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .top-bar__nav-link {
+    padding: 14px 14px 12px;
+    font-size: 13px;
+    color: var(--c-text-2);
+    text-decoration: none;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition: color 150ms;
+  }
+
+  .top-bar__nav-link:hover,
+  .top-bar__nav-link.is-current {
+    color: var(--c-text);
+  }
+
+  .top-bar__nav-link.is-current {
+    font-weight: 600;
+  }
+
+  .top-bar__spacer { flex: 1; }
+
+  .doc {
+    max-width: 880px;
+    margin: 40px auto;
+    background: var(--c-bg);
+    padding: 64px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    flex: 1 1 auto;
+  }
+
+  .meta {
+    color: var(--c-text-3);
+    font-size: 13px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background: var(--c-brand);
+    color: #fff;
+    border-radius: var(--r-base);
+    text-align: center;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--c-text);
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: var(--c-text-2);
+  }
+
+  p { margin: 12px 0; color: var(--c-text-2); }
+  strong { color: var(--c-text); font-weight: 600; }
+
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--c-code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--c-brand);
+  }
+
+  pre {
+    background: #1a1a1a;
+    color: #e8e8e8;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+  }
+
+  blockquote.warn {
+    background: var(--c-warning-bg);
+    border-left-color: var(--c-warning);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--c-line);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--c-bg-sunken);
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+    color: var(--c-text-2);
+  }
+
+  li { margin: 6px 0; }
+
+  a {
+    color: var(--c-info);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  a:hover { border-bottom-color: var(--c-info); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--c-line);
+    margin: 40px 0;
+  }
+
+  .toc {
+    background: var(--c-bg-sunken);
+    padding: 20px 28px;
+    border-radius: var(--r-base);
+    margin-bottom: 40px;
+  }
+
+  .toc h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: var(--c-text-3);
+    font-weight: 500;
+  }
+
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--c-text-2); border: none; }
+
+  .view-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    flex-shrink: 0;
+  }
+
+  .view-tab {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-text-2);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 150ms;
+    line-height: 1.4;
+  }
+
+  .view-tab.is-active {
+    background: var(--c-bg);
+    color: var(--c-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-weight: 600;
+  }
+
+  body.mode-basic .pro-only { display: none !important; }
+  body.mode-pro .basic-only { display: none !important; }
+  body:not(.mode-basic):not(.mode-pro) .pro-only,
+  body:not(.mode-basic):not(.mode-pro) .basic-only { display: none; }
+
+  .basic-only.summary {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+    font-size: 14px;
+  }
+
+  .case {
+    margin: 20px 0;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+  }
+
+  .case.good {
+    background: var(--c-success-bg);
+    border-color: var(--c-success);
+  }
+
+  .case.bad {
+    background: var(--c-danger-bg);
+    border-color: var(--c-danger);
+  }
+
+  .case h4 {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .case .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .case.good .badge { background: var(--c-success); }
+  .case.bad .badge { background: var(--c-danger); }
+
+  .stage {
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px dashed var(--c-line);
+    margin: 12px 0;
+    padding: 24px;
+  }
+
+  .stage-label {
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+
+  .phone-stage {
+    display: grid;
+    place-items: center;
+    min-height: 560px;
+    background:
+      linear-gradient(180deg, rgba(23, 26, 38, 0.04), rgba(23, 26, 38, 0.02)),
+      var(--c-bg-sunken);
+  }
+
+  .phone-stage iframe {
+    width: 375px;
+    height: 812px;
+    border: 0;
+    transform: scale(0.66);
+    transform-origin: center;
+    box-shadow: 0 20px 56px rgba(23, 26, 38, 0.22);
+    background: #1a1a1a;
+  }
+
+  .flow {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .flow-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    background: var(--c-bg-sunken);
+  }
+
+  .flow-row strong { font-size: 13px; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--c-bg-sunken);
+    color: var(--c-text-2);
+    font-size: 13px;
+  }
+
+  .footer-meta {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--c-line);
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 720px) {
+    .doc {
+      margin: 0;
+      padding: 32px 20px;
+      border-radius: 0;
+    }
+
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    table { font-size: 12px; }
+    th,
+    td { padding: 8px 10px; }
+    .flow-row { grid-template-columns: 1fr; }
+    .phone-stage { min-height: 500px; overflow: hidden; }
+    .phone-stage iframe { transform: scale(0.58); }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .top-bar,
+    .view-tabs,
+    .phone-stage { display: none; }
+    .doc {
+      box-shadow: none;
+      margin: 0;
+      padding: 24px 32px;
+      max-width: none;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="../../../docs/jd-design-wiki-knowledge-tree.html" class="top-bar__brand">JD Design Wiki <small>· V16</small></a>
+  <nav class="top-bar__nav" aria-label="5 大分区导航">
+    <a href="../../../knowledge/spec-page.html" class="top-bar__nav-link">Design 知识</a>
+    <a href="../../../foundations/spec-page.html" class="top-bar__nav-link">Design 基础</a>
+    <a href="../../../ai-mechanism/spec-page.html" class="top-bar__nav-link">AI 机制</a>
+    <a href="../../../product-architecture/spec-page.html" class="top-bar__nav-link">产品架构</a>
+    <a href="../../../horizontal/spec-page.html" class="top-bar__nav-link is-current">横向专项</a>
+  </nav>
+  <span class="top-bar__spacer"></span>
+</div>
+
+<div class="doc">
+  <div class="title-row">
+    <h1>视频信息流页面 · VideoFeedPage 页面规范</h1>
+    <div class="view-tabs" role="tablist" aria-label="视图切换">
+      <button class="view-tab is-active" role="tab" data-view="basic" aria-selected="true">常规版</button>
+      <button class="view-tab" role="tab" data-view="pro" aria-selected="false">专业版</button>
+    </div>
+  </div>
+
+  <div class="meta">
+    来源: <a href="https://relay.jd.com/file/design?id=1958051135088508929&amp;page_id=291%3A5329&amp;node_id=2075%3A224">Relay 节点 2075:224</a> · Page / Scene Composition Layer · draft<br>
+    样式来源: Relay V16.0 GUIDELINE 节点 <code>2075:224</code> · Token 版本: <code>JD APP 16.0</code><br>
+    关联 Foundation: color / spacing / typography / radius / shadow / BottomSheet / Avatar / Icon
+  </div>
+
+  <div class="toc">
+    <h3>目录</h3>
+    <ol>
+      <li><a href="#sec-1">定义</a></li>
+      <li><a href="#sec-2">行为准则</a></li>
+      <li><a href="#sec-3">类型</a></li>
+      <li><a href="#sec-4">结构</a></li>
+      <li><a href="#sec-5">布局</a></li>
+      <li><a href="#sec-6">正反案例</a></li>
+      <li><a href="#sec-7">典型场景</a></li>
+    </ol>
+  </div>
+
+  <h2 id="sec-1"><span class="num">1</span>定义</h2>
+  <p><strong>Video Feed Page</strong> 是视频沉浸式信息流页面，用于承载短视频播放、频道切换、视频信息展示、右侧互动操作与底部评论输入。</p>
+  <p>它的核心边界是组合既有横向专项组件形成完整视频消费场景，而不是在页面层新增视觉组件、重写组件 token 或定义视频内容层的 Design System 组件。</p>
+  <div class="basic-only summary"><strong>一句话理解：</strong>这是一张全屏视频画布，页面只负责把顶部频道、左下信息、右侧互动和底部评论入口稳定地放在视频之上。</div>
+  <table>
+    <thead>
+      <tr>
+        <th>对象</th>
+        <th>主要内容</th>
+        <th>交互模型</th>
+        <th>布局模型</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>普通 Feed 页面</td>
+        <td>多条内容卡片列表</td>
+        <td>卡片级浏览、点击进入详情</td>
+        <td>文档流 / 列表流</td>
+      </tr>
+      <tr>
+        <td>Video Feed Page</td>
+        <td>单条全屏视频内容</td>
+        <td>上下滑切视频、叠加互动、沉浸播放</td>
+        <td>immersive overlay video feed layout</td>
+      </tr>
+    </tbody>
+  </table>
+  <blockquote>
+    <p><strong>页面立场：</strong>Page 层保持 Page → Components → Visual Atoms → Tokens 的依赖链路，只声明组合、位置、状态联动和优先级。</p>
+  </blockquote>
+
+  <h2 id="sec-2"><span class="num">2</span>行为准则</h2>
+  <ol>
+    <li><strong>内容优先：</strong>视频内容始终是 base layer，页面组件只作为 overlay 叠加。</li>
+    <li><strong>固定锚点：</strong><code>video-top-tab</code>、<code>InteractiveArea2</code>、<code>bottom-tab</code> 在当前视频帧中保持固定锚点。</li>
+    <li><strong>组件自治：</strong>Page 调用组件公开能力与状态参数，不进入组件内部子树修改 slot 顺序。</li>
+    <li><strong>滑动同步：</strong>上下滑切视频时，页面负责同步当前视频的左下信息、右侧互动和底部评论上下文。</li>
+    <li><strong>键盘避让：</strong>进入 <code>keyboard-visible</code> 后，底部输入区避让键盘，信息层避免覆盖输入主路径。</li>
+    <li><strong>Sheet 协调：</strong>评论、分享、更多频道等 BottomSheet 打开时，页面协调底部入口、信息层与手势区域。</li>
+    <li><strong>手势优先级：</strong>上下滑优先作用于视频 feed；右侧点击操作不得触发视频切换。</li>
+    <li><strong>禁止 raw value：</strong>页面不直接定义位置、间距、颜色、圆角、阴影或动效的 raw value。</li>
+  </ol>
+
+  <h2 id="sec-3"><span class="num">3</span>类型</h2>
+  <p>本页是单一页面模式，按场景状态区分为 7 个页面状态：<code>idle</code>、<code>playing</code>、<code>paused</code>、<code>commenting</code>、<code>immersive</code>、<code>keyboard-visible</code>、<code>full-screen</code>。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>状态</th>
+        <th>影响组件</th>
+        <th>规则</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>idle</code></td>
+        <td>all</td>
+        <td>初始页面结构已挂载，视频内容未进入强播放反馈。</td>
+      </tr>
+      <tr>
+        <td><code>playing</code></td>
+        <td><code>info-layer</code> / <code>InteractiveArea2</code> / <code>bottom-tab</code></td>
+        <td>保持沉浸 overlay 展示，不阻断视频内容。</td>
+      </tr>
+      <tr>
+        <td><code>paused</code></td>
+        <td><code>InteractiveArea2</code> / <code>info-layer</code></td>
+        <td>互动区仍可点击，页面可保留信息层可读性。</td>
+      </tr>
+      <tr>
+        <td><code>commenting</code></td>
+        <td><code>bottom-tab</code> / <code>info-layer</code> / BottomSheet</td>
+        <td>评论入口触发输入或评论面板，信息层根据空间避让。</td>
+      </tr>
+      <tr>
+        <td><code>immersive</code></td>
+        <td><code>video-top-tab</code> / <code>InteractiveArea2</code> / <code>info-layer</code></td>
+        <td>顶部、右侧、左下内容以沉浸态视觉叠加在视频上。</td>
+      </tr>
+      <tr>
+        <td><code>keyboard-visible</code></td>
+        <td><code>bottom-tab</code> / <code>info-layer</code> / BottomSheet</td>
+        <td>底部输入区键盘避让，信息层避免与键盘和输入区冲突。</td>
+      </tr>
+      <tr>
+        <td><code>full-screen</code></td>
+        <td><code>video-top-tab</code> / <code>bottom-tab</code> / <code>InteractiveArea2</code></td>
+        <td>可收敛非必要 overlay，但不得修改组件内部结构。</td>
+      </tr>
+    </tbody>
+  </table>
+  <blockquote>
+    <p><strong>不允许扩展：</strong>页面不新增替代型导航、互动区、评论入口、Icon、Avatar 或视频内容组件。</p>
+  </blockquote>
+
+  <h2 id="sec-4"><span class="num">4</span>结构</h2>
+  <p>VideoFeedPage 由视频内容层、顶部频道、左下信息、右侧互动、底部评论入口和系统安全区组成。</p>
+  <pre>VideoFeedPage
+├── video-top-tab
+├── info-layer
+├── InteractiveArea2
+├── bottom-tab
+└── SystemSafeArea</pre>
+  <table>
+    <thead>
+      <tr>
+        <th>节点</th>
+        <th>页面职责</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>video-top-tab</code></td>
+        <td>页面顶部频道切换、频道导航、搜索 / 菜单入口，在沉浸视频上方 overlay 展示。</td>
+      </tr>
+      <tr>
+        <td><code>info-layer</code></td>
+        <td>左下信息展示，包括昵称、视频标题、商品信息、视频切片等内容。</td>
+      </tr>
+      <tr>
+        <td><code>InteractiveArea2</code></td>
+        <td>右侧点赞、评论、种草、分享、头像关注、音量控制等互动操作。</td>
+      </tr>
+      <tr>
+        <td><code>bottom-tab</code></td>
+        <td>底部评论输入入口、表情入口与评论触发区域。</td>
+      </tr>
+      <tr>
+        <td><code>SystemSafeArea</code></td>
+        <td>页面级系统安全区处理，包括顶部状态栏、底部 Home Indicator、键盘避让。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="stage phone-stage" aria-label="VideoFeedPage 手机端复现预览">
+    <iframe src="./index.html" title="VideoFeedPage 手机端样式复现"></iframe>
+  </div>
+  <div class="stage-label">静态预览引用同目录 <code>index.html</code>，用于展示页面组合关系。</div>
+
+  <div class="pro-only">
+    <h3>Visual Dependencies</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Visual Atom</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Avatar</code></td>
+          <td><code>InteractiveArea2</code> 中作者头像、直播 / 关注状态的头像基础能力。</td>
+        </tr>
+        <tr>
+          <td><code>Icon</code></td>
+          <td>顶部菜单 / 搜索图标、互动区操作图标、底部评论 / 表情图标、信息层标签 / 商品 / 切片图标。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="sec-5"><span class="num">5</span>布局</h2>
+  <p>页面布局采用 immersive overlay model：视频内容为基础层，导航、信息、互动、评论入口固定或自适应叠加在其上。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>组件</th>
+        <th>位置</th>
+        <th>布局行为</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>video-top-tab</code></td>
+        <td><code>top-fixed</code></td>
+        <td>immersive overlay</td>
+      </tr>
+      <tr>
+        <td><code>info-layer</code></td>
+        <td><code>bottom-left</code></td>
+        <td>overlay / adaptive height</td>
+      </tr>
+      <tr>
+        <td><code>InteractiveArea2</code></td>
+        <td><code>right-center</code></td>
+        <td>fixed overlay</td>
+      </tr>
+      <tr>
+        <td><code>bottom-tab</code></td>
+        <td><code>bottom-fixed</code></td>
+        <td>keyboard-aware</td>
+      </tr>
+      <tr>
+        <td><code>SystemSafeArea</code></td>
+        <td>page boundary</td>
+        <td>safe-area</td>
+      </tr>
+    </tbody>
+  </table>
+  <pre>┌──────────────────────────────┐
+│ SystemSafeArea / status bar  │
+│ ┌──────────────────────────┐ │
+│ │ video-top-tab            │ │
+│ └──────────────────────────┘ │
+│                              │
+│          Video Content       │
+│                         ┌──┐ │
+│                         │IA│ │
+│                         │2 │ │
+│ ┌──────────────────┐    └──┘ │
+│ │ info-layer       │         │
+│ └──────────────────┘         │
+│ ┌──────────────────────────┐ │
+│ │ bottom-tab               │ │
+│ └──────────────────────────┘ │
+└──────────────────────────────┘</pre>
+  <div class="pro-only">
+    <h3>Layer Priority</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>组件</th>
+          <th>优先级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>bottom-tab</code></td>
+          <td>highest</td>
+        </tr>
+        <tr>
+          <td><code>video-top-tab</code></td>
+          <td>high</td>
+        </tr>
+        <tr>
+          <td><code>InteractiveArea2</code></td>
+          <td>high</td>
+        </tr>
+        <tr>
+          <td><code>info-layer</code></td>
+          <td>medium</td>
+        </tr>
+        <tr>
+          <td><code>Video Content</code></td>
+          <td>base</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <blockquote class="warn">
+    <p><strong>TBD</strong>：页面级 z-index / priority token、键盘避让 token、视频切换 motion token 尚未沉淀，当前只记录语义，不写 raw value。</p>
+  </blockquote>
+
+  <h2 id="sec-6"><span class="num">6</span>正反案例</h2>
+  <div class="case good">
+    <h4><span class="badge">GOOD</span> 沉浸视频消费页</h4>
+    <p>视频内容保持为主层，顶部频道、左下信息、右侧互动、底部评论入口以 overlay 方式稳定可达。</p>
+    <ul>
+      <li>组件职责清晰，Page 不改写组件内部结构。</li>
+      <li>互动入口在播放、暂停、评论等状态下仍能保持操作优先级。</li>
+    </ul>
+  </div>
+  <div class="case good">
+    <h4><span class="badge">GOOD</span> 评论与键盘联动</h4>
+    <p>点击 <code>bottom-tab</code> 后进入 <code>commenting</code> 或 <code>keyboard-visible</code>，页面负责避让输入区并协调 BottomSheet。</p>
+    <ul>
+      <li>底部入口拥有最高交互优先级。</li>
+      <li><code>info-layer</code> 根据空间让出输入路径。</li>
+    </ul>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> 在页面层新增组件或 atom</h4>
+    <p><strong>问题：</strong>绕过 existing component system 自绘 <code>video-top-tab</code>、<code>info-layer</code>、<code>InteractiveArea2</code> 或 <code>bottom-tab</code>，会破坏组件职责边界与 token 追溯。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> 用 raw value 写页面级布局</h4>
+    <p><strong>问题：</strong>直接在 Page 文档中定义位置、间距、颜色、圆角、阴影或动效的 raw value，会绕开 V16 token 体系。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> 将视频内容包装成 Design System 组件</h4>
+    <p><strong>问题：</strong><code>Video Content</code> 是业务内容层，不作为 Design System 组件新增；页面只声明其作为 base layer 的关系。</p>
+  </div>
+
+  <h2 id="sec-7"><span class="num">7</span>典型场景</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>场景</th>
+        <th>状态</th>
+        <th>核心组件</th>
+        <th>页面规则</th>
+        <th>触发</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>视频流浏览</td>
+        <td><code>playing</code> / <code>immersive</code></td>
+        <td><code>video-top-tab</code>、<code>info-layer</code>、<code>InteractiveArea2</code>、<code>bottom-tab</code></td>
+        <td>保持全屏视频主层与 overlay 控件稳定可达。</td>
+        <td>进入视频信息流页面</td>
+      </tr>
+      <tr>
+        <td>上下滑切视频</td>
+        <td><code>playing</code></td>
+        <td><code>info-layer</code>、<code>InteractiveArea2</code>、<code>bottom-tab</code></td>
+        <td>切换后同步当前视频标题、互动计数、评论上下文。</td>
+        <td>上滑 / 下滑 feed</td>
+      </tr>
+      <tr>
+        <td>频道切换</td>
+        <td><code>idle</code> / <code>playing</code></td>
+        <td><code>video-top-tab</code></td>
+        <td>由顶部 tab 触发数据源刷新，Page 不新增顶部导航结构。</td>
+        <td>点击频道 tab</td>
+      </tr>
+      <tr>
+        <td>评论输入</td>
+        <td><code>commenting</code> / <code>keyboard-visible</code></td>
+        <td><code>bottom-tab</code>、BottomSheet、<code>info-layer</code></td>
+        <td>底部输入链路最高优先级，信息层避让键盘与输入区。</td>
+        <td>点击评论输入入口</td>
+      </tr>
+      <tr>
+        <td>分享 / 更多面板</td>
+        <td><code>immersive</code></td>
+        <td><code>InteractiveArea2</code>、BottomSheet</td>
+        <td>BottomSheet 使用既有规则，页面协调手势优先级。</td>
+        <td>点击分享或更多操作</td>
+      </tr>
+      <tr>
+        <td>全屏强沉浸</td>
+        <td><code>full-screen</code></td>
+        <td><code>video-top-tab</code>、<code>bottom-tab</code>、<code>InteractiveArea2</code></td>
+        <td>可收敛非必要 overlay，但不得删除组件定义或新建替代组件。</td>
+        <td>进入全屏 / 强沉浸播放</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h3>API 速查</h3>
+  <blockquote class="warn">
+    <p><strong>TBD</strong>：本页面 design.md 暂未提供 AI Schema 或 API 调用形态。建议后续补充页面输入参数、状态机、组件 props 透传边界。</p>
+  </blockquote>
+
+  <h3>引用</h3>
+  <ul>
+    <li>Relay: <a href="https://relay.jd.com/file/design?id=1958051135088508929&amp;page_id=291%3A5329&amp;node_id=2075%3A224">视频信息流页面节点 2075:224</a></li>
+    <li>组件依赖: <code>horizontal/components/video-top-tab/design.md</code>、<code>horizontal/components/info-layer/design.md</code>、<code>horizontal/components/InteractiveArea2/design.md</code>、<code>horizontal/components/bottom-tab/design.md</code></li>
+    <li>视觉依赖: <code>foundations/visual/Avatar.md</code>、<code>foundations/visual/Icon.md</code></li>
+    <li>Token 依赖: <code>color.md</code>、<code>spacing.md</code>、<code>typography.md</code>、<code>radius.md</code>、<code>shadow.md</code>、<code>BottomSheet.md</code></li>
+    <li>源文档: <code>JDSPzujianku/pages/video-feed/design.md</code></li>
+  </ul>
+
+  <div class="footer-meta">
+    JD APP V16.0 Design System · 视频信息流页面规范 · 生成于 2026-05-25 · 样式 = Relay 节点 2075:224
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'spec-page-view-mode';
+  var body = document.body;
+  var tabs = document.querySelectorAll('.view-tab');
+
+  function setMode(mode) {
+    body.classList.remove('mode-basic', 'mode-pro');
+    body.classList.add('mode-' + mode);
+    tabs.forEach(function (tab) {
+      var on = tab.dataset.view === mode;
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, mode);
+    } catch (e) {}
+  }
+
+  var initial = 'basic';
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'pro' || saved === 'basic') initial = saved;
+  } catch (e) {}
+
+  setMode(initial);
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      setMode(tab.dataset.view);
+    });
+  });
+})();
+</script>
+</body>
+</html>

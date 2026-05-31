@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双列 · Double row 页面规范 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+  }
+
+  .top-bar__brand {
+    padding: 14px 0;
+    margin-right: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  .top-bar__brand small {
+    color: var(--c-text-3);
+    font-weight: 500;
+    margin-left: 6px;
+  }
+
+  .top-bar__nav {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .top-bar__nav-link {
+    padding: 14px 14px 12px;
+    font-size: 13px;
+    color: var(--c-text-2);
+    text-decoration: none;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .top-bar__nav-link:hover,
+  .top-bar__nav-link.is-current {
+    color: var(--c-text);
+  }
+
+  .top-bar__nav-link.is-current { font-weight: 600; }
+  .top-bar__spacer { flex: 1; }
+
+  .doc {
+    max-width: 880px;
+    margin: 40px auto;
+    background: var(--c-bg);
+    padding: 64px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    flex: 1 1 auto;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background: var(--c-brand);
+    color: #fff;
+    border-radius: var(--r-base);
+    text-align: center;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: var(--c-text-2);
+  }
+
+  p { margin: 12px 0; color: var(--c-text-2); }
+  strong { color: var(--c-text); font-weight: 600; }
+
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--c-code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--c-brand);
+  }
+
+  pre {
+    background: #1a1a1a;
+    color: #e8e8e8;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+  }
+
+  blockquote.warn {
+    background: var(--c-warning-bg);
+    border-left-color: var(--c-warning);
+  }
+
+  blockquote.danger {
+    background: var(--c-danger-bg);
+    border-left-color: var(--c-danger);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--c-line);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--c-bg-sunken);
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+    color: var(--c-text-2);
+  }
+
+  li { margin: 6px 0; }
+  a { color: var(--c-info); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--c-info); }
+  hr { border: none; border-top: 1px solid var(--c-line); margin: 40px 0; }
+
+  .meta {
+    color: var(--c-text-3);
+    font-size: 13px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  .view-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    flex-shrink: 0;
+  }
+
+  .view-tab {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-text-2);
+    cursor: pointer;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+
+  .view-tab.is-active {
+    background: var(--c-bg);
+    color: var(--c-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-weight: 600;
+  }
+
+  body.mode-basic .pro-only { display: none !important; }
+  body.mode-pro .basic-only { display: none !important; }
+  body:not(.mode-basic):not(.mode-pro) .pro-only,
+  body:not(.mode-basic):not(.mode-pro) .basic-only { display: none; }
+
+  .basic-only.summary {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+    font-size: 14px;
+  }
+
+  .toc {
+    background: var(--c-bg-sunken);
+    padding: 20px 28px;
+    border-radius: var(--r-base);
+    margin-bottom: 40px;
+  }
+
+  .toc h3 { margin: 0 0 8px; font-size: 14px; color: var(--c-text-3); font-weight: 500; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--c-text-2); border: none; }
+  .toc a:hover { color: var(--c-brand); }
+
+  .stage {
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px dashed var(--c-line);
+    margin: 12px 0;
+    padding: 28px 24px;
+    min-height: 140px;
+  }
+
+  .stage-label {
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+
+  .feed-demo {
+    width: 375px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 28px rgba(23, 26, 38, 0.08);
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+  }
+
+  .feed-top {
+    padding: 12px 8px 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .feed-nav,
+  .feed-tags {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--c-text-2);
+  }
+
+  .feed-nav strong { color: var(--c-text); }
+  .feed-tags { gap: 8px; margin-top: 10px; font-size: 12px; }
+  .feed-tag {
+    padding: 3px 9px;
+    background: var(--c-bg-sunken);
+    border-radius: 4px;
+  }
+
+  .feed-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 176px);
+    gap: 8px 7px;
+    padding: 8px;
+    justify-content: center;
+  }
+
+  .feed-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feed-card {
+    width: 176px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+
+  .cover {
+    height: 176px;
+    background: linear-gradient(135deg, #f9d9df 0%, #f5f6fa 48%, #d9def1 100%);
+    position: relative;
+  }
+
+  .cover.tall { height: 234px; }
+  .cover::before {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.52);
+  }
+
+  .card-body { padding: 8px; }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--c-text);
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--c-text-3);
+    font-size: 11px;
+  }
+  .avatar {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: -3px;
+    border-radius: 50%;
+    margin-right: 4px;
+    background: #d9def1;
+  }
+  .benefit {
+    color: #b5691a;
+    font-size: 11px;
+    margin: 3px 0 6px;
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .metric {
+    background: var(--c-bg-sunken);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    padding: 14px;
+  }
+  .metric strong {
+    display: block;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+  .metric span {
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+
+  .case {
+    margin: 20px 0;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+  }
+  .case.good { background: var(--c-success-bg); border-color: var(--c-success); }
+  .case.bad { background: var(--c-danger-bg); border-color: var(--c-danger); }
+  .case h4 { margin-top: 0; }
+
+  @media print {
+    body { background: #fff; }
+    .doc { box-shadow: none; margin: 0; padding: 24px 32px; max-width: none; border-radius: 0; }
+    .view-tabs, .top-bar { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    .doc { margin: 0; padding: 32px 20px; border-radius: 0; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+    .spec-grid { grid-template-columns: 1fr; }
+    .feed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .feed-card { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="../../docs/jd-design-wiki-knowledge-tree.html" class="top-bar__brand">JD Design Wiki <small>· V16</small></a>
+  <nav class="top-bar__nav" aria-label="5 大分区导航">
+    <a href="../../knowledge/spec-page.html" class="top-bar__nav-link">Design 知识</a>
+    <a href="../../foundations/spec-page.html" class="top-bar__nav-link">Design 基础</a>
+    <a href="../../ai-mechanism/spec-page.html" class="top-bar__nav-link">AI 机制</a>
+    <a href="../../product-architecture/spec-page.html" class="top-bar__nav-link">产品架构</a>
+    <a href="../../horizontal/spec-page.html" class="top-bar__nav-link is-current">横向专项</a>
+  </nav>
+  <span class="top-bar__spacer"></span>
+</div>
+
+<div class="doc">
+  <div class="title-row">
+    <h1>双列 · Double row 页面规范</h1>
+    <div class="view-tabs" role="tablist" aria-label="视图切换">
+      <button class="view-tab is-active" role="tab" data-view="basic" aria-selected="true">常规版</button>
+      <button class="view-tab" role="tab" data-view="pro" aria-selected="false">专业版</button>
+    </div>
+  </div>
+
+  <div class="meta">
+    JD APP 16.0 GUIDELINE · page-doc bundle · <code>flow / horizontal</code><br>
+    样式来源: Relay V16.0 GUIDELINE 节点 <code>1758:251</code> · Token 版本: <code>tokens.json</code><br>
+    关联 Foundation: color / typography / radius / spacing / image assets
+  </div>
+
+  <div class="toc">
+    <h3>目录</h3>
+    <ol>
+      <li><a href="#sec-1">定义</a></li>
+      <li><a href="#sec-2">行为准则</a></li>
+      <li><a href="#sec-3">类型</a></li>
+      <li><a href="#sec-4">结构</a></li>
+      <li><a href="#sec-5">布局</a></li>
+      <li><a href="#sec-6">正反案例</a></li>
+      <li><a href="#sec-7">典型场景</a></li>
+    </ol>
+  </div>
+
+  <h2 id="sec-1"><span class="num">1</span>定义</h2>
+  <p><strong>双列</strong>用于 Feed 场景中以两列瀑布流承载内容卡，支持 1:1 与 3:4 封面、内容文案、利益点、用户信息与互动数据组合展示。</p>
+  <div class="basic-only summary"><strong>一句话理解：</strong>它是“逛一逛”这类内容流的密集浏览布局，让用户在同一屏看到更多内容入口。</div>
+  <blockquote>
+    <p>核心边界：双列适合内容发现和浏览，不适合强任务单列表、横向对比表格或复杂表单编辑。</p>
+  </blockquote>
+  <table>
+    <thead>
+      <tr><th>对象</th><th>使用目的</th><th>关键差异</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>双列 Feed</td><td>内容发现、商品/视频/种草卡浏览</td><td>两列瀑布流，卡片高度可不等，强调浏览密度</td></tr>
+      <tr><td>单列列表</td><td>任务处理、信息逐条阅读</td><td>一行一个对象，强调完整信息和操作确定性</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="sec-2"><span class="num">2</span>行为准则</h2>
+  <ol>
+    <li><strong>维持两列。</strong>375 逻辑宽下使用两列，卡片宽度 176，列间距 7。</li>
+    <li><strong>允许错落。</strong>内容卡可使用 176×231 与 176×328 两种高度形成瀑布流。</li>
+    <li><strong>封面先行。</strong>卡片优先承载图片封面，再进入标题、利益点、用户信息和互动数据。</li>
+    <li><strong>信息分层。</strong>标题、营销信息、用户信息、互动信息按视觉重要度纵向排列，不互相挤占。</li>
+    <li><strong>tab 可吸顶。</strong>当前稿件标注一级 tab 与二级 tab 均吸顶。</li>
+    <li><strong>资产可追踪。</strong>封面和头像均为 IMAGE fill，必须登记到 <code>_assets-cdn.md</code> 并上传 CDN。</li>
+  </ol>
+  <blockquote class="warn pro-only">
+    <p>当前 Relay 未抽到 <code>dimension_spec</code> 文本，尺寸规则主要来自节点几何；正式发布前建议设计师补充关键尺寸标注。</p>
+  </blockquote>
+
+  <h2 id="sec-3"><span class="num">3</span>类型</h2>
+  <p>双列当前定义 2 种卡片高度、2 种封面比例、2 种内容区形态，并支持浏览/喜欢两类互动信息。</p>
+  <table>
+    <thead>
+      <tr><th>维度</th><th>形态</th><th>关键尺寸</th><th>典型用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>内容卡</td><td>短卡</td><td>176×231</td><td>1:1 封面 + 单行标题 + UGC/互动区</td></tr>
+      <tr><td>内容卡</td><td>长卡</td><td>176×328</td><td>3:4 封面 + 双行标题 + 营销信息 + 用户信息/互动区</td></tr>
+      <tr><td>封面</td><td>1:1</td><td>176×176</td><td>商品/内容正方形图片</td></tr>
+      <tr><td>封面</td><td>3:4</td><td>176×234</td><td>视频、直播、图文内容封面</td></tr>
+      <tr><td>标签</td><td>图标型 / 文案型</td><td>16×16 / 75×16 / 13×13</td><td>视频、直播、种草挂件等轻量标识</td></tr>
+    </tbody>
+  </table>
+  <div class="stage">
+    <div class="feed-demo" aria-label="双列 Feed 演示">
+      <div class="feed-top">
+        <div class="feed-nav"><span>☰</span><span>直播</span><strong>推荐</strong><span>小说</span><span>短剧</span><span>视频</span><span>⌕</span></div>
+        <div class="feed-tags"><span class="feed-tag">精选</span><span class="feed-tag">时尚</span><span class="feed-tag">科技</span><span class="feed-tag">美食</span><span class="feed-tag">生活</span></div>
+      </div>
+      <div class="feed-grid">
+        <div class="feed-col">
+          <article class="feed-card">
+            <div class="cover"></div>
+            <div class="card-body">
+              <div class="card-title">北京白塔寺顶流咖啡胡同</div>
+              <div class="card-meta"><span><i class="avatar"></i>海鱼头</span><span>313</span></div>
+            </div>
+          </article>
+          <article class="feed-card">
+            <div class="cover"></div>
+            <div class="card-body">
+              <div class="card-title">轻松拿捏 18 套简约穿搭</div>
+              <div class="benefit">服饰美妆排行榜第1名</div>
+              <div class="card-meta"><span><i class="avatar"></i>海鱼头</span><span>313</span></div>
+            </div>
+          </article>
+        </div>
+        <div class="feed-col">
+          <article class="feed-card">
+            <div class="cover tall"></div>
+            <div class="card-body">
+              <div class="card-title">跟博主学穿搭 18 套简约里做个紫色白日梦</div>
+              <div class="benefit">1000+人已加购</div>
+              <div class="card-meta"><span><i class="avatar"></i>海鱼头</span><span>313</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stage-label">静态 mockup：按 design.md / variants.md 的尺寸关系重绘，非 Relay 切图。</div>
+
+  <h2 id="sec-4"><span class="num">4</span>结构</h2>
+  <p>双列由<strong>页面 tab、双列容器、内容卡、封面、内容区、用户信息与互动区</strong>组成。</p>
+  <div class="spec-grid">
+    <div class="metric"><strong>375</strong><span>页面逻辑宽度</span></div>
+    <div class="metric"><strong>176</strong><span>内容卡列宽</span></div>
+    <div class="metric"><strong>7</strong><span>双列间距</span></div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>结构层</th><th>规格</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>页面容器</td><td>375 宽，左右 8 安全边距</td><td>承载顶部导航、二级 tab 与双列内容流</td></tr>
+      <tr><td>双列容器</td><td>176 + 7 + 176</td><td>两列瀑布流，列间距使用 Feeds 特殊值 <code>spacing.7</code></td></tr>
+      <tr><td>内容卡</td><td>176×231 / 176×328</td><td>短卡或长卡，取决于封面比例与内容信息密度</td></tr>
+      <tr><td>封面</td><td>176×176 / 176×234</td><td>IMAGE fill，需 CDN 托管</td></tr>
+      <tr><td>互动区</td><td>头像 16×16，互动图标 12×12</td><td>展示用户昵称、浏览或喜欢数据</td></tr>
+    </tbody>
+  </table>
+  <div class="pro-only">
+    <h3>Token 摘要</h3>
+    <table>
+      <thead>
+        <tr><th>类型</th><th>已匹配</th><th>待复核</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>色彩</td><td><code>color_primary</code>、<code>color_title</code>、<code>color_text</code>、<code>color_background_component</code></td><td>装饰紫/蓝/橙、透明白、透明红</td></tr>
+        <tr><td>文字</td><td><code>pingfang_regular/font_size_11_400</code>、<code>font_size_14_400</code>、<code>font_size_16_400</code></td><td>PingFang Medium 13/16/20、Semibold 60/80/15</td></tr>
+        <tr><td>圆角</td><td><code>radius_s</code>、<code>radius_base</code>、<code>radius_l</code></td><td>15 / 23 / 30 / 100 / 200</td></tr>
+        <tr><td>间距</td><td><code>spacing.0</code>、<code>2</code>、<code>4</code>、<code>6</code>、<code>7</code>、<code>8</code>、<code>12</code>、<code>40</code></td><td>10 / 9 / 14 / 11 / 30 / 3 / 5 / 23</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="sec-5"><span class="num">5</span>布局</h2>
+  <h3>5.1 位置规则</h3>
+  <table>
+    <thead>
+      <tr><th>对象</th><th>规则</th><th>依据</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>双列内容区</td><td>屏幕宽 375 下，左右边距 8，列宽 176，列间距 7</td><td>variants.md 双列容器</td></tr>
+      <tr><td>内容区内边距</td><td>左右 8，标题与辅助信息纵向排列</td><td>spec.md 间距 / 布局</td></tr>
+      <tr><td>卡片信息区</td><td>单行内容区 176×37；双行内容区 176×76</td><td>variants.md 内容区</td></tr>
+      <tr><td>tab 吸顶</td><td>当前稿件标注一级 tab、二级 tab 均吸顶</td><td>behaviors.md 交互</td></tr>
+    </tbody>
+  </table>
+  <h3>5.2 内部布局</h3>
+  <pre><code>375 page
+┌───────────────────────────────────────┐
+│ top nav / primary tab                 │
+│ secondary tab                         │
+│ 8px                                   │
+│ ┌──────────────176──────────────┐ 7 ┌──────────────176──────────────┐ │
+│ │ cover 176×176                 │   │ cover 176×234                 │ │
+│ │ title                         │   │ title line 1                  │ │
+│ │ avatar + user      icon + num │   │ title line 2                  │ │
+│ └───────────────────────────────┘   │ marketing info                │ │
+│                                     │ avatar + user      icon + num │ │
+│                                     └───────────────────────────────┘ │
+└───────────────────────────────────────┘</code></pre>
+  <blockquote class="warn">
+    <p>⚠️ 动效参数暂未在 design.md 中提供。tab 吸顶、瀑布流加载、卡片曝光等 motion 需业务页面补充。</p>
+  </blockquote>
+
+  <h2 id="sec-6"><span class="num">6</span>正反案例</h2>
+  <div class="case good">
+    <h4>正例：内容发现流</h4>
+    <p>使用双列承载图文、视频、直播、种草内容，封面优先，辅助信息收在卡片底部。</p>
+  </div>
+  <div class="case good">
+    <h4>正例：混合封面比例</h4>
+    <p>允许 1:1 和 3:4 封面在同一 Feed 中出现，通过卡片高度差形成瀑布流节奏。</p>
+  </div>
+  <div class="case bad">
+    <h4>反例：用双列处理强任务列表</h4>
+    <p><strong>问题：</strong>强任务列表需要逐条完整阅读和明确操作，双列会削弱信息完整性和操作确定性。</p>
+  </div>
+  <div class="case bad">
+    <h4>反例：封面资产未登记 CDN</h4>
+    <p><strong>问题：</strong>当前封面与头像均为 IMAGE fill，若不登记到 <code>_assets-cdn.md</code>，发布物无法稳定还原视觉。</p>
+  </div>
+  <blockquote class="warn pro-only">
+    <p>⚠️ 当前 behaviors.md 未提供自动化 dont_rule，反例由应用边界和资产约束推导；建议设计师后续补充正式 Donts。</p>
+  </blockquote>
+
+  <h2 id="sec-7"><span class="num">7</span>典型场景</h2>
+  <table>
+    <thead>
+      <tr><th>场景</th><th>类型</th><th>参数</th><th>文案/内容</th><th>触发</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>内容发现 Feed</td><td>双列瀑布流</td><td>2 列 / 176 卡宽 / 7 列距</td><td>图文、商品、视频、直播内容卡</td><td>进入频道页后展示</td></tr>
+      <tr><td>种草内容卡</td><td>长卡</td><td>3:4 封面 / 双行标题 / 营销信息</td><td>“1000+人已加购”等利益点</td><td>卡片曝光或点击</td></tr>
+      <tr><td>普通内容卡</td><td>短卡</td><td>1:1 封面 / 单行标题 / UGC 信息</td><td>用户昵称、浏览或喜欢数据</td><td>卡片曝光或点击</td></tr>
+      <tr><td>频道筛选</td><td>二级 tab</td><td>筛选项 52×28</td><td>精选、时尚、科技、数码等</td><td>tab 点击切换内容流</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h3>API 速查</h3>
+  <pre><code>component: double-row
+forms:
+  - key: waterfall_feed
+    columns:
+      count: 2
+      item_width: 176
+      gap: 7
+      side_margin: 8
+slots:
+  card:
+    required: [cover, title]
+    optional: [tag, marketing_info, user_info, interaction_info]
+events:
+  on_card_tap: TBD
+  on_card_exposure: TBD
+  on_primary_tab_sticky: TBD
+  on_secondary_tab_sticky: TBD
+  on_feed_load_more: TBD</code></pre>
+
+  <h3>引用</h3>
+  <ul>
+    <li>Relay source：<a href="https://relay.jd.com/file/design?id=1958051135088508929&amp;page_id=1758%3A1&amp;node_id=1758%3A251">节点 1758:251</a></li>
+    <li>源 bundle：<a href="./design.md">design.md</a> / <a href="./spec.md">spec.md</a> / <a href="./variants.md">variants.md</a> / <a href="./behaviors.md">behaviors.md</a> / <a href="./ai-schema.yaml">ai-schema.yaml</a></li>
+    <li>位图资产：<a href="./_assets-cdn.md">_assets-cdn.md</a>，当前 27 处 IMAGE fill，去重 9 组，待 CDN 回填。</li>
+    <li>Token 文件：<code>jd-design-system-md-v16/foundations/tokens/tokens.json</code></li>
+  </ul>
+
+  <div style="margin-top:60px; padding-top:20px; border-top:1px solid var(--c-line); color:var(--c-text-3); font-size:12px; text-align:center;">
+    JD APP V16.0 Design System · 双列规范 · 生成于 2026-05-31 · 样式 = Relay 节点 1758:251
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'spec-page-view-mode';
+  var body = document.body;
+  var tabs = document.querySelectorAll('.view-tab');
+  function setMode(mode) {
+    body.classList.remove('mode-basic', 'mode-pro');
+    body.classList.add('mode-' + mode);
+    tabs.forEach(function (t) {
+      var on = t.dataset.view === mode;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) {}
+  }
+  var initial = 'basic';
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'pro' || saved === 'basic') initial = saved;
+  } catch (e) {}
+  setMode(initial);
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { setMode(t.dataset.view); });
+  });
+})();
+</script>
+
+</body>
+</html>

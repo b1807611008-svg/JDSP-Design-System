@@ -1,0 +1,224 @@
+component_type:
+  name: VideoTopTab
+  slug: video-top-tab
+  layer: Component Composition Layer
+  version: "1.0.0"
+  description: Top video channel tab component for immersive and non-immersive video pages.
+
+slots:
+  leading:
+    accepts:
+      - back
+      - menu
+    assets:
+      back: assets/icons/icon-back-video.svg
+      menu: assets/icons/icon-menu-video.svg
+  tab_list:
+    accepts:
+      - tab_item
+      - activity_tab_item
+      - badge
+      - indicator
+  trailing:
+    accepts:
+      - search
+      - forward
+      - menu
+    assets:
+      search: assets/icons/icon-search-video.svg
+      forward: assets/icons/icon-forward-video.svg
+      menu: assets/icons/icon-menu-video.svg
+  dropdown:
+    accepts:
+      - channel_item
+      - selected_channel
+      - configurable_channel
+
+states:
+  selected:
+    type: string
+    required: true
+    description: Current selected channel id.
+  flow:
+    type: enum
+    values:
+      - immersive
+      - standard
+    default: immersive
+    description: Flow type; controls slot layout and TabList protocol. Maps to data-vtt-flow in spec-page.html.
+  theme:
+    type: enum
+    values:
+      - default
+      - dark
+    default: default
+    description: Visual theme; controls background and text tokens only. Maps to data-vtt-theme in spec-page.html.
+  sticky:
+    type: boolean
+    default: false
+    description: Sticky header; enabled for standard flow only in demo.
+  immersive:
+    type: boolean
+    default: true
+    deprecated: true
+    description: "Deprecated: use flow=immersive|standard instead."
+  disabled:
+    type: boolean
+    default: false
+  dropdown_open:
+    type: boolean
+    default: false
+  activity_enabled:
+    type: boolean
+    default: false
+  noise_reduction:
+    type: boolean
+    default: false
+
+variants:
+  - default
+  - selected
+  - activity
+  - sticky
+  - immersive
+  - dropdown
+  - folded
+  - noise-reduction
+  - scrollable
+
+layout:
+  demo_matrix:
+    flow:
+      immersive:
+        relay: "2084:44"
+        back: false
+        tab_list_viewport: 275
+        tab_list_track: right-anchored with left peek
+        channels:
+          - 关注
+          - 直播
+          - 推荐
+          - 小说
+          - 短剧
+          - 视频
+        sticky: false
+      standard:
+        relay: "518:2141"
+        back: true
+        tab_list_viewport: 246
+        channels:
+          - 直播
+          - 推荐
+          - 小说
+          - 短剧
+          - 视频
+        sticky: true
+    theme:
+      default:
+        standard_background: light
+        immersive_background: gradient
+      dark:
+        standard_background: dark
+        immersive_background: deep-gradient
+  container:
+    content_width: "TODO: missing token dependency — size.video_top_tab_content_w; Relay measured 362"
+    margin_x: "TODO: missing token dependency — spacing.video_top_tab_margin_x; Relay measured 6"
+    safe_area: tokens/spacing.md#special-safe-area
+    background:
+      default: tokens/color.md#background
+      immersive: tokens/color.md#text
+      sticky: tokens/color.md#background
+    blur: "TODO: missing token dependency"
+    z_index: "TODO: missing token dependency"
+  tab_item:
+    typography:
+      default: tokens/typography.md#font_size_14_500
+      selected: same-as-default
+      activity: same-as-default
+    spacing:
+      list_gap: tokens/spacing.md#spacing_xxs
+    color:
+      default: current-mode-text-token
+      selected: same-as-default
+      activity: same-as-default
+      disabled: tokens/color.md#color_text_disable
+    bounds:
+      height: "TODO: missing token dependency — size.video_top_tab_item_h; Relay measured 44"
+      pad_x: "TODO: missing token dependency — spacing.video_top_tab_item_pad_x; Relay measured 9"
+    viewport:
+      standard: "TODO: missing token dependency — size.video_top_tab_list_viewport_w; Relay measured 246"
+      immersive: "TODO: missing token dependency — size.video_top_tab_list_viewport_w_immersive; Relay measured 275"
+    max_visible: "TODO: missing token dependency — count.video_top_tab_visible_tabs; Relay measured 5"
+  back:
+    bounds: "TODO: missing token dependency — size.video_top_tab_back_w; Relay measured 28x44"
+    visible_when: "flow=standard"
+  indicator:
+    color: inherit-current-tab-text-token
+    radius: tokens/radius.md#radius_module_nav_tag
+    motion: "TODO: missing token dependency"
+    highlight: false
+  icon:
+    render: direct-svg-img
+    hit: "TODO: missing token dependency — size.video_top_tab_icon_hit; Relay measured 44x44"
+    visual: "TODO: missing token dependency — size.video_top_tab_icon; Relay measured 22x22"
+  dropdown:
+    radius: tokens/radius.md#radius_module_dialog
+    background: tokens/color.md#background
+
+events:
+  onTabChange:
+    payload:
+      - previous_id
+      - next_id
+      - trigger
+  onStickyChange:
+    payload:
+      - sticky
+  onDropdownOpen:
+    payload:
+      - trigger
+  onDropdownClose:
+    payload:
+      - selected_id
+  onNoiseReductionApply:
+    payload:
+      - persistent_tabs
+      - folded_tabs
+  onActivityFallback:
+    payload:
+      - activity_id
+      - fallback_reason
+
+dependencies:
+  tokens:
+    color: tokens/color.md
+    typography: tokens/typography.md
+    spacing: tokens/spacing.md
+    radius: tokens/radius.md
+    shadow: tokens/shadow.md
+  visual:
+    icon: visual/Icon.md
+  assets:
+    private_icons: assets/icons/*
+
+assets:
+  private:
+    icon-back-video.svg:
+      usage: leading back button
+      ownership: component-owned private asset
+      global_icon_system: false
+    icon-search-video.svg:
+      usage: trailing search entry
+      ownership: component-owned private asset
+      global_icon_system: false
+    icon-menu-video.svg:
+      usage: menu / folded channel entry
+      ownership: component-owned private asset
+      global_icon_system: false
+    icon-forward-video.svg:
+      usage: forward / secondary navigation
+      ownership: component-owned private asset
+      global_icon_system: false
+  activity:
+    source: service payload or operation-owned asset
+    fallback: selected underline indicator

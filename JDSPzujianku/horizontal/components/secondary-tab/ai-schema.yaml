@@ -1,0 +1,131 @@
+# bundle_part_of: design.md
+# component: secondary-tab
+# generated_by: relay-to-design-md
+# last_synced: 2026-05-30
+
+component:
+  slug: secondary-tab
+  name_zh: 二级 Tab
+  name_en: Secondary Tab
+  level: component-base
+  bg: horizontal
+  relay:
+    file_id: "1958051135088508929"
+    page_id: "1758:1"
+    node_id: "2131:27"
+    node_name: "容器 6811711"
+
+modes:
+  - key: scrollable
+    relay_node_id: "2131:7"
+    label: 二级tab 左右滑动
+    size: { width: 375, height: 44 }
+    slots: [scroll_area, add_entry]
+  - key: all_tabs
+    relay_node_id: "2131:28"
+    label: 全部tab
+    size: { width: 375, height: 28 }
+    slots: [tab_items]
+
+slots:
+  scroll_area:
+    relay_node_id: "2131:8"
+    size: { width: 331, height: 28 }
+    padding_x: 8
+    gap: 8
+    overflow: horizontal-scroll
+  add_entry:
+    relay_node_id: "2131:17"
+    size: { width: 28, height: 28 }
+    icon: icon-add
+    icon_size: 24
+    fixed: right
+  tab_item:
+    size: { height: 28 }
+    padding: { x: 12, y: 6 }
+    radius: 4
+    text:
+      font_family: PingFang SC
+      font_size: 14
+      line_height: 14.02
+      align: center
+
+states:
+  selected:
+    relay_property: "选中态"
+    background: "#fff0f4"
+    color: "#ff0f23"
+    font_weight: 500
+  default:
+    relay_property: "非选中态"
+    background: "#f5f6fa"
+    color: "#171a26"
+    font_weight: 400
+
+sample_items:
+  - key: selected
+    label: 精选
+    state: selected
+  - key: fashion
+    label: 时尚
+    state: default
+  - key: tech
+    label: 科技
+    state: default
+  - key: digital
+    label: 数码
+    state: default
+  - key: food
+    label: 美食
+    state: default
+  - key: life
+    label: 生活
+    state: default
+  - key: health
+    label: 健康
+    state: default
+
+tokens:
+  colors:
+    selected_bg: "品牌色 color/primary-light"
+    selected_text: "品牌色 color/primary"
+    default_bg: "背景 color/background 1"
+    default_text: "文字 color/tittle"
+  spacing:
+    item_padding_x: 12
+    item_padding_y: 6
+    item_gap: 8
+    container_padding_y: 8
+    icon_padding: 2
+  radius:
+    item: 4
+    add_entry: 4
+
+interactions:
+  tab_click:
+    target: tab_item
+    action: change_selected_tab
+    result: refresh_content_list
+  horizontal_scroll:
+    target: scroll_area
+    action: browse_overflow_tabs
+  add_click:
+    target: add_entry
+    action: open_all_tabs_or_category_manager
+    status: needs_product_confirmation
+  all_tab_click:
+    target: tab_item
+    action: change_selected_tab
+    optional_result: collapse_all_tabs_panel
+
+fallbacks:
+  few_items: hide_add_entry
+  no_add_capability: expand_scroll_area_to_container_width
+  long_label: truncate_or_allow_item_width_growth
+  missing_icon_add: use_global_icon_add
+
+constraints:
+  single_selected_item: true
+  item_text_lines: 1
+  add_entry_scrolls_with_list: false
+  supports_multi_select: false

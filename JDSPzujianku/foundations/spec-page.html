@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Foundations · 基础规范总览 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    font-size: 15px; line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc {
+    max-width: 960px; margin: 40px auto;
+    background: var(--c-bg);
+    padding: 56px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  h1 { font-size: 32px; font-weight: 600; margin: 0 0 8px; line-height: 1.3; }
+  h2 { font-size: 22px; font-weight: 600; margin: 48px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--c-line); }
+  h2 .num { display:inline-block; width:28px; height:28px; line-height:28px; background:var(--c-brand); color:#fff; border-radius:var(--r-base); text-align:center; font-size:14px; margin-right:10px; vertical-align:middle; }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: var(--c-text); }
+  h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--c-text-2); }
+  p { margin: 10px 0; color: var(--c-text-2); }
+  code { font-family: "JetBrains Mono","SF Mono",Menlo,Consolas,monospace; font-size: 12px; background: var(--c-bg-sunken); padding: 2px 6px; border-radius: 4px; color: var(--c-brand); }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--c-line); padding: 9px 13px; text-align: left; vertical-align: top; }
+  th { background: var(--c-bg-sunken); font-weight: 600; color: var(--c-text); }
+  td code { font-size: 11px; }
+  blockquote { margin: 14px 0; padding: 10px 18px; background: var(--c-info-bg); border-left: 3px solid var(--c-info); border-radius: 0 var(--r-base) var(--r-base) 0; color: var(--c-text-2); }
+  blockquote.warn { background: var(--c-warning-bg); border-left-color: var(--c-warning); }
+  blockquote.danger { background: var(--c-danger-bg); border-left-color: var(--c-danger); }
+  ul, ol { padding-left: 22px; color: var(--c-text-2); }
+  li { margin: 5px 0; }
+  a { color: var(--c-info); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--c-info); }
+  hr { border: none; border-top: 1px solid var(--c-line); margin: 36px 0; }
+
+  /* ---- token swatch ---- */
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 72px; }
+  .swatch__color { width: 48px; height: 48px; border-radius: 8px; border: 1px solid var(--c-line); flex-shrink: 0; }
+  .swatch__label { font-size: 11px; color: var(--c-text-3); text-align: center; word-break: break-all; }
+
+  /* ---- radius demo ---- */
+  .radius-demos { display: flex; flex-wrap: wrap; gap: 16px; margin: 16px 0; align-items: flex-end; }
+  .radius-demo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .radius-demo__box { width: 48px; height: 48px; background: var(--c-bg-sunken); border: 2px solid var(--c-brand); }
+  .radius-demo__label { font-size: 11px; color: var(--c-text-3); }
+
+  /* ---- spacing demo ---- */
+  .spacing-demos { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; align-items: flex-end; }
+  .spacing-demo { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .spacing-demo__bar { background: var(--c-brand); opacity: 0.7; width: 14px; border-radius: 2px; }
+  .spacing-demo__label { font-size: 11px; color: var(--c-text-3); }
+
+  /* ---- shadow demo ---- */
+  .shadow-demos { display: flex; flex-wrap: wrap; gap: 20px; margin: 14px 0; }
+  .shadow-demo { width: 100px; height: 56px; background: var(--c-bg); border-radius: var(--r-detail); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--c-text-3); }
+
+  /* ---- type scale demo ---- */
+  .type-scale { margin: 14px 0; }
+  .type-row { display: flex; align-items: baseline; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--c-line); }
+  .type-row:last-child { border-bottom: none; }
+  .type-row__meta { min-width: 120px; font-size: 11px; color: var(--c-text-3); font-family: "JetBrains Mono","SF Mono",monospace; }
+  .type-row__sample { color: var(--c-text); }
+
+  /* ---- component card grid ---- */
+  .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 14px 0; }
+  .comp-card { border: 1px solid var(--c-line); border-radius: var(--r-detail); padding: 16px 18px; background: var(--c-bg); }
+  .comp-card__title { font-size: 14px; font-weight: 600; color: var(--c-text); margin: 0 0 6px; }
+  .comp-card__meta { font-size: 12px; color: var(--c-text-3); margin: 0 0 10px; }
+  .comp-card__body { font-size: 13px; color: var(--c-text-2); }
+
+  /* ---- icon demo ---- */
+  .icon-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .icon-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border: 1px solid var(--c-line); border-radius: var(--r-base); min-width: 72px; background: var(--c-bg); }
+  .icon-preview { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--c-text); background: var(--c-bg-sunken); border-radius: var(--r-base); }
+  .icon-preview img { width: 48px; height: 48px; display: block; object-fit: contain; }
+  .icon-item--interactive .icon-preview { width: 50px; height: 50px; background: #1f1f1f; color: #fff; }
+  .icon-item--interactive .icon-preview img { width: 50px; height: 50px; filter: brightness(0) invert(1); }
+  .icon-item__name { font-size: 10px; color: var(--c-text-3); text-align: center; }
+
+  /* ---- avatar demo ---- */
+  .avatar-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; align-items: flex-end; }
+  .avatar-demo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .avatar-demo__circle { background: #eaeaea; border-radius: 50%; border: 1px solid var(--c-line); flex-shrink: 0; }
+  .avatar-demo__label { font-size: 11px; color: var(--c-text-3); }
+
+  /* ---- button demo ---- */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; align-items: center; }
+  .btn-demo { display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-family: inherit; font-weight: 600; cursor: default; border: none; }
+  .btn-xl  { height: 48px; padding: 0 20px; font-size: 18px; background: var(--c-brand); color: #fff; }
+  .btn-lg  { height: 44px; padding: 0 16px; font-size: 15px; background: var(--c-brand); color: #fff; }
+  .btn-md  { height: 40px; padding: 0 16px; font-size: 14px; background: var(--c-brand); color: #fff; }
+  .btn-sm  { height: 36px; padding: 0 12px; font-size: 12px; background: var(--c-brand); color: #fff; }
+  .btn-service { height: 44px; padding: 0 16px; font-size: 15px; background: #FFE7CC; color: #664100; }
+  .btn-secondary { height: 44px; padding: 0 16px; font-size: 15px; background: #FFF0F4; color: var(--c-brand); font-weight: 500; }
+  .btn-disabled { height: 44px; padding: 0 16px; font-size: 15px; background: #C2C4CC; color: #fff; }
+
+  /* ---- tag demo ---- */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; align-items: center; }
+  .tag { display: inline-flex; align-items: center; justify-content: center; font-family: inherit; font-weight: 400; line-height: 1; border-radius: 4px; padding: 0 8px; height: 28px; font-size: 11px; border: 1px solid transparent; }
+  .tag-primary   { background: #FF0F23; color: #fff; }
+  .tag-light-red { background: #FFF0F4; color: #FF0F23; }
+  .tag-service   { background: #FFE7CC; color: #664100; }
+  .tag-outline   { background: transparent; color: #FF0F23; border-color: #FF0F23; }
+  .tag-neutral   { background: #F5F6FA; color: #505259; border-color: rgba(0,0,0,0.08); }
+  .tag-disabled  { background: #F5F6FA; color: #C2C4CC; border-color: rgba(0,0,0,0.04); }
+
+  /* ---- toc ---- */
+  .toc { background: var(--c-bg-sunken); padding: 18px 26px; border-radius: var(--r-base); margin-bottom: 36px; }
+  .toc h3 { margin: 0 0 8px; font-size: 13px; color: var(--c-text-3); font-weight: 500; }
+  .toc ol { margin: 0; padding-left: 18px; }
+  .toc li { margin: 3px 0; }
+  .toc a { color: var(--c-text-2); border: none; }
+  .toc a:hover { color: var(--c-brand); }
+
+  /* ---- title-row + view-tabs ---- */
+  .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; border-bottom: 2px solid var(--c-text); padding-bottom: 14px; margin-bottom: 8px; }
+  .title-row h1 { border-bottom: none; padding-bottom: 0; margin: 0; flex: 1 1 auto; }
+  .view-tabs { display: inline-flex; align-items: center; gap: 4px; padding: 4px; background: var(--c-bg-sunken); border-radius: var(--r-base); flex-shrink: 0; }
+  .view-tab { background: transparent; border: none; padding: 5px 13px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--c-text-2); cursor: pointer; border-radius: 4px; transition: all 150ms; line-height: 1.4; }
+  .view-tab:hover { color: var(--c-text); }
+  .view-tab.is-active { background: var(--c-bg); color: var(--c-text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); font-weight: 600; }
+
+  /* ---- top-bar ---- */
+  .top-bar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: rgba(255,255,255,0.82); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); box-shadow: 0 1px 0 rgba(0,0,0,0.04); flex-wrap: wrap; }
+  .top-bar__brand { padding: 14px 0; margin-right: 12px; font-size: 13px; font-weight: 600; color: var(--c-text); text-decoration: none; letter-spacing: 0.02em; }
+  .top-bar__brand small { color: var(--c-text-3); font-weight: 500; margin-left: 6px; }
+  .top-bar__nav { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; }
+  .top-bar__nav-link { padding: 14px 14px 12px; font-size: 13px; color: var(--c-text-2); text-decoration: none; font-weight: 500; line-height: 1.4; white-space: nowrap; transition: color 150ms; }
+  .top-bar__nav-link:hover { color: var(--c-text); }
+  .top-bar__nav-link.is-current { color: var(--c-text); font-weight: 600; }
+  .top-bar__spacer { flex: 1; }
+
+  /* pro/basic */
+  body.mode-basic .pro-only { display: none !important; }
+  body.mode-pro .basic-only { display: none !important; }
+  body:not(.mode-basic):not(.mode-pro) .pro-only, body:not(.mode-basic):not(.mode-pro) .basic-only { display: none; }
+  .basic-only.summary { margin: 14px 0; padding: 10px 18px; background: var(--c-info-bg); border-left: 3px solid var(--c-info); border-radius: 0 var(--r-base) var(--r-base) 0; color: var(--c-text-2); font-size: 13px; }
+  .pro-inline { color: var(--c-text-3); font-size: 11px; margin-left: 5px; }
+
+  @media (max-width: 720px) {
+    .doc { margin: 0; padding: 24px 16px; border-radius: 0; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 18px; }
+    table { font-size: 12px; }
+    th, td { padding: 7px 9px; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; }
+    .doc { box-shadow: none; margin: 0; padding: 20px 28px; max-width: none; border-radius: 0; }
+    .top-bar { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部 5 大 Zone nav -->
+<div class="top-bar">
+  <a href="../../docs/jd-design-wiki-knowledge-tree.html" class="top-bar__brand">JD Design Wiki <small>· V16</small></a>
+  <nav class="top-bar__nav" aria-label="5 大分区导航">
+    <a href="#" class="top-bar__nav-link">📚 Design 知识</a>
+    <a href="#" class="top-bar__nav-link is-current">🎨 Design 基础</a>
+    <a href="#" class="top-bar__nav-link">🤖 AI 机制</a>
+    <a href="#" class="top-bar__nav-link">🏗 产品架构</a>
+    <a href="#" class="top-bar__nav-link">🚀 横向专项</a>
+  </nav>
+  <span class="top-bar__spacer"></span>
+</div>
+
+<div class="doc">
+
+<div class="title-row">
+  <h1>Design Foundations · 基础规范总览</h1>
+  <div class="view-tabs" role="tablist" aria-label="视图切换">
+    <button class="view-tab is-active" role="tab" data-view="basic" aria-selected="true">常规版</button>
+    <button class="view-tab" role="tab" data-view="pro" aria-selected="false">专业版</button>
+  </div>
+</div>
+<div style="color:var(--c-text-3);font-size:13px;margin-bottom:36px;line-height:1.8;">
+  覆盖范围：<code>tokens/</code> × 8 + <code>visual/</code> × 2 &nbsp;·&nbsp;
+  Relay 文件 <code>1958051135088508929</code> &nbsp;·&nbsp;
+  版本：<strong>JD APP V16.0 GUIDELINE</strong> &nbsp;·&nbsp;
+  生成于 2026-05-25
+</div>
+
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#sec-color">色彩 Color</a></li>
+    <li><a href="#sec-typography">字体排版 Typography</a></li>
+    <li><a href="#sec-spacing">间距 Spacing</a></li>
+    <li><a href="#sec-radius">圆角 Radius</a></li>
+    <li><a href="#sec-shadow">阴影 Shadow</a></li>
+    <li><a href="#sec-icon">图标 Icon</a></li>
+    <li><a href="#sec-avatar">头像 Avatar</a></li>
+    <li><a href="#sec-button">按钮 Button</a></li>
+    <li><a href="#sec-tag">标签 Tag</a></li>
+    <li><a href="#sec-toast">轻提示 Toast</a></li>
+    <li><a href="#sec-modal">弹窗 Modal</a></li>
+    <li><a href="#sec-bottomsheet">半弹层 BottomSheet</a></li>
+  </ol>
+</div>
+
+<!-- ==================== 1 色彩 ==================== -->
+<h2 id="sec-color"><span class="num">1</span>色彩 Color</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：所有颜色必须引用 Token，禁止裸 Hex。四层结构：组件层 → 语义层 → Atom层 → 值层。品牌主色为京东红 <code>#FF0F23</code>，沉浸式场景有专用文本与背景色体系。
+</div>
+
+<p class="pro-only">色彩体系采用<strong>四层映射结构</strong>：组件层（业务消费）→ 语义 Token 层（<code>color/*</code>）→ Atom 层（原子色板）→ 值层（Hex/RGBA）。规范来源：Relay 节点 <code>862:1</code>，共提取 22 个语义变量。</p>
+
+<h3>主色 Primary</h3>
+<div class="swatch-row">
+  <div class="swatch"><div class="swatch__color" style="background:#ff0f23;"></div><div class="swatch__label"><code>color/primary</code><br>#FF0F23</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#4c1c20;"></div><div class="swatch__label"><code>color/primary-light</code><br>#4C1C20</div></div>
+</div>
+
+<h3>文本 Text</h3>
+<div class="swatch-row">
+  <div class="swatch"><div class="swatch__color" style="background:#171a26;"></div><div class="swatch__label"><code>color/title</code><br>#171A26</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#3d414d;"></div><div class="swatch__label"><code>color/text</code><br>#3D414D</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#828794;"></div><div class="swatch__label"><code>color/text_help</code><br>#828794</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#666666;"></div><div class="swatch__label"><code>color/text_disable</code><br>#666666</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#ffffff;border:1px solid #eee;"></div><div class="swatch__label"><code>color/title_immerse</code><br>#FFFFFF</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:rgba(255,255,255,0.7);border:1px solid #eee;"></div><div class="swatch__label"><code>color/text_immerse_help</code><br>#FFFFFFlb2</div></div>
+</div>
+
+<h3>背景 Background</h3>
+<div class="swatch-row">
+  <div class="swatch"><div class="swatch__color" style="background:#333333;"></div><div class="swatch__label"><code>color/background 1</code><br>#333333</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#1f1f1f;"></div><div class="swatch__label"><code>color/background 2</code><br>#1F1F1F</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:rgba(23,26,38,0.34);"></div><div class="swatch__label"><code>color/background 5</code><br>#171A2657</div></div>
+</div>
+
+<h3>蒙层 Mask & 分割线 Line</h3>
+<div class="swatch-row">
+  <div class="swatch"><div class="swatch__color" style="background:rgba(20,20,20,0.7);"></div><div class="swatch__label"><code>color/mask 1</code><br>#141414b2</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:rgba(20,20,20,0.4);"></div><div class="swatch__label"><code>color/mask 2</code><br>#14141466</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:rgba(255,255,255,0.08);border:1px solid #eee;"></div><div class="swatch__label"><code>color/line</code><br>#ffffff14</div></div>
+</div>
+
+<h3>服务色 & 种草色</h3>
+<div class="swatch-row">
+  <div class="swatch"><div class="swatch__color" style="background:#2b2723;"></div><div class="swatch__label"><code>color/service</code><br>#2B2723</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#4d3b2a;"></div><div class="swatch__label"><code>color/service-btnbg</code><br>#4D3B2A</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#ccb8a3;"></div><div class="swatch__label"><code>color/service-btntext 1</code><br>#CCB8A3</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#b87c3f;"></div><div class="swatch__label"><code>color/service-btntext 2</code><br>#B87C3F</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#72b8ff;"></div><div class="swatch__label"><code>color/color_link</code><br>#72B8FF</div></div>
+  <div class="swatch"><div class="swatch__color" style="background:#15ba64;"></div><div class="swatch__label"><code>color/Recommend_btnbg</code><br>#15BA64</div></div>
+</div>
+
+<div class="pro-only">
+<blockquote>
+  <strong>Token 规范约束</strong>：所有 Fill / Stroke / Effect 必须引用上方变量，严禁写入裸 <code>#RRGGBB</code> 或 <code>rgba(...)</code>。命名疑似拼写问题：<code>color/title</code>（建议核查是否为 <code>color/title</code>）；大小写命名空间不一致：<code>Color/文本 Text/color_text_help</code> 与 <code>color/*</code> 并存，待设计侧统一。
+</blockquote>
+</div>
+
+<!-- ==================== 2 字体 ==================== -->
+<h2 id="sec-typography"><span class="num">2</span>字体排版 Typography</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：主字体 PingFang SC，价格用 JDZhengHei，品牌字 JingDongLangZhengTi。字阶从 10~80px，字重四档（400/500/600/700）。行高 = 字号 × 1.5，奇数取 -1。
+</div>
+
+<h3>字族 Font Family</h3>
+<table class="pro-only">
+  <tr><th>Atom Token</th><th>字体名称</th><th>用途</th></tr>
+  <tr><td><code>font_family_pfsc_regular</code></td><td>PingFang-SC / Regular</td><td>主体中文内容（最高频）</td></tr>
+  <tr><td><code>font_family_pfsc_semibold</code></td><td>PingFang-SC / Semibold</td><td>强调标题、表头、关键数值</td></tr>
+  <tr><td><code>font_family_pfsc_medium</code></td><td>PingFang-SC / Medium</td><td>中等强调</td></tr>
+  <tr><td><code>font_family_jdzh_bold</code></td><td>JDZhengHei-V2.0 / Bold</td><td>价格数字强化</td></tr>
+  <tr><td><code>font_family_jdzh_regular</code></td><td>JDZhengHei-V2.0 / Regular</td><td>价格数字常规</td></tr>
+  <tr><td><code>font_family_brand_regular</code></td><td>JingDongLangZhengTi / Regular</td><td>品牌字族</td></tr>
+</table>
+
+<h3>字阶 & 字重（Role 层演示）</h3>
+<div class="type-scale">
+  <div class="type-row"><span class="type-row__meta">80px · 600</span><span class="type-row__sample" style="font-size:40px;font-weight:600;line-height:1.2;">超大标题</span></div>
+  <div class="type-row"><span class="type-row__meta">36px · 600</span><span class="type-row__sample" style="font-size:36px;font-weight:600;line-height:1.2;">京东商城</span></div>
+  <div class="type-row"><span class="type-row__meta">24px · 400</span><span class="type-row__sample" style="font-size:24px;font-weight:400;">标准一级正文内容</span></div>
+  <div class="type-row"><span class="type-row__meta">20px · 600</span><span class="type-row__sample" style="font-size:20px;font-weight:600;">二级标题强调词</span></div>
+  <div class="type-row"><span class="type-row__meta">16px · 400</span><span class="type-row__sample" style="font-size:16px;font-weight:400;">说明文案、辅助内容展示行</span></div>
+  <div class="type-row"><span class="type-row__meta">14px · 400</span><span class="type-row__sample" style="font-size:14px;font-weight:400;">标准内容主干文字，最常用字号</span></div>
+  <div class="type-row"><span class="type-row__meta">12px · 400</span><span class="type-row__sample" style="font-size:12px;font-weight:400;">次级辅助说明，评论区时间戳</span></div>
+  <div class="type-row"><span class="type-row__meta">11px · 400</span><span class="type-row__sample" style="font-size:11px;font-weight:400;">标签文案、角标内容</span></div>
+  <div class="type-row"><span class="type-row__meta">10px · 400</span><span class="type-row__sample" style="font-size:10px;font-weight:400;">最小字号，仅标注辅助</span></div>
+</div>
+
+<div class="pro-only">
+<h4>行高规则</h4>
+<ul>
+  <li>单行推荐：<code>lineGap = fontSize × 0.5</code>（奇数 -1）</li>
+  <li>段落推荐：<code>lineHeight = fontSize × 1.5</code>（奇数 -1）</li>
+  <li>混排延续 <code>fontSize × 1.5</code> 规则</li>
+</ul>
+<blockquote class="warn">⚠️ 规则与实测不完全一致：节点中存在 <code>AUTO</code> 与多组浮点 lineHeight（如 <code>52.8325</code>），待设计侧与工程端对齐。</blockquote>
+</div>
+
+<!-- ==================== 3 间距 ==================== -->
+<h2 id="sec-spacing"><span class="num">3</span>间距 Spacing</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：最小 2px，所有间距为 2 的倍数。7 档：2 / 4 / 6 / 8 / 12 / 16 / 24px。组件内用小值，模块间用大值。
+</div>
+
+<div class="spacing-demos">
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:2px;"></div><div class="spacing-demo__label"><code>spacing_xxs</code><br>2px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:4px;"></div><div class="spacing-demo__label"><code>spacing_xs</code><br>4px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:6px;"></div><div class="spacing-demo__label"><code>spacing_sm</code><br>6px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:8px;"></div><div class="spacing-demo__label"><code>spacing_md</code><br>8px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:12px;"></div><div class="spacing-demo__label"><code>spacing_lg</code><br>12px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:16px;"></div><div class="spacing-demo__label"><code>spacing_xl</code><br>16px</div></div>
+  <div class="spacing-demo"><div class="spacing-demo__bar" style="height:24px;"></div><div class="spacing-demo__label"><code>spacing_2xl</code><br>24px</div></div>
+</div>
+
+<table class="pro-only">
+  <tr><th>Token</th><th>px</th><th>pt (@2x)</th><th>主要用途</th></tr>
+  <tr><td><code>spacing_xxs</code></td><td>2</td><td>1</td><td>角标贴靠偏移、进度条端点留白</td></tr>
+  <tr><td><code>spacing_xs</code></td><td>4</td><td>2</td><td>图标与文字间距（Icon-Label gap）</td></tr>
+  <tr><td><code>spacing_sm</code></td><td>6</td><td>3</td><td>标签内水平 padding 次级场景</td></tr>
+  <tr><td><code>spacing_md</code></td><td>8</td><td>4</td><td>按钮上下 padding、卡片内图文 gap</td></tr>
+  <tr><td><code>spacing_lg</code></td><td>12</td><td>6</td><td>卡片左右 padding、标题与内容垂直 gap</td></tr>
+  <tr><td><code>spacing_xl</code></td><td>16</td><td>8</td><td>Tab 导航各 Tab 水平 gap</td></tr>
+  <tr><td><code>spacing_2xl</code></td><td>24</td><td>12</td><td>区块间、全屏页面安全边距（保留扩展）</td></tr>
+</table>
+
+<!-- ==================== 6 图标 ==================== -->
+<h2 id="sec-icon"><span class="num">6</span>图标 Icon</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：统一来源 JDSP 规范稿页面「1.3 icon图标 🟢」。线图（line）+ 面图（fill）+ 互动区（interactive）三类严格分区。互动区图标画板固定 50×50pt，不可用普通字号尺寸缩放。
+</div>
+
+<h3>栅格规范</h3>
+<table>
+  <tr><th>场景</th><th>母版网格</th><th>输出尺寸</th><th>点击热区</th></tr>
+  <tr><td>标准图标库</td><td>48×48</td><td>20 / 24 / 32 / 48</td><td>由容器定义</td></tr>
+  <tr><td>互动区专属</td><td>50×50（含透明热区 padding）</td><td>50（不可缩减）</td><td>自带 50×50 透明 padding</td></tr>
+</table>
+
+<h3>线图 Line · 来自 <code>JDSPzujianku/src/assets/icons</code></h3>
+<div class="icon-grid">
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-arrow-left.svg" alt=""></span>
+    <span class="icon-item__name">icon-arrow-left</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-arrow-right.svg" alt=""></span>
+    <span class="icon-item__name">icon-arrow-right</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-close.svg" alt=""></span>
+    <span class="icon-item__name">icon-close</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-search.svg" alt=""></span>
+    <span class="icon-item__name">icon-search</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-like.svg" alt=""></span>
+    <span class="icon-item__name">icon-like</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-message.svg" alt=""></span>
+    <span class="icon-item__name">icon-message</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-share.svg" alt=""></span>
+    <span class="icon-item__name">icon-share</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-cart.svg" alt=""></span>
+    <span class="icon-item__name">icon-cart</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-user.svg" alt=""></span>
+    <span class="icon-item__name">icon-user</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-add.svg" alt=""></span>
+    <span class="icon-item__name">icon-add</span>
+  </div>
+</div>
+
+<h3>面图 Fill · 来自 <code>JDSPzujianku/src/assets/icons</code></h3>
+<div class="icon-grid">
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-cart-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-cart-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-like-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-like-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-heart-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-heart-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-gift-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-gift-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-play-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-play-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-volume-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-volume-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-check-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-check-fill</span>
+  </div>
+  <div class="icon-item">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-arrow-right-fill.svg" alt=""></span>
+    <span class="icon-item__name">icon-arrow-right-fill</span>
+  </div>
+</div>
+
+<h3>互动区 Interactive · 50×50 透明热区，不裁剪</h3>
+<div class="icon-grid">
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-like-default.svg" alt=""></span>
+    <span class="icon-item__name">icon-like-default</span>
+  </div>
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-like-active.svg" alt=""></span>
+    <span class="icon-item__name">icon-like-active</span>
+  </div>
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-comment-default.svg" alt=""></span>
+    <span class="icon-item__name">icon-comment-default</span>
+  </div>
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-grass-default.svg" alt=""></span>
+    <span class="icon-item__name">icon-grass-default</span>
+  </div>
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-grass-active.svg" alt=""></span>
+    <span class="icon-item__name">icon-grass-active</span>
+  </div>
+  <div class="icon-item icon-item--interactive">
+    <span class="icon-preview"><img src="../src/assets/icons/icon-share-default.svg" alt=""></span>
+    <span class="icon-item__name">icon-share-default</span>
+  </div>
+</div>
+
+<div class="pro-only">
+<h4>笔触规范</h4>
+<table>
+  <tr><th>规则项</th><th>参数</th><th>适用范围</th></tr>
+  <tr><td>默认线宽</td><td><code>3dp</code> (icon.strokeWidth.default)</td><td>常规线图图标</td></tr>
+  <tr><td>提示增强线宽</td><td><code>4dp</code> (icon.strokeWidth.hint)</td><td>告警/提示类图标</td></tr>
+  <tr><td>32 尺寸笔触</td><td><code>2dp</code> 等比降阶</td><td>32 输出位，保证清晰度</td></tr>
+</table>
+<h4>圆角与转折</h4>
+<ul>
+  <li>Outer corner: <code>8dp → radius.lg</code></li>
+  <li>Detail large: <code>6dp → radius.md</code></li>
+  <li>Detail small: <code>4dp → radius.sm</code></li>
+  <li>Sharp corner (&lt;90°): <code>1.5dp → radius.sharp</code></li>
+</ul>
+<blockquote class="warn">⚠️ 互动区图标画板固定 50×50pt，禁止对其使用常规字号级尺寸（24px/36px），等比缩小后内部图形会显得极其微小。</blockquote>
+</div>
+
+<!-- ==================== 7 头像 ==================== -->
+<h2 id="sec-avatar"><span class="num">7</span>头像 Avatar</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：6 档尺寸（16/20/32/36/42/76px），强制圆形裁切（<code>border-radius: 50%</code>）。未上传头像必须显示通用人像兜底，不允许空白或破图。
+</div>
+
+<div class="avatar-row">
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:76px;height:76px;"></div><div class="avatar-demo__label"><code>avatar.size-76</code><br>个人页主头像</div></div>
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:42px;height:42px;"></div><div class="avatar-demo__label"><code>avatar.size-42</code><br>互动区/榜单</div></div>
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:36px;height:36px;"></div><div class="avatar-demo__label"><code>avatar.size-36</code><br>评论区</div></div>
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:32px;height:32px;"></div><div class="avatar-demo__label"><code>avatar.size-32</code><br>问答一级</div></div>
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:20px;height:20px;"></div><div class="avatar-demo__label"><code>avatar.size-20</code><br>评论二级</div></div>
+  <div class="avatar-demo"><div class="avatar-demo__circle" style="width:16px;height:16px;"></div><div class="avatar-demo__label"><code>avatar.size-16</code><br>双列图文</div></div>
+</div>
+
+<div class="pro-only">
+<h4>边框规范（图片头像）</h4>
+<table>
+  <tr><th>尺寸</th><th>描边</th><th>场景</th></tr>
+  <tr><td>76px / 42px</td><td>2px white 内描边</td><td>标准场景</td></tr>
+  <tr><td>36px / 32px</td><td>1px white 内描边</td><td>标准场景</td></tr>
+  <tr><td>20px / 16px</td><td>0.5px white 内描边</td><td>标准场景</td></tr>
+</table>
+<blockquote>描边必须以内描边方式实现，避免增加组件外部占位尺寸。Avatar 不参与普通组件按高度推导圆角的规则，必须始终使用 <code>border-radius: 50%</code>。</blockquote>
+</div>
+
+<!-- ==================== 8 按钮 ==================== -->
+<h2 id="sec-button"><span class="num">8</span>按钮 Button</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：7 档高度（24~48px），3 种风格（primary 红/service 金/secondary 浅红）。全部圆角 6px。双行内容仅 xl/lg 支持。
+</div>
+
+<h3>尺寸演示</h3>
+<div class="btn-row">
+  <button class="btn-demo btn-xl">立即购买 48px</button>
+  <button class="btn-demo btn-lg">立即购买 44px</button>
+  <button class="btn-demo btn-md">立即购买 40px</button>
+  <button class="btn-demo btn-sm">购买 36px</button>
+</div>
+
+<h3>风格演示</h3>
+<div class="btn-row">
+  <button class="btn-demo btn-lg">Primary 主操作</button>
+  <button class="btn-demo btn-service">Service 服务购买</button>
+  <button class="btn-demo btn-secondary">Secondary 品牌</button>
+  <button class="btn-demo btn-disabled">Disabled 禁用</button>
+</div>
+
+<div class="pro-only">
+<table>
+  <tr><th>Token key</th><th>名称</th><th>高度</th><th>PaddingX</th><th>字号</th><th>字重</th></tr>
+  <tr><td><code>xl</code></td><td>特定场景按钮</td><td>48px</td><td>20px</td><td>18px</td><td>600</td></tr>
+  <tr><td><code>lg</code></td><td>页面主操作按钮</td><td>44px</td><td>16px</td><td>15px</td><td>600</td></tr>
+  <tr><td><code>md</code></td><td>区块主操作按钮</td><td>40px</td><td>16px</td><td>14px</td><td>600</td></tr>
+  <tr><td><code>sm</code></td><td>功能按钮</td><td>36px</td><td>12px</td><td>12px</td><td>600</td></tr>
+  <tr><td><code>xs</code></td><td>标签按钮 32</td><td>32px</td><td>10px</td><td>12px</td><td>400</td></tr>
+  <tr><td><code>2xs</code></td><td>标签按钮 28</td><td>28px</td><td>8px</td><td>11px</td><td>400</td></tr>
+  <tr><td><code>3xs</code></td><td>标签按钮 24</td><td>24px</td><td>8px</td><td>10px</td><td>400</td></tr>
+</table>
+<table>
+  <tr><th>Variant</th><th>Background</th><th>Text</th><th>用途</th></tr>
+  <tr><td><code>primary</code></td><td><code>#FF0F23</code></td><td><code>#FFFFFF</code></td><td>主要操作</td></tr>
+  <tr><td><code>service</code></td><td><code>#FFE7CC</code></td><td><code>#664100</code></td><td>购买决策（金色）</td></tr>
+  <tr><td><code>secondary</code></td><td><code>#FFF0F4</code></td><td><code>#FF0F23</code></td><td>次要操作（浅红）</td></tr>
+  <tr><td><code>disabled</code></td><td><code>#C2C4CC</code></td><td><code>#FFFFFF</code></td><td>标准禁用态</td></tr>
+</table>
+</div>
+
+<!-- ==================== 9 标签 ==================== -->
+<h2 id="sec-tag"><span class="num">9</span>标签 Tag</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：4 档高度（24/28/32 + 不定高 xs），7 种风格。非交互标签用于状态/类目展示，选中态通过 selected variant 切换，不通过 detach 修改。
+</div>
+
+<h3>标签演示</h3>
+<div class="tag-row">
+  <span class="tag tag-primary">自营</span>
+  <span class="tag tag-primary">PLUS</span>
+  <span class="tag tag-light-red">品牌标签</span>
+  <span class="tag tag-service">金标服务</span>
+  <span class="tag tag-outline">筛选标签</span>
+  <span class="tag tag-neutral">规格选择</span>
+  <span class="tag tag-neutral" style="background:#FFF0F4;color:#FF0F23;border-color:#FF0F23;">已选中</span>
+  <span class="tag tag-disabled">禁用规格</span>
+</div>
+
+<div class="pro-only">
+<table>
+  <tr><th>Size</th><th>高度</th><th>PaddingX</th><th>字号</th><th>圆角</th></tr>
+  <tr><td><code>lg</code></td><td>32px</td><td>10px</td><td>12px</td><td>6px</td></tr>
+  <tr><td><code>md</code></td><td>28px</td><td>8px</td><td>11px</td><td>4px</td></tr>
+  <tr><td><code>sm</code></td><td>24px</td><td>8px</td><td>10px</td><td>4px</td></tr>
+  <tr><td><code>xs</code></td><td>不定高</td><td>6px</td><td>11px</td><td>3px</td></tr>
+</table>
+</div>
+
+<!-- ==================== 10 Toast ==================== -->
+<h2 id="sec-toast"><span class="num">10</span>轻提示 Toast</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：非阻断性短暂提示，屏幕底部弹出，2 秒后自动消失。支持图标前缀和尾部操作链接两种扩展形态。
+</div>
+
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin:14px 0;">
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:12px;background:#fff;border-radius:12px;box-shadow:0px 4px 12px rgba(0,0,0,0.06);font-size:14px;font-weight:500;color:#1A1A1A;min-height:40px;">
+    操作成功
+  </div>
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:12px;background:#fff;border-radius:12px;box-shadow:0px 4px 12px rgba(0,0,0,0.06);font-size:14px;font-weight:500;color:#1A1A1A;min-height:40px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2aa32a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    已加入购物车
+  </div>
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:12px;background:#fff;border-radius:12px;box-shadow:0px 4px 12px rgba(0,0,0,0.06);font-size:14px;font-weight:500;color:#1A1A1A;min-height:40px;">
+    网络异常，请重试
+    <span style="margin-left:4px;color:#0073ff;display:flex;align-items:center;gap:2px;">去看看 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </div>
+</div>
+
+<div class="pro-only">
+<table>
+  <tr><th>Property</th><th>Token</th><th>值</th></tr>
+  <tr><td>Background</td><td><code>color.bg.primary</code></td><td>#FFFFFF</td></tr>
+  <tr><td>Box shadow</td><td><code>shadow.toast</code></td><td>0px 4px 12px rgba(0,0,0,0.06)</td></tr>
+  <tr><td>Border radius</td><td><code>radius.xl</code></td><td>12px</td></tr>
+  <tr><td>Padding</td><td><code>spacing_lg</code></td><td>12px</td></tr>
+  <tr><td>Icon size</td><td><code>icon.sizes.sm</code></td><td>16px</td></tr>
+  <tr><td>Font size</td><td><code>font_size_body_base</code></td><td>14px / 500</td></tr>
+</table>
+</div>
+
+<!-- ==================== 11 Modal ==================== -->
+<h2 id="sec-modal"><span class="num">11</span>弹窗 Modal</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：居中全屏遮罩弹窗，用于重要操作确认。区别于 BottomSheet（底部滑入），Modal 强调「中断性」，必须有主操作按钮。
+</div>
+
+<div style="position:relative;background:rgba(0,0,0,0.15);border-radius:var(--r-xl);padding:24px;margin:14px 0;display:flex;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;width:280px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+    <h4 style="text-align:center;font-size:18px;font-weight:600;color:#171A26;margin:0 0 12px;">确认删除</h4>
+    <p style="text-align:center;font-size:14px;color:#505259;line-height:22px;margin:0 0 24px;">删除后无法恢复，确认要删除该内容吗？</p>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-demo btn-secondary" style="flex:1;height:44px;font-size:15px;">取消</button>
+      <button class="btn-demo btn-lg" style="flex:1;">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="pro-only">
+<table>
+  <tr><th>Property</th><th>值</th></tr>
+  <tr><td>Overlay</td><td><code>rgba(0,0,0,0.70)</code></td></tr>
+  <tr><td>Container width</td><td><code>calc(100vw - 64px)</code> max 327px</td></tr>
+  <tr><td>Border radius</td><td><code>20px (radius.xl)</code></td></tr>
+  <tr><td>Title font</td><td>18px / weight 600</td></tr>
+  <tr><td>Content font</td><td>14px / weight 400 / lineHeight 22px</td></tr>
+  <tr><td>Action padding-top</td><td>24px</td></tr>
+</table>
+</div>
+
+<!-- ==================== 12 BottomSheet ==================== -->
+<h2 id="sec-bottomsheet"><span class="num">12</span>半弹层 BottomSheet</h2>
+
+<div class="basic-only summary">
+  <strong>一句话理解</strong>：从屏幕底部滑入的弹层，圆角仅上方两角（20px），支持拖拽手柄和 auto/half/full 三种高度。与 Modal 的区别：优先级更低，不需要强迫选择。
+</div>
+
+<div style="position:relative;background:rgba(0,0,0,0.12);border-radius:var(--r-xl);padding:16px;margin:14px 0;display:flex;justify-content:center;">
+  <div style="background:#fff;border-radius:20px 20px 0 0;width:300px;padding:0 16px 24px;">
+    <div style="display:flex;justify-content:center;padding:8px 0 16px;">
+      <div style="width:32px;height:4px;border-radius:2px;background:rgba(0,0,0,0.12);"></div>
+    </div>
+    <h4 style="text-align:center;font-size:18px;font-weight:600;color:#171A26;margin:0 0 16px;">选择配送方式</h4>
+    <div style="font-size:14px;color:#3d414d;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.08);">京东快递 · 明日达</div>
+    <div style="font-size:14px;color:#3d414d;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.08);">京东物流 · 次日达</div>
+    <div style="font-size:14px;color:#3d414d;padding:12px 0;">普通快递 · 3-5天</div>
+    <div style="margin-top:16px;">
+      <button class="btn-demo btn-lg" style="width:100%;">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="pro-only">
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Overlay</td><td><code>rgba(0,0,0,0.70)</code></td></tr>
+  <tr><td>Border radius</td><td><code>20px 20px 0 0</code></td></tr>
+  <tr><td>Drag handle width</td><td>32px</td></tr>
+  <tr><td>Drag handle height</td><td>4px</td></tr>
+  <tr><td>Drag handle color</td><td><code>rgba(0,0,0,0.12)</code></td></tr>
+  <tr><td>Drag handle top gap</td><td>8px</td></tr>
+  <tr><td>PaddingX</td><td>16px</td></tr>
+  <tr><td>PaddingBottom</td><td><code>16px + safeAreaBottom</code></td></tr>
+</table>
+</div>
+
+<hr>
+
+<h3>引用</h3>
+<ul style="font-size:13px;">
+  <li>色彩规范：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=862%3A1&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 862:1</a></li>
+  <li>字体规范：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=862%3A252&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 862:252</a></li>
+  <li>边框&圆角&阴影：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=862%3A533&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 862:533</a></li>
+  <li>Icon 规范：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=146%3A39&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 1487:10277</a></li>
+  <li>Button 规范：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=862%3A2634&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 862:2634</a></li>
+  <li>图像&标签：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=862%3A3713&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 862:3713</a></li>
+  <li>半弹层：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=172%3A985&PAGE_LOAD_MODE=1" target="_blank" rel="noopener">Relay 节点 172:985</a></li>
+</ul>
+
+<div style="margin-top:48px;padding-top:16px;border-top:1px solid var(--c-line);color:var(--c-text-3);font-size:12px;text-align:center;">
+  JD APP V16.0 Design System · Design Foundations 基础规范总览 · 生成于 2026-05-25 · Relay fileKey 1958051135088508929
+</div>
+
+</div>
+
+<!-- v0.3: 视图切换 JS -->
+<script>
+(function () {
+  var STORAGE_KEY = 'spec-page-view-mode';
+  var body = document.body;
+  var tabs = document.querySelectorAll('.view-tab');
+  function setMode(mode) {
+    body.classList.remove('mode-basic', 'mode-pro');
+    body.classList.add('mode-' + mode);
+    tabs.forEach(function (t) {
+      var on = t.dataset.view === mode;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) {}
+  }
+  var initial = 'basic';
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'pro' || saved === 'basic') initial = saved;
+  } catch (e) {}
+  setMode(initial);
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { setMode(t.dataset.view); });
+  });
+})();
+</script>
+</body>
+</html>

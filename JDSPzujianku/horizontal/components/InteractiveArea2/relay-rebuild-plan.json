@@ -1,0 +1,367 @@
+{
+  "component_name": "InteractiveArea",
+  "source_files": [
+    "JDSPzujianku/horizontal/components/InteractiveArea2/design.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/spec.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/variants.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/behaviors.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/ai-schema.yaml",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/references/InteractiveArea/InteractiveAvatar.md",
+    "JDSPzujianku/horizontal/components/InteractiveArea2/references/InteractiveArea/InteractiveActionItem.md"
+  ],
+  "relay_source": {
+    "source_file_id": "1958051135088508929",
+    "source_page_id": "0:13090",
+    "source_page_name": "互动区",
+    "scope_node": "1600:588",
+    "reference_nodes": {
+      "area_component": "1600:588",
+      "without_grass": "633:4487",
+      "with_grass": "1600:1053",
+      "avatar_stage": "633:3418",
+      "action_item": "823:3046",
+      "volume_control": "633:3616 / 1791:107"
+    },
+    "target_file_url": "https://relay.jd.com/file/design?id=2054381889128513537&title=JDSP&page_id=0%3A2",
+    "target_page_name": "Interaction Area Rebuild Test"
+  },
+  "atoms": [
+    {
+      "name": "Avatar Image",
+      "semantic_source": "InteractiveAvatar.md",
+      "size": {
+        "token": "avatar.size-42",
+        "dp": 42
+      },
+      "radius_token": "avatar.radius = circle / radius.full",
+      "stroke_token": "stroke.interactive_avatar_image_border",
+      "notes": "Use placeholder fill until avatar image asset is available."
+    },
+    {
+      "name": "Interactive Icon",
+      "semantic_source": "InteractiveActionItem.md / visual/Icon.md",
+      "size": {
+        "token": "size.interactive_icon",
+        "dp": 50
+      },
+      "content_size_note": "Icon art is about 27dp inside a 50dp transparent hotzone.",
+      "notes": "Use TODO_ASSET placeholder frames for missing SVG assets."
+    },
+    {
+      "name": "Label Text",
+      "semantic_source": "InteractiveActionItem.md",
+      "typography_token": "font_size_11_500 proposal + font_weight_medium",
+      "color_token": "color/text_immerse",
+      "line_height_dp": 15
+    },
+    {
+      "name": "Volume Icon",
+      "semantic_source": "InteractiveActionItem.md#volume",
+      "size_tokens": [
+        "size.interactive_volume_icon_compact",
+        "size.interactive_volume_icon_inline"
+      ],
+      "notes": "Use TODO_ASSET placeholder for icon-volume-mute-fill.svg."
+    }
+  ],
+  "components": [
+    {
+      "name": "InteractiveAvatar",
+      "frame_name": "InteractiveAvatar / not_live / unfollowed",
+      "width_dp": 50,
+      "height_dp": 83,
+      "layout": "absolute internal positioning",
+      "children": [
+        "Avatar Image",
+        "Follow Badge"
+      ]
+    },
+    {
+      "name": "InteractiveActionItem",
+      "frame_name": "InteractiveActionItem / like / default",
+      "width_dp": 50,
+      "height_dp": 62,
+      "layout": "absolute internal positioning; label top 43dp",
+      "children": [
+        "Icon TODO_ASSET",
+        "Label Text"
+      ]
+    },
+    {
+      "name": "InteractiveVolumeControl",
+      "frame_name": "InteractiveVolumeControl / muted",
+      "width_dp": 50,
+      "height_dp": 50,
+      "layout": "absolute internal positioning",
+      "children": [
+        "Circle visual base",
+        "Volume Icon TODO_ASSET"
+      ]
+    },
+    {
+      "name": "InteractiveArea",
+      "frame_name": "InteractiveArea / without_grass / default",
+      "width_dp": 50,
+      "height_dp": 319,
+      "layout": "column",
+      "children": [
+        "InteractiveAvatar",
+        "InteractiveActionItem(type=like)",
+        "InteractiveActionItem(type=comment)",
+        "InteractiveActionItem(type=share)",
+        "InteractiveVolumeControl"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "name": "without_grass",
+      "order": [
+        "avatar",
+        "like",
+        "comment",
+        "share",
+        "volume"
+      ],
+      "height_formula": "size.interactive_avatar_h + 3 * size.action_item + size.interactive_volume_hotzone + 4 * space.action_item_stack_gap",
+      "height_dp": 319,
+      "must_not_render": [
+        "grass placeholder"
+      ]
+    },
+    {
+      "name": "with_grass",
+      "order": [
+        "avatar",
+        "like",
+        "comment",
+        "grass",
+        "share",
+        "volume"
+      ],
+      "height_formula": "size.interactive_avatar_h + 4 * size.action_item + size.interactive_volume_hotzone + 5 * space.action_item_stack_gap",
+      "height_dp": 381
+    }
+  ],
+  "states": {
+    "created_in_test_page": [
+      {
+        "frame_name": "InteractiveArea / without_grass / default",
+        "variant": "without_grass",
+        "avatar_live_state": "not_live",
+        "avatar_relationship": "unfollowed",
+        "like_active": false,
+        "volume_state": "muted"
+      },
+      {
+        "frame_name": "InteractiveArea / without_grass / like_active",
+        "variant": "without_grass",
+        "avatar_live_state": "not_live",
+        "avatar_relationship": "unfollowed",
+        "like_active": true,
+        "volume_state": "muted"
+      }
+    ],
+    "available_but_not_created_now": [
+      "with_grass",
+      "avatar_live",
+      "relationship_intermediate",
+      "relationship_followed",
+      "grass_active",
+      "action_disabled",
+      "volume_unmute_prompt"
+    ]
+  },
+  "layout_rules": {
+    "container_direction": "column",
+    "container_width": {
+      "token": "size.interactive_avatar_w / size.interactive_icon",
+      "dp": 50
+    },
+    "stack_gap": {
+      "token": "space.action_item_stack_gap",
+      "dp": 0
+    },
+    "container_background": "page-owned; no component background",
+    "positioning": "page-owned; Relay source canvas coordinates must not become layout tokens",
+    "action_item_internal": {
+      "icon_hotzone": {
+        "token": "size.interactive_icon",
+        "dp": 50
+      },
+      "label_top": {
+        "token": "space.action_item_label_top",
+        "dp": 43
+      },
+      "label_bottom_inset": {
+        "token": "space.action_item_bottom_inset",
+        "dp": 4
+      }
+    },
+    "volume_internal": {
+      "hotzone": {
+        "token": "size.interactive_volume_hotzone",
+        "dp": 50
+      },
+      "circle": {
+        "token": "size.interactive_volume_circle",
+        "dp": 30
+      },
+      "circle_inset": {
+        "token": "space.interactive_volume_circle_inset",
+        "dp": 10
+      }
+    }
+  },
+  "color_tokens": [
+    {
+      "token": "color/title_immerse",
+      "value": "#ffffff",
+      "usage": "default interactive icons and avatar border"
+    },
+    {
+      "token": "color/text_immerse",
+      "value": "#ffffffe5",
+      "usage": "default count labels"
+    },
+    {
+      "token": "color/primary",
+      "value": "#ff0f23",
+      "usage": "like active, follow badge, live ring"
+    },
+    {
+      "token": "color/Recommend_btntext",
+      "value": "#14ad5d",
+      "usage": "grass active"
+    },
+    {
+      "token": "color.interactive_volume_bg -> color/background 3",
+      "value": "#ffffffe5",
+      "usage": "volume circle/pill background"
+    },
+    {
+      "token": "color.interactive_volume_fg -> color/title",
+      "value": "#171a26",
+      "usage": "volume icon/text foreground"
+    },
+    {
+      "token": "color/text_disable",
+      "value": "#666666",
+      "usage": "disabled icon color"
+    }
+  ],
+  "typography_tokens": [
+    {
+      "token": "font_size_11_500 proposal",
+      "font_family": "PingFang SC",
+      "font_size_dp": 11,
+      "font_weight": 500,
+      "line_height_dp": 15,
+      "usage": "InteractiveActionItem count labels"
+    },
+    {
+      "token": "font.interactive_volume_label / font_size_10_500",
+      "font_family": "PingFang SC",
+      "font_size_dp": 10,
+      "font_weight": 500,
+      "line_height_dp": 10.91,
+      "usage": "unmute prompt label"
+    },
+    {
+      "token": "font.interactive_avatar_live_label",
+      "font_family": "PingFang SC",
+      "font_size_dp": 9,
+      "font_weight": 500,
+      "line_height_dp": 11,
+      "usage": "live badge label"
+    }
+  ],
+  "radius_tokens": [
+    {
+      "token": "radius.full / avatar.radius = circle",
+      "usage": "avatar crop"
+    },
+    {
+      "token": "radius.interactive_avatar_follow_badge",
+      "dp": 30,
+      "usage": "20dp follow badge"
+    },
+    {
+      "token": "radius.interactive_volume_circle",
+      "dp": 9999,
+      "usage": "30dp muted volume button"
+    },
+    {
+      "token": "radius.interactive_volume_pill",
+      "dp": 9999,
+      "usage": "69x30 unmute prompt pill"
+    }
+  ],
+  "spacing_tokens": [
+    {
+      "token": "space.action_item_stack_gap",
+      "dp": 0
+    },
+    {
+      "token": "space.action_item_label_top",
+      "dp": 43
+    },
+    {
+      "token": "space.action_item_bottom_inset",
+      "dp": 4
+    },
+    {
+      "token": "space.interactive_avatar_x",
+      "dp": 4
+    },
+    {
+      "token": "space.interactive_avatar_y_default",
+      "dp": 30
+    },
+    {
+      "token": "space.interactive_avatar_follow_x",
+      "dp": 15
+    },
+    {
+      "token": "space.interactive_avatar_follow_y",
+      "dp": 62
+    },
+    {
+      "token": "space.interactive_volume_circle_inset",
+      "dp": 10
+    },
+    {
+      "token": "space.interactive_volume_icon_compact_inset",
+      "dp": 17
+    }
+  ],
+  "asset_requirements": {
+    "missing_or_not_imported_for_test": [
+      "avatar image",
+      "icon-like-default.svg",
+      "icon-like-active.svg",
+      "icon-comment-default.svg",
+      "icon-share-default.svg",
+      "icon-volume-mute-fill.svg",
+      "icon-add.svg"
+    ],
+    "placeholder_policy": "Use placeholder frames named with TODO_ASSET instead of inventing inaccurate icons/images."
+  },
+  "mcp_supported_items": [
+    "Create target page named Interaction Area Rebuild Test",
+    "Create frames and text nodes",
+    "Set frame names to semantic names from design.md/spec.md",
+    "Set DP sizes from spec.md and ai-schema.yaml",
+    "Apply approximate fills, strokes, radii, text styles, and layout positions",
+    "Create TODO_ASSET placeholder nodes for missing icons/images"
+  ],
+  "manual_check_items": [
+    "Verify actual SVG icon import and single-color currentColor cleanup",
+    "Replace avatar placeholder with real image or image component",
+    "Confirm disabled asset behavior for comment/share",
+    "Confirm loading/click animation tokens if required",
+    "Confirm exact shadow_interactive rendering because MCP may not reproduce SVG drop-shadow/text-shadow exactly",
+    "Confirm typography token font_size_11_500 because it is documented as a missing/proposed token",
+    "Confirm page-owned right-side position, safe-area, and z-index in a real video page"
+  ]
+}

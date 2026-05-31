@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JD APP 16.0 GUIDELINE · InteractiveActionItem 沉浸式互动操作项</title>
+  <meta name="description" content="短视频沉浸流右侧互动列最小可交互单元（Molecule）规范。v1.2.0 MCP 实测校验，补齐底部静音 / 取消静音控制。" />
+  <style>
+    :root {
+      --color-primary: #ff0f23;
+      --color-recommend-btntext: #14ad5d;
+      --color-title-immerse: #ffffff;
+      --color-text-immerse: #ffffffe5;
+      --color-text-immerse-help: #ffffffb2;
+      --color-text-disable: #666666;
+      --interactive-color-icon-default-immersive: var(--color-title-immerse);
+      --interactive-color-icon-active-like: var(--color-primary);
+      --interactive-color-icon-active-grass: var(--color-recommend-btntext);
+      --interactive-color-text-counter: var(--color-text-immerse);
+      --interactive-color-text-counter-shadow: rgba(0, 0, 0, 0.2);
+      --spacing-xs: 4px;
+      --spacing-md: 8px;
+      --size-interactive-icon: 50px;
+      --size-action-item: 62px;
+      --size-action-item-content: 58px;
+      --size-action-item-label: 14px;
+      --space-action-item-zero: 0;
+      --space-action-item-label-top: 43px;
+      --space-action-item-bottom-inset: 4px;
+      --space-action-item-stack-gap: 0;
+      --font-family-pf-medium: "PingFang SC", "PingFang-SC", "Microsoft YaHei", sans-serif;
+      --font-size-11: 11px;
+      --font-weight-medium: 500;
+      --line-height-counter: 15px;
+      --shadow-interactive-filter: drop-shadow(0 1px 1px var(--interactive-color-text-counter-shadow));
+      --shadow-interactive-text: 0 1px 1px var(--interactive-color-text-counter-shadow);
+      --icon-size-interactive: var(--size-interactive-icon);
+      --color-interactive-volume-bg: #ffffffe5;
+      --color-interactive-volume-fg: #171a26;
+      --color-interactive-volume-transparent: transparent;
+      --border-interactive-volume-reset: none;
+      --opacity-interactive-volume-content: 0.90;
+      --size-interactive-volume-hotzone: 50px;
+      --size-interactive-volume-control-w: 69px;
+      --size-interactive-volume-control-h: 30px;
+      --size-interactive-volume-circle: 30px;
+      --size-interactive-volume-icon-compact: 16px;
+      --size-interactive-volume-icon-inline: 14px;
+      --space-interactive-volume-circle-inset: 10px;
+      --space-interactive-volume-icon-compact-inset: 17px;
+      --space-interactive-volume-label-x: 7px;
+      --space-interactive-volume-label-y: 9.5px;
+      --space-interactive-volume-inline-icon-x: 48px;
+      --space-interactive-volume-inline-icon-y: 8px;
+      --space-interactive-volume-reset: 0;
+      --radius-interactive-volume-pill: 9999px;
+      --radius-interactive-volume-circle: 9999px;
+      --font-size-10: 10px;
+      --line-height-interactive-volume-label: 10.91px;
+    }
+    :root {
+      --doc-color-text: #11141A;
+      --doc-color-help: #6B6F7A;
+      --doc-color-divider: rgba(17, 20, 26, 0.08);
+      --doc-color-tips-bg: #F0F7FF;
+      --doc-color-tips-border: #B3D4FC;
+      --doc-color-must: #E94B5A;
+      --doc-color-optional: #5BAA5F;
+      --doc-color-example-bg: #FFF8DC;
+      --doc-color-link: #1976D2;
+      --doc-color-bullet: #1976D2;
+      --doc-banner-bg: #F5F6FA;
+      --doc-max-width: 1666px;
+      --doc-page-max-width: 1200px;
+      --doc-demo-bg: linear-gradient(160deg, #2a2a32 0%, #11141a 100%);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #fff; color: var(--doc-color-text); font-family: var(--font-family-pf-medium); line-height: 1.6; }
+    .wrap { max-width: var(--doc-max-width); margin: 0 auto; }
+    .banner { position: relative; background: #fff; display: grid; grid-template-columns: 1fr 548px; min-height: 240px; }
+    .banner__text { padding: 54px 60px; display: flex; flex-direction: column; gap: 28px; }
+    .banner__tag { font-size: 20px; line-height: 20px; letter-spacing: .04em; }
+    .banner__title { font-size: 40px; line-height: 1.1; margin: 0; font-weight: 600; }
+    .banner__subtitle { font-size: 16px; line-height: 16px; margin: 0; }
+    .banner__art { width: 548px; height: 240px; background-image: radial-gradient(circle at 30% 50%, #FFB8C5 0%, #FFE0E6 28%, transparent 62%), radial-gradient(circle at 68% 48%, #E8DDFF 0%, transparent 52%); }
+    .page { max-width: var(--doc-page-max-width); margin: 0 auto; padding: 60px; }
+    .page__h2 { font-size: 28px; font-weight: 600; margin: 0 0 40px; }
+    .page__h2 .num { color: var(--doc-color-link); margin-right: 8px; }
+    .guideline-tips { border: 1px solid var(--doc-color-tips-border); background: var(--doc-color-tips-bg); padding: 28px 36px; border-radius: 8px; margin: 0 0 56px; }
+    .guideline-tips h3 { margin: 0 0 16px; }
+    .guideline-tips ol { margin: 0; padding-left: 24px; }
+    .must { color: var(--doc-color-must); }
+    .optional { color: var(--doc-color-optional); }
+    .example-header { background: var(--doc-color-example-bg); padding: 10px 16px; margin: 0 0 36px; border-radius: 4px; display: flex; gap: 24px; flex-wrap: wrap; align-items: baseline; }
+    .example-tag { color: var(--doc-color-must); font-weight: 600; }
+    .example-link { color: var(--doc-color-link); text-decoration: none; }
+    .example-link:hover { text-decoration: underline; }
+    .bullet-section { margin: 0 0 44px; }
+    .bullet-section__title { position: relative; padding-left: 24px; font-size: 18px; margin: 0 0 16px; font-weight: 500; }
+    .bullet-section__title::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--doc-color-bullet); }
+    .bullet-section p, .bullet-section ul, .bullet-section ol { font-size: 15px; line-height: 1.8; margin: 0 0 12px; }
+    .bullet-section ul, .bullet-section ol { padding-left: 24px; }
+    .section-table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14px; }
+    .section-table th, .section-table td { border: 1px solid var(--doc-color-divider); text-align: left; padding: 10px 14px; vertical-align: top; }
+    .section-table th { background: var(--doc-banner-bg); font-weight: 600; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    .token-ref { color: var(--doc-color-link); }
+    .muted { color: var(--doc-color-help); font-size: 14px; }
+    .warn { color: #b26b00; }
+    .anatomy-pre { background: var(--doc-banner-bg); border: 1px solid var(--doc-color-divider); border-radius: 4px; padding: 16px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 1.5; overflow-x: auto; white-space: pre; margin: 0 0 16px; }
+    pre.code { background: #1a1a1a; color: #e8e8e8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; line-height: 1.5; margin: 0 0 16px; }
+    .demo-rail { display: flex; flex-direction: column; align-items: center; gap: var(--space-action-item-stack-gap); padding: 32px 24px; border-radius: 8px; background: var(--doc-demo-bg); margin: 16px 0 24px; width: fit-content; }
+    .iai { width: var(--size-interactive-icon); height: var(--size-action-item); position: relative; cursor: default; }
+    .iai__icon-wrap { position: absolute; left: var(--space-action-item-zero); top: var(--space-action-item-zero); width: var(--icon-size-interactive); height: var(--icon-size-interactive); color: var(--interactive-color-icon-default-immersive); filter: var(--shadow-interactive-filter); }
+    .iai__icon-wrap[data-state="active-like"] { color: var(--interactive-color-icon-active-like); }
+    .iai__icon-wrap[data-state="active-grass"] { color: var(--interactive-color-icon-active-grass); }
+    .iai__icon-wrap[data-icon="icon-like-default"] { --icon-url: url("src/assets/icons/icon-like-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-like-active"] { --icon-url: url("src/assets/icons/icon-like-active.svg"); }
+    .iai__icon-wrap[data-icon="icon-comment-default"] { --icon-url: url("src/assets/icons/icon-comment-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-grass-default"] { --icon-url: url("src/assets/icons/icon-grass-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-grass-active"] { --icon-url: url("src/assets/icons/icon-grass-active.svg"); }
+    .iai__icon-wrap[data-icon="icon-share-default"] { --icon-url: url("src/assets/icons/icon-share-default.svg"); }
+    .iai__icon { width: 100%; height: 100%; display: block; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
+    .iai__label { position: absolute; left: var(--space-action-item-zero); top: var(--space-action-item-label-top); width: var(--size-interactive-icon); height: var(--size-action-item-label); font-family: var(--font-family-pf-medium); font-size: var(--font-size-11); font-weight: var(--font-weight-medium); line-height: var(--line-height-counter); text-align: center; color: var(--interactive-color-text-counter); text-shadow: var(--shadow-interactive-text); word-break: break-word; }
+    .iai__label[data-state="active-like"] { color: var(--interactive-color-icon-active-like); }
+    .iai__label[data-state="active-grass"] { color: var(--interactive-color-icon-active-grass); }
+    .iai__label:empty { display: none; }
+    .ivc { position: relative; border: var(--border-interactive-volume-reset); padding: var(--space-interactive-volume-reset); color: var(--color-interactive-volume-fg); cursor: default; }
+    .ivc[data-state="muted"] { width: var(--size-interactive-volume-hotzone); height: var(--size-interactive-volume-hotzone); background: var(--color-interactive-volume-transparent); }
+    .ivc[data-state="unmute-prompt"] { width: var(--size-interactive-volume-control-w); height: var(--size-interactive-volume-control-h); border-radius: var(--radius-interactive-volume-pill); background: var(--color-interactive-volume-bg); }
+    .ivc__circle { position: absolute; left: var(--space-interactive-volume-circle-inset); top: var(--space-interactive-volume-circle-inset); width: var(--size-interactive-volume-circle); height: var(--size-interactive-volume-circle); border-radius: var(--radius-interactive-volume-circle); background: var(--color-interactive-volume-bg); }
+    .ivc__icon { position: absolute; color: currentColor; display: block; background: currentColor; -webkit-mask: url("src/assets/icons/icon-volume-mute-fill.svg") center / contain no-repeat; mask: url("src/assets/icons/icon-volume-mute-fill.svg") center / contain no-repeat; }
+    .ivc[data-state="muted"] .ivc__icon { left: var(--space-interactive-volume-icon-compact-inset); top: var(--space-interactive-volume-icon-compact-inset); width: var(--size-interactive-volume-icon-compact); height: var(--size-interactive-volume-icon-compact); }
+    .ivc[data-state="unmute-prompt"] .ivc__icon { left: var(--space-interactive-volume-inline-icon-x); top: var(--space-interactive-volume-inline-icon-y); width: var(--size-interactive-volume-icon-inline); height: var(--size-interactive-volume-icon-inline); opacity: var(--opacity-interactive-volume-content); }
+    .ivc__label { position: absolute; left: var(--space-interactive-volume-label-x); top: var(--space-interactive-volume-label-y); opacity: var(--opacity-interactive-volume-content); font-family: var(--font-family-pf-medium); font-size: var(--font-size-10); font-weight: var(--font-weight-medium); line-height: var(--line-height-interactive-volume-label); color: currentColor; white-space: nowrap; }
+    .state-toggle { display: flex; gap: 8px; margin: 0 0 16px; flex-wrap: wrap; }
+    .state-toggle button { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--doc-color-divider); background: #fff; cursor: pointer; font-size: 13px; font-family: var(--font-family-pf-medium); transition: background 0.15s, border-color 0.15s; }
+    .state-toggle button:hover { background: var(--doc-color-tips-bg); }
+    .state-toggle button.is-active { background: var(--doc-color-link); color: #fff; border-color: var(--doc-color-link); }
+    .site-footer { padding: 40px 60px; border-top: 1px solid var(--doc-color-divider); color: var(--doc-color-help); font-size: 13px; }
+    @media (max-width: 768px) {
+      .banner { grid-template-columns: 1fr; }
+      .banner__art { width: 100%; height: 120px; }
+      .banner__text, .page, .site-footer { padding: 24px 20px; }
+      .banner__title { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__tag">JD APP 16.0&nbsp;&nbsp;GUIDELINE</span>
+        <h1 class="banner__title">InteractiveActionItem<br />沉浸式互动操作项</h1>
+        <p class="banner__subtitle">设计与用研部 - 综合业务设计组 · Molecule v1.2.0</p>
+      </div>
+      <div class="banner__art" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+      <h2 class="page__h2"><span class="num">1.</span>业务组件库（业务型组件）</h2>
+
+      <aside class="guideline-tips">
+        <h3>🌟 规范要素参考：</h3>
+        <ol>
+          <li><strong>组件定义</strong><span class="must">（必写）</span>：组件目的或用途</li>
+          <li><strong>行为准则</strong><span class="optional">（选写）</span>：与用户约定好的行为规则</li>
+          <li><strong>组件类型</strong><span class="optional">（选写）</span>：交互/视觉形态分类</li>
+          <li><strong>组件结构</strong><span class="must">（必写）</span>：内部组成、层级及约束</li>
+          <li><strong>组件属性</strong><span class="must">（必写）</span>：尺寸、间距、颜色、适配</li>
+          <li><strong>典型场景示意</strong><span class="must">（必写）</span>：覆盖典型场景</li>
+          <li><strong>错误示例</strong><span class="optional">（选写）</span>：避免误用</li>
+        </ol>
+      </aside>
+
+      <p class="example-header">
+        <span class="example-tag">*示意：</span>
+        <span><strong>沉浸式互动操作项（InteractiveActionItem） · published v1.2.0</strong></span>
+        <a class="example-link" href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A13090&node_id=0%3A13091">Relay 规范入口 →</a>
+        <a class="example-link" href="./InteractiveActionItem.md">InteractiveActionItem.md →</a>
+        <a class="example-link" href="../../../../../foundations/visual/Icon.md">Icon.md →</a>
+        <a class="example-link" href="../../../../../foundations/tokens/color.md">color.md →</a>
+        <a class="example-link" href="../../../../../foundations/tokens/spacing.md">spacing.md →</a>
+        <a class="example-link" href="../../../../../foundations/tokens/shadow.md">shadow.md →</a>
+      </p>
+
+      <!-- §1 定义 -->
+      <section class="bullet-section" id="interactive-action-item-definition">
+        <h3 class="bullet-section__title">沉浸式互动操作项 定义</h3>
+        <p><strong>InteractiveActionItem</strong> 是短视频沉浸流右侧互动列的最小可交互单元（Molecule）。每个操作项由 <span class="token-ref">Icon（interactive, size="interactive"）</span> 与计数 Label 垂直堆叠，承载点赞、评论、种草、分享四类强交互；底部音量由独立 <span class="mono">InteractiveVolumeControl</span> 承载。</p>
+        <p><strong>适用场景</strong>：Action Rail 竖排 4 项并追加底部音量控制；沉浸式深色背景；图标与文字均使用 <span class="mono token-ref">shadow_interactive</span> 防穿透。</p>
+        <p class="muted">层级：Icon + Text → Molecule；4 × InteractiveActionItem + InteractiveVolumeControl → Organism（Action Rail）。</p>
+      </section>
+
+      <!-- §2 行为准则 -->
+      <section class="bullet-section" id="interactive-action-item-behavior">
+        <h3 class="bullet-section__title">行为准则</h3>
+        <p>Label 仅展示经 <span class="mono">formatCount</span> 格式化的<strong>真实数字</strong>，禁止固定词透传。</p>
+        <table class="section-table">
+          <thead><tr><th>原始值</th><th>显示值</th><th>规则</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">undefined</td><td>（不渲染）</td><td>—</td></tr>
+            <tr><td class="mono">0</td><td class="mono">0</td><td>零计数显式展示</td></tr>
+            <tr><td class="mono">1232</td><td class="mono">1232</td><td>&lt; 10000</td></tr>
+            <tr><td class="mono">99000</td><td class="mono">9.9万</td><td>≥ 10000，1 位小数</td></tr>
+            <tr><td class="mono">345000</td><td class="mono">34.5万</td><td>尾零保留（1.0万）</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>热区：<span class="token-ref">size.interactive_icon</span>（<span class="mono">50×50</span>）不可裁剪；整项 <span class="token-ref">size.action_item</span>（<span class="mono">50×62</span>）可点。</li>
+          <li>图标：<span class="mono">icons/interactive/</span> 资产 + <span class="mono">currentColor</span>（见 Icon.md §6）。</li>
+          <li><span class="mono">comment</span> / <span class="mono">share</span> 忽略 <span class="mono">isActive</span>。</li>
+          <li>阴影约束：图标用 <span class="mono">filter: drop-shadow</span>，文字用 <span class="mono">text-shadow</span>，同一元素禁止叠加两者。</li>
+        </ul>
+      </section>
+
+      <!-- §3 类型 -->
+      <section class="bullet-section" id="interactive-action-item-types">
+        <h3 class="bullet-section__title">沉浸式互动操作项 类型</h3>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th><span class="mono">type</span></th>
+              <th>Default 资产</th>
+              <th>Active 资产</th>
+              <th>激活图标色 Token</th>
+              <th>激活文字色 Token</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">like</td>
+              <td class="mono">icon-like-default</td>
+              <td class="mono">icon-like-active</td>
+              <td class="mono token-ref">color/primary</td>
+              <td class="mono token-ref">color/primary</td>
+            </tr>
+            <tr>
+              <td class="mono">comment</td>
+              <td class="mono">icon-comment-default</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="mono">grass</td>
+              <td class="mono">icon-grass-default</td>
+              <td class="mono">icon-grass-active</td>
+              <td class="mono token-ref">color/Recommend_btntext</td>
+              <td class="mono token-ref">color/Recommend_btntext</td>
+            </tr>
+            <tr>
+              <td class="mono">share</td>
+              <td class="mono">icon-share-default</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted">约束：comment / share 无 isActive 状态，传入 isActive=true 时忽略，不改变外观。</p>
+        <p class="muted">Icon.md 节点映射（1808:654）：like · comment · grass · share；Active：633:4222 / 633:4342。</p>
+      </section>
+
+      <!-- §4 结构 -->
+      <section class="bullet-section" id="interactive-action-item-structure">
+        <h3 class="bullet-section__title">沉浸式互动操作项 结构</h3>
+        <pre class="anatomy-pre">┌─────────────────────────┐
+│  InteractiveActionItem  │  ← 宽: size.interactive_icon (50px)
+│  ┌───────────────────┐  │     高: size.action_item (62px)
+│  │  Icon 50×50       │  │  ← Icon.md size="interactive"
+│  └───────────────────┘  │
+│  Label top: 43px         │  ← 与 50px 图标热区重叠
+│  ┌───────────────────┐  │
+│  │  Label 14px       │  │  ← 内容高 58px；底部留 4px
+│  └───────────────────┘  │
+└─────────────────────────┘</pre>
+        <table class="section-table">
+          <thead><tr><th>层</th><th>原子</th><th>Token / 资产</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>A1</td>
+              <td>Icon（Interactive）</td>
+              <td><span class="mono">icons/interactive/*</span> · <span class="token-ref">--icon-size-interactive</span> (50px)</td>
+            </tr>
+            <tr>
+              <td>A2</td>
+              <td>Label Text</td>
+              <td><span class="token-ref">--font-size-11</span> (11px) · <span class="token-ref">--font-weight-medium</span> (500) · <span class="token-ref">--line-height-counter</span> (15px)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- §5 设计属性 -->
+      <section class="bullet-section" id="interactive-action-item-properties">
+        <h3 class="bullet-section__title">设计属性</h3>
+
+        <p><strong>尺寸与间距</strong></p>
+        <table class="section-table">
+          <thead><tr><th>属性</th><th>Token</th><th>CSS 变量</th><th>值</th></tr></thead>
+          <tbody>
+            <tr><td>图标容器</td><td class="mono">size.interactive_icon</td><td class="mono">--size-interactive-icon</td><td>50px</td></tr>
+            <tr><td>内部视觉内容高</td><td class="mono">size.action_item_content</td><td class="mono">--size-action-item-content</td><td>58px</td></tr>
+            <tr><td>Label 顶部定位</td><td class="mono">space.action_item_label_top</td><td class="mono">--space-action-item-label-top</td><td>43px</td></tr>
+            <tr><td>Label 底部留白</td><td class="mono">space.action_item_bottom_inset</td><td class="mono">--space-action-item-bottom-inset</td><td>4px</td></tr>
+            <tr><td>单项总高</td><td class="mono">size.action_item</td><td class="mono">--size-action-item</td><td>62px</td></tr>
+            <tr><td>项间距</td><td class="mono">space.action_item_stack_gap</td><td class="mono">--space-action-item-stack-gap</td><td>0</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>排版字体</strong></p>
+        <table class="section-table">
+          <thead><tr><th>属性</th><th>Token</th><th>CSS 变量</th><th>值</th><th>来源</th></tr></thead>
+          <tbody>
+            <tr><td>Label 字族</td><td class="mono">font_family_pf_medium</td><td class="mono">--font-family-pf-medium</td><td>PingFang SC</td><td>MCP 实测</td></tr>
+            <tr><td>Label 字号/字重</td><td class="mono">font_size_11_500</td><td class="mono">--font-size-11 / --font-weight-medium</td><td>11px / 500</td><td>MCP 实测 ⚠️ 非 400</td></tr>
+            <tr><td>Label 行高</td><td>MCP 实测</td><td class="mono">--line-height-counter</td><td>15px</td><td>设计稿显式值</td></tr>
+            <tr><td>文字对齐</td><td>—</td><td>—</td><td>center</td><td>MCP 实测</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>色彩与状态</strong></p>
+        <table class="section-table">
+          <thead><tr><th>状态</th><th>Token</th><th>CSS 变量</th><th>值</th></tr></thead>
+          <tbody>
+            <tr><td>Label Default</td><td class="mono">color/text_immerse</td><td class="mono">--color-text-immerse</td><td>#ffffffe5</td></tr>
+            <tr><td>Icon Default</td><td class="mono">color/title_immerse</td><td class="mono">--color-title-immerse</td><td>#ffffff</td></tr>
+            <tr><td>Like Active</td><td class="mono">color/primary</td><td class="mono">--color-primary</td><td>#ff0f23</td></tr>
+            <tr><td>Grass Active</td><td class="mono">color/Recommend_btntext</td><td class="mono">--color-recommend-btntext</td><td>#14ad5d</td></tr>
+            <tr><td>Disabled Label</td><td class="mono">color/text_immerse_help</td><td class="mono">--color-text-immerse-help</td><td>#ffffffb2</td></tr>
+            <tr><td>Disabled Icon</td><td class="mono">color/text_disable</td><td class="mono">--color-text-disable</td><td>#666666</td></tr>
+            <tr><td>Volume BG</td><td class="mono">color.interactive_volume_bg → color/background 3</td><td class="mono">--color-interactive-volume-bg</td><td>#ffffffe5</td></tr>
+            <tr><td>Volume FG</td><td class="mono">color.interactive_volume_fg → color/title</td><td class="mono">--color-interactive-volume-fg</td><td>#171a26</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>阴影</strong></p>
+        <table class="section-table">
+          <thead><tr><th>元素</th><th>Token</th><th>实现</th></tr></thead>
+          <tbody>
+            <tr><td>图标</td><td class="mono">shadow_interactive</td><td><span class="mono">filter: drop-shadow(0 1px 1px rgba(0,0,0,.2))</span></td></tr>
+            <tr><td>文字</td><td class="mono">shadow_interactive</td><td><span class="mono">text-shadow: 0 1px 1px rgba(0,0,0,.2)</span></td></tr>
+          </tbody>
+        </table>
+
+        <p class="warn">⚠️ Label 使用 <span class="mono">color/text_immerse</span>（#ffffffe5，约 90% 不透明度），图标 Default 使用 <span class="mono">color/title_immerse</span>（#ffffff，纯白），二者不可混用。</p>
+        <p class="warn">⚠️ 禁止同一元素同时设置 <span class="mono">drop-shadow</span> 与 <span class="mono">text-shadow</span>。</p>
+      </section>
+
+      <!-- §6 典型场景示意 -->
+      <section class="bullet-section" id="interactive-action-item-scenes">
+        <h3 class="bullet-section__title">典型场景示意</h3>
+        <p>Action Rail：项间距 <span class="token-ref">space.action_item_stack_gap</span>；互动项内部为绝对定位，Label 顶部位于 <span class="mono">43px</span>，内容高 <span class="mono">58px</span>，容器底部留 <span class="mono">4px</span>。演示区图标按 <a class="example-link" href="../../../../../foundations/visual/Icon.md">Icon.md</a>「核心互动资产映射表」引用 <span class="mono">src/assets/icons/icon-*.svg</span>，并通过 CSS mask + <span class="mono">currentColor</span> 响应 Default / Active 状态色。</p>
+
+        <div class="state-toggle" id="stateToggle">
+          <button data-target="all" class="is-active">全部 Default</button>
+          <button data-target="like-active">点赞 Active</button>
+          <button data-target="grass-active">种草 Active</button>
+          <button data-target="volume-muted">静音</button>
+          <button data-target="volume-unmute">取消静音</button>
+        </div>
+
+        <div class="demo-rail" role="group" aria-label="Action Rail 演示">
+          <article class="iai" data-type="like" data-default-icon="icon-like-default" data-active-icon="icon-like-active">
+            <div class="iai__icon-wrap" data-icon="icon-like-default" data-icon-node="1808:654;1600:1055" aria-hidden="true">
+              <span class="iai__icon" aria-hidden="true"></span>
+            </div>
+            <span class="iai__label">34.5万</span>
+          </article>
+
+          <article class="iai" data-type="comment" data-default-icon="icon-comment-default">
+            <div class="iai__icon-wrap" data-icon="icon-comment-default" data-icon-node="1808:654;1600:1056" aria-hidden="true">
+              <span class="iai__icon" aria-hidden="true"></span>
+            </div>
+            <span class="iai__label">1232</span>
+          </article>
+
+          <article class="iai" data-type="grass" data-default-icon="icon-grass-default" data-active-icon="icon-grass-active">
+            <div class="iai__icon-wrap" data-icon="icon-grass-default" data-icon-node="1808:654;1600:1057" aria-hidden="true">
+              <span class="iai__icon" aria-hidden="true"></span>
+            </div>
+            <span class="iai__label">9.9万</span>
+          </article>
+
+          <article class="iai" data-type="share" data-default-icon="icon-share-default">
+            <div class="iai__icon-wrap" data-icon="icon-share-default" data-icon-node="1808:654;1600:1061" aria-hidden="true">
+              <span class="iai__icon" aria-hidden="true"></span>
+            </div>
+            <span class="iai__label">0</span>
+          </article>
+
+          <button class="ivc" data-state="muted" type="button" aria-label="静音" data-icon-node="1791:109">
+            <span class="ivc__circle" aria-hidden="true"></span>
+            <span class="ivc__icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <p>
+          <a class="example-link" href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=146%3A39&node_id=1487%3A10277">Icon 规范入口（1487:10277）→</a>
+        </p>
+      </section>
+
+      <!-- §7 错误示例 -->
+      <section class="bullet-section" id="interactive-action-item-donts">
+        <h3 class="bullet-section__title">错误示例</h3>
+        <ul>
+          <li>Label 透传「种草」「评论」等固定词。</li>
+          <li>互动图标使用 <span class="mono">xs/sm/md/lg</span> 常规尺寸，而非 Icon.md <span class="mono">size="interactive"</span>（50px）。</li>
+          <li>裁剪 SVG viewBox / 缩减 50×50 热区。</li>
+          <li>SVG 内写死 fill，未 <span class="mono">currentColor</span> 收口。</li>
+          <li>同一元素同时 <span class="mono">drop-shadow</span> + <span class="mono">text-shadow</span>。</li>
+          <li>绕过 Design Token 写死色值/间距。</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      生成于 <time datetime="2026-05-23T10:00:00.000Z">2026-05-23</time> ·
+      源：<a href="./InteractiveActionItem.md">InteractiveActionItem.md</a> ·
+      Token：<a href="../../../../../foundations/tokens/color.md">color.md</a> · <a href="../../../../../foundations/tokens/spacing.md">spacing.md</a> · <a href="../../../../../foundations/tokens/shadow.md">shadow.md</a> ·
+      Icon：<a href="../../../../../foundations/visual/Icon.md">Icon.md</a>
+    </footer>
+  </div>
+
+  <script>
+    var iconNodeMap = {
+      'icon-like-default': '1808:654;1600:1055',
+      'icon-like-active': '633:4222',
+      'icon-comment-default': '1808:654;1600:1056',
+      'icon-grass-default': '1808:654;1600:1057',
+      'icon-grass-active': '633:4342',
+      'icon-share-default': '1808:654;1600:1061',
+      'icon-volume-mute-fill': '1847:6831'
+    };
+
+    function setIcon(item, iconName) {
+      var wrap = item.querySelector('.iai__icon-wrap');
+      wrap.dataset.icon = iconName;
+      wrap.dataset.iconNode = iconNodeMap[iconName] || '';
+    }
+
+    document.getElementById('stateToggle').addEventListener('click', function(e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+      var target = btn.dataset.target;
+
+      this.querySelectorAll('button').forEach(function(b) { b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+
+      var likeItem = document.querySelector('.iai[data-type="like"]');
+      var grassItem = document.querySelector('.iai[data-type="grass"]');
+      var volumeControl = document.querySelector('.ivc');
+
+      function setVolumeState(state) {
+        volumeControl.dataset.state = state;
+        volumeControl.setAttribute('aria-label', state === 'unmute-prompt' ? '取消静音' : '静音');
+        volumeControl.dataset.iconNode = state === 'unmute-prompt' ? '1787:150;1847:6838' : '1791:109';
+        if (state === 'unmute-prompt') {
+          volumeControl.innerHTML = '<span class="ivc__label">取消静音</span><span class="ivc__icon" aria-hidden="true"></span>';
+        } else {
+          volumeControl.innerHTML = '<span class="ivc__circle" aria-hidden="true"></span><span class="ivc__icon" aria-hidden="true"></span>';
+        }
+      }
+
+      if (target === 'all') {
+        likeItem.querySelector('.iai__icon-wrap').removeAttribute('data-state');
+        likeItem.querySelector('.iai__label').removeAttribute('data-state');
+        setIcon(likeItem, likeItem.dataset.defaultIcon);
+        grassItem.querySelector('.iai__icon-wrap').removeAttribute('data-state');
+        grassItem.querySelector('.iai__label').removeAttribute('data-state');
+        setIcon(grassItem, grassItem.dataset.defaultIcon);
+        setVolumeState('muted');
+      } else if (target === 'like-active') {
+        likeItem.querySelector('.iai__icon-wrap').setAttribute('data-state', 'active-like');
+        likeItem.querySelector('.iai__label').setAttribute('data-state', 'active-like');
+        setIcon(likeItem, likeItem.dataset.activeIcon);
+        grassItem.querySelector('.iai__icon-wrap').removeAttribute('data-state');
+        grassItem.querySelector('.iai__label').removeAttribute('data-state');
+        setIcon(grassItem, grassItem.dataset.defaultIcon);
+        setVolumeState('muted');
+      } else if (target === 'grass-active') {
+        likeItem.querySelector('.iai__icon-wrap').removeAttribute('data-state');
+        likeItem.querySelector('.iai__label').removeAttribute('data-state');
+        setIcon(likeItem, likeItem.dataset.defaultIcon);
+        grassItem.querySelector('.iai__icon-wrap').setAttribute('data-state', 'active-grass');
+        grassItem.querySelector('.iai__label').setAttribute('data-state', 'active-grass');
+        setIcon(grassItem, grassItem.dataset.activeIcon);
+        setVolumeState('muted');
+      } else if (target === 'volume-muted') {
+        setVolumeState('muted');
+      } else if (target === 'volume-unmute') {
+        setVolumeState('unmute-prompt');
+      }
+    });
+  </script>
+</body>
+</html>

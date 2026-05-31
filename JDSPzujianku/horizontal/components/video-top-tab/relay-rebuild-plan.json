@@ -1,0 +1,254 @@
+{
+  "component_name": "VideoTopTab",
+  "source_files": [
+    "JDSPzujianku/horizontal/components/video-top-tab/design.md",
+    "JDSPzujianku/horizontal/components/video-top-tab/spec.md",
+    "JDSPzujianku/horizontal/components/video-top-tab/variants.md",
+    "JDSPzujianku/horizontal/components/video-top-tab/behaviors.md",
+    "JDSPzujianku/horizontal/components/video-top-tab/ai-schema.yaml"
+  ],
+  "relay_source": {
+    "source_file_id": "1958051135088508929",
+    "source_page_id": "0:3770",
+    "source_page_name": "顶部tab",
+    "scope_node": "518:2141",
+    "reference_nodes": {
+      "standard_top_tab": "518:2141",
+      "immersive_top_tab": "2084:44",
+      "immersive_application": "2084:10",
+      "interaction_update": "2075:6916"
+    },
+    "target_file_url": "https://relay.jd.com/file/design?id=2054381889128513537&page_id=7%3A3",
+    "target_page_id": "7:3",
+    "target_page_name": "Interaction Area Rebuild Test"
+  },
+  "atoms": [
+    {
+      "name": "Private Navigation Icon",
+      "assets": [
+        "assets/icons/icon-back-video.svg",
+        "assets/icons/icon-menu-video.svg",
+        "assets/icons/icon-search-video.svg",
+        "assets/icons/icon-forward-video.svg"
+      ],
+      "hit_size_dp": 44,
+      "visual_size_dp": 22,
+      "ownership": "VideoTopTab private asset; do not migrate to global Icon system"
+    },
+    {
+      "name": "TabItem Label",
+      "typography_token": "font_size_body_sm + font_weight_medium",
+      "measured_font_size_dp": 16,
+      "measured_weight": 500,
+      "height_dp": 44,
+      "pad_x_dp": 9
+    },
+    {
+      "name": "Indicator",
+      "color_rule": "inherit-current-tab-text-token",
+      "radius_token": "radius.module.nav_tag",
+      "height_token": "TODO: missing token dependency — size.video_top_tab_indicator_h"
+    }
+  ],
+  "components": [
+    {
+      "name": "VideoTopTab / standard / default",
+      "width_dp": 362,
+      "height_dp": 44,
+      "layout": "horizontal slots",
+      "children": [
+        "back 28x44",
+        "menu 44x44",
+        "TabList 246x44",
+        "search 44x44"
+      ]
+    },
+    {
+      "name": "VideoTopTab / immersive / default",
+      "width_dp": 363,
+      "height_dp": 44,
+      "layout": "horizontal slots",
+      "children": [
+        "menu 44x44",
+        "TabList 275x44",
+        "search 44x44"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "name": "standard/default",
+      "flow": "standard",
+      "theme": "default",
+      "back_visible": true,
+      "tab_list_viewport_dp": 246,
+      "channels": [
+        "直播",
+        "推荐",
+        "小说",
+        "短剧",
+        "视频"
+      ],
+      "selected": "视频"
+    },
+    {
+      "name": "immersive/default",
+      "flow": "immersive",
+      "theme": "default",
+      "back_visible": false,
+      "tab_list_viewport_dp": 275,
+      "channels": [
+        "关注",
+        "直播",
+        "推荐",
+        "小说",
+        "短剧",
+        "视频"
+      ],
+      "selected": "视频",
+      "track_rule": "right-anchored with left peek"
+    }
+  ],
+  "states": [
+    "default",
+    "selected",
+    "immersive",
+    "standard",
+    "sticky",
+    "scrollable",
+    "edge-fade",
+    "quick-return",
+    "dropdown",
+    "folded",
+    "noise-reduction",
+    "activity"
+  ],
+  "layout_rules": {
+    "content_width": {
+      "token": "TODO: size.video_top_tab_content_w",
+      "dp": 362
+    },
+    "margin_x": {
+      "token": "TODO: spacing.video_top_tab_margin_x",
+      "dp": 6
+    },
+    "height": {
+      "token": "TODO: size.video_top_tab_container_h",
+      "dp": 44
+    },
+    "back": {
+      "token": "TODO: size.video_top_tab_back_w",
+      "width_dp": 28,
+      "height_dp": 44,
+      "visible_when": "flow=standard"
+    },
+    "icon_hit": {
+      "token": "TODO: size.video_top_tab_icon_hit",
+      "dp": 44
+    },
+    "icon_visual": {
+      "token": "TODO: size.video_top_tab_icon",
+      "dp": 22
+    },
+    "tab_item": {
+      "height_dp": 44,
+      "pad_x_dp": 9,
+      "max_visible": 5
+    },
+    "standard_tab_list": {
+      "width_dp": 246,
+      "height_dp": 44,
+      "anchor": "right"
+    },
+    "immersive_tab_list": {
+      "width_dp": 275,
+      "height_dp": 44,
+      "anchor": "right",
+      "left_peek": true
+    }
+  },
+  "color_tokens": [
+    {
+      "token": "color/background 2",
+      "usage": "standard/default nav background"
+    },
+    {
+      "token": "color/background 1",
+      "usage": "standard/dark nav background"
+    },
+    {
+      "token": "color/title",
+      "value": "#171A26",
+      "usage": "standard/default tab text and icons"
+    },
+    {
+      "token": "color/title_immerse",
+      "value": "#FFFFFF",
+      "usage": "immersive selected text and icons"
+    },
+    {
+      "token": "color/text_immerse",
+      "value": "#FFFFFFCC",
+      "usage": "immersive unselected tab text"
+    }
+  ],
+  "typography_tokens": [
+    {
+      "token": "font_size_body_sm + font_weight_medium",
+      "font_size_dp": 16,
+      "font_weight": 500,
+      "usage": "一级 Tab 文案"
+    }
+  ],
+  "radius_tokens": [
+    {
+      "token": "radius.module.nav_tag",
+      "usage": "selected underline indicator"
+    },
+    {
+      "token": "radius.module.dialog",
+      "usage": "dropdown layer, not created in this first pass"
+    }
+  ],
+  "spacing_tokens": [
+    {
+      "token": "spacing.video_top_tab_margin_x TODO",
+      "dp": 6
+    },
+    {
+      "token": "spacing.video_top_tab_item_pad_x TODO",
+      "dp": 9
+    },
+    {
+      "token": "spacing_xxs",
+      "usage": "TabList gap reference"
+    }
+  ],
+  "asset_requirements": {
+    "ready_assets": [
+      "assets/icons/icon-back-video.svg",
+      "assets/icons/icon-menu-video.svg",
+      "assets/icons/icon-search-video.svg",
+      "assets/icons/icon-forward-video.svg"
+    ],
+    "not_created_now": [
+      "activity assets",
+      "dropdown channel imagery",
+      "edge fade mask token"
+    ]
+  },
+  "mcp_supported_items": [
+    "Create frames/text/vector SVG nodes on existing Relay page",
+    "Import private SVG assets via createNodeFromSvg",
+    "Set semantic frame names",
+    "Use measured DP sizes from spec.md / ai-schema.yaml",
+    "Create standard/default and immersive/default small samples"
+  ],
+  "manual_check_items": [
+    "Confirm exact original TabItem text widths and indicator x if pixel-perfect source parity is required",
+    "Confirm edge-fade gradient token before building scroll state",
+    "Confirm sticky background and blur token before creating sticky variant",
+    "Confirm activity asset dimensions before creating activity variant",
+    "Confirm dropdown/folded channel data source before creating dropdown layer"
+  ]
+}

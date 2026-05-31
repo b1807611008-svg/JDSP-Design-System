@@ -1,0 +1,277 @@
+component_type:
+  name: InteractiveArea
+  slug: interactive-area
+  layer: Component Composition Layer
+  version: "1.0.0"
+  description: Right-side immersive video interaction rail composed from avatar, action items, optional grass, share, and volume control.
+
+slots:
+  avatar:
+    required: true
+    component: InteractiveAvatar
+    source: references/InteractiveArea/InteractiveAvatar.md
+  actions:
+    accepts:
+      - like
+      - comment
+      - grass
+      - share
+    component: InteractiveActionItem
+    source: references/InteractiveArea/InteractiveActionItem.md
+  volume:
+    required: true
+    component: InteractiveVolumeControl
+    source: references/InteractiveArea/InteractiveActionItem.md
+
+reusable_contracts:
+  composition_order:
+    owner: InteractiveArea2
+    without_grass:
+      - avatar
+      - like
+      - comment
+      - share
+      - volume
+    with_grass:
+      - avatar
+      - like
+      - comment
+      - grass
+      - share
+      - volume
+  avatar_state_matrix:
+    owner: InteractiveAvatar
+    source: references/InteractiveArea/InteractiveAvatar.md
+    dimensions:
+      liveState:
+        - not_live
+        - live
+      relationship:
+        - unfollowed
+        - intermediate
+        - followed
+  action_item_contract:
+    owner: InteractiveActionItem
+    source: references/InteractiveArea/InteractiveActionItem.md
+    action_types:
+      - like
+      - comment
+      - grass
+      - share
+    active_supported:
+      - like
+      - grass
+  volume_control_contract:
+    owner: InteractiveVolumeControl
+    source: references/InteractiveArea/InteractiveActionItem.md#volume
+    states:
+      - muted
+      - unmute_prompt
+
+states:
+  variant:
+    type: enum
+    values:
+      - without_grass
+      - with_grass
+    default: without_grass
+    description: Controls whether the grass action is rendered.
+  avatar_live_state:
+    type: enum
+    values:
+      - not_live
+      - live
+    default: not_live
+  avatar_relationship:
+    type: enum
+    values:
+      - unfollowed
+      - intermediate
+      - followed
+    default: unfollowed
+  like_active:
+    type: boolean
+    default: false
+  grass_active:
+    type: boolean
+    default: false
+  disabled_actions:
+    type: array
+    items:
+      type: enum
+      values:
+        - like
+        - comment
+        - grass
+        - share
+    default: []
+  volume_state:
+    type: enum
+    values:
+      - muted
+      - unmute_prompt
+    default: muted
+
+presentation_required_states:
+  avatar_matrix:
+    rows:
+      - not_live
+      - live
+    columns:
+      - unfollowed
+      - intermediate
+      - followed
+    required: true
+  rail_variants:
+    - variant: without_grass
+      required_actions:
+        - like
+        - comment
+        - share
+      forbidden_actions:
+        - grass
+    - variant: with_grass
+      required_actions:
+        - like
+        - comment
+        - grass
+        - share
+  action_click_states:
+    like:
+      required:
+        - default
+        - active
+      active_color_token: color/primary
+    grass:
+      required:
+        - default
+        - active
+      active_color_token: color/Recommend_btntext
+    comment:
+      required:
+        - default
+      active_supported: false
+    share:
+      required:
+        - default
+      active_supported: false
+  volume_states:
+    required:
+      - muted
+      - unmute_prompt
+
+variants:
+  - without_grass
+  - with_grass
+  - avatar_not_live
+  - avatar_live
+  - relationship_unfollowed
+  - relationship_intermediate
+  - relationship_followed
+  - action_default
+  - action_active
+  - action_disabled
+  - volume_muted
+  - volume_unmute_prompt
+
+layout:
+  container:
+    direction: column
+    width: "derived from size.interactive_avatar_w / size.interactive_icon"
+    height_without_grass: "size.interactive_avatar_h + 3 * size.action_item + size.interactive_volume_hotzone + 4 * space.action_item_stack_gap"
+    height_with_grass: "size.interactive_avatar_h + 4 * size.action_item + size.interactive_volume_hotzone + 5 * space.action_item_stack_gap"
+    background: page-owned
+    position: page-owned
+  order:
+    without_grass:
+      - avatar
+      - like
+      - comment
+      - share
+      - volume
+    with_grass:
+      - avatar
+      - like
+      - comment
+      - grass
+      - share
+      - volume
+  avatar:
+    source: references/InteractiveArea/InteractiveAvatar.md
+    relay: "633:3418"
+  action_item:
+    source: references/InteractiveArea/InteractiveActionItem.md
+    relay: "823:3046"
+  volume:
+    source: references/InteractiveArea/InteractiveActionItem.md#volume
+    relay: "633:3616 / 1791:107"
+
+events:
+  onAvatarTap:
+    payload:
+      - live_state
+      - relationship
+      - trigger
+  onFollowTap:
+    payload:
+      - previous_relationship
+      - next_relationship
+  onActionTap:
+    payload:
+      - type
+      - previous_state
+      - next_state
+      - count
+  onVolumeToggle:
+    payload:
+      - previous_state
+      - next_state
+  onVariantFallback:
+    payload:
+      - from_variant
+      - to_variant
+      - reason
+
+dependencies:
+  component_docs:
+    interactive_avatar: references/InteractiveArea/InteractiveAvatar.md
+    interactive_action_item: references/InteractiveArea/InteractiveActionItem.md
+  tokens:
+    color: ../../foundations/tokens/color.md
+    typography: ../../foundations/tokens/typography.md
+    spacing: ../../foundations/tokens/spacing.md
+    radius: ../../foundations/tokens/radius.md
+    shadow: ../../foundations/tokens/shadow.md
+  visual:
+    avatar: ../../foundations/visual/Avatar.md
+    icon: ../../foundations/visual/Icon.md
+
+assets:
+  global_icon_system:
+    source: ../../src/assets/icons/*
+    interactive_icons:
+      - icon-like-default.svg
+      - icon-like-active.svg
+      - icon-comment-default.svg
+      - icon-grass-default.svg
+      - icon-grass-active.svg
+      - icon-share-default.svg
+      - icon-volume-mute-fill.svg
+    avatar_icons:
+      - icon-cart-fill.svg
+      - icon-add.svg
+      - icon-check-fill.svg
+
+rules:
+  no_raw_css_values: true
+  no_grass_placeholder_when_without_grass: true
+  volume_is_not_action_item: true
+  page_owns_positioning: true
+  preserve_legacy_visual_spec: true
+  ignore_legacy_html_outputs: true
+
+todos:
+  - "TODO: missing token dependency — font_size_11_500"
+  - "TODO: missing token dependency — size.interactive_area_without_grass_h"
+  - "TODO: missing token dependency — size.interactive_area_with_grass_h"
+  - "TODO: missing token dependency — z_index.interactive_area"

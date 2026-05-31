@@ -1,0 +1,298 @@
+# bundle_part_of: design.md
+# component: image-card
+# generated_by: relay-to-design-md
+# last_synced: 2026-05-30
+
+component:
+  slug: image-card
+  name_zh: 基础内容卡
+  name_en: Image Card
+  level: component-base
+  bg: horizontal
+  relay:
+    file_id: "1958051135088508929"
+    page_id: "968:6937"
+    node_id: "1042:4844"
+    node_name: 基础内容卡
+
+variants:
+  - key: image
+    relay_node_id: "1042:4782"
+    label: 图文
+    size: { width: 176, height: 289 }
+    media_type: image
+    slots: [cover, title, author, metric]
+  - key: video
+    relay_node_id: "1042:4846"
+    label: 视频
+    size: { width: 176, height: 289 }
+    media_type: video
+    slots: [cover, corner_tag, title, author, metric]
+  - key: recommend_profile
+    relay_node_id: "1042:4860"
+    label: 种草个人页专用
+    size: { width: 176, height: 289 }
+    media_type: video
+    slots: [cover, corner_tag, topic_bar, title, author, recommend_metric]
+  - key: commerce
+    relay_node_id: "1042:4895"
+    label: 种草个人页-挂商卡
+    size: { width: 176, height: 340 }
+    media_type: image
+    slots: [cover, image_badge, topic_bar, commerce_strip, title, author, recommend_metric]
+  - key: commerce_b2c
+    relay_node_id: "1058:727"
+    label: 种草个人页-挂商卡 B2C
+    size: { width: 176, height: 321 }
+    media_type: image
+    slots: [cover, image_badge, topic_bar, commerce_strip, title, author, recommend_metric]
+  - key: video_barrage
+    relay_node_id: "1099:11008"
+    label: 视频卡带弹幕
+    size: { width: 176, height: 289 }
+    media_type: video
+    slots: [cover, media_badge, barrage_tags, title, author, metric]
+  - key: immersive_image
+    relay_node_id: "1042:4970"
+    label: 沉浸式图文
+    size: { width: 176, height: 234 }
+    media_type: image
+    slots: [cover, image_badge]
+  - key: immersive_video
+    relay_node_id: "1648:8686"
+    label: 沉浸式视频
+    size: { width: 176, height: 234 }
+    media_type: video
+    slots: [cover, media_badge, immersive_title]
+
+slots:
+  cover:
+    required: true
+    type: image
+    radius: 8
+    asset_role: cover
+  media_badge:
+    required: false
+    type: badge
+    height: 16
+    icon_size: 8
+    background: "rgba(0,0,0,0.40)"
+    radius: 4
+  corner_tag:
+    required: false
+    type: badge
+    relay_node_id: "1042:3616"
+    kinds: [image_text, video, live_on, just_watched, view_count, rising_value, replay, live_icon]
+    icon_assets:
+      image_text: "../../../src/assets/icons/icon-copy-fill.svg"
+      video: "assets/tag-video.svg"
+      live_on: "assets/tag-live-on.svg"
+      just_watched: "assets/tag-live-on.svg"
+      view_count: "assets/tag-live-on.svg"
+      rising_value: "assets/tag-rise.svg"
+      live_icon: "assets/tag-live.svg"
+    position: { top: 8, left: 8 }
+    height:
+      icon_image_text: 13
+      default: 16
+    styles: [icon_only, translucent_pill, red_emphasis_pill]
+    role: media_hint
+  image_badge:
+    required: false
+    type: icon
+    size_range: [13, 16]
+  title:
+    required: false
+    type: text
+    font: { family: PingFang-SC, size: 13, line_height: 13, weight: 500 }
+    color: "#171a26"
+    states: [one_line, two_line, one_line_marketing_badge, two_line_marketing_badge]
+    two_line_gap: { value: 6, unit: pt }
+    marketing_badge: { height: 14, padding_x: 3, radius: 2, background: "#ff0f23", color: "#ffffff" }
+    max_lines:
+      default: 1
+      commerce: 2
+  content_area:
+    required: true
+    type: layout
+    height: auto
+    padding: { top: 8, right: 8, bottom: 8, left: 8 }
+    bottom_distance_rule: "text_or_meta_to_card_bottom_must_remain_8px"
+  author:
+    required: false
+    type: author
+    avatar: { shape: circle, outline: "0.5px #ffffff" }
+    name_font: { family: PingFang-SC, size: 11, line_height: 11, weight: 400 }
+  metric:
+    required: false
+    type: metric
+    kinds: [like, view, recommend]
+    value_type: number
+  recommend_metric:
+    required: false
+    type: metric
+    kinds: [recommend]
+    value_type: number
+    active_color: "#15ba64"
+  topic_bar:
+    required: false
+    type: overlay
+    gradient: "rgba(0,0,0,0.70)->rgba(0,0,0,0)"
+    text_font: { family: PingFang SC, size: 12, line_height: 12, weight: 500 }
+  barrage_tags:
+    required: false
+    type: tag_group
+    item_height: 16
+    item_radius: 8
+    item_gap: 16
+  commerce_strip:
+    required: false
+    type: commerce
+    kinds: [b2c, o2o, scenic_spot, rating]
+    background: "#f5f6fa"
+    radius: 2
+    size: { width: 160, height: 24 }
+    thumbnail: { width: 20, height: 20, radius: 2 }
+    fields:
+      b2c: [image, price, origin_price, sales_text]
+      o2o: [image, shop_name, distance]
+      scenic_spot: [image, place_name, distance]
+      rating: [image, shop_name, score]
+  immersive_title:
+    required: false
+    type: text_overlay
+    font: { family: PingFang-SC, size: 12, line_height: 12, weight: 500 }
+    color: "#ffffff"
+
+tokens:
+  colors:
+    card_background: "背景 color/background 2"
+    commerce_background: "背景 color/background 1"
+    title: "文字 color/tittle"
+    title_immerse: "文字 color/tittle_immerse"
+    helper_text: "文字 color/text_help"
+    badge_mask: "蒙层 color/mask 2"
+    recommend: "种草 color/Recommend_btnbg"
+    like_active: "Color/主色 Primary/color_primary"
+  icons:
+    like:
+      source: "foundations/visual/Icon.md#icon-heart"
+      asset: "src/assets/icons/icon-heart.svg"
+      default_icon_color: "#828794"
+      active_icon_color: "#ff0f23"
+      value_color: "#828794"
+      note: "regular line icon, not interactive/ right-rail icon"
+    view:
+      source: "foundations/visual/Icon.md#icon-browse"
+      asset: "src/assets/icons/icon-browse.svg"
+      color: "#828794"
+    size:
+      width: 12
+      height: 12
+      unit: pt
+    recommend:
+      source: "foundations/visual/Icon.md#icon-like"
+      asset: "src/assets/icons/icon-like.svg"
+      default_icon_color: "#828794"
+      active_icon_color: "#15ba64"
+      value_color: "#828794"
+      note: "regular line icon, not interactive/ right-rail icon"
+  spacing:
+    xxs: 2
+    xs: 4
+    md: 8
+    xl: 16
+    token_miss_media_gap: 10
+  radius:
+    xs: 2
+    sm: 4
+    lg: 8
+    full: 100
+
+  interactions:
+  primary_click:
+    target: card
+    action: open_content_detail
+  commerce_click:
+    target: commerce_strip
+    action: open_product_detail
+    priority: higher_than_card
+  topic_click:
+    target: topic_bar
+    action: open_topic_page
+    optional: true
+  recommend_toggle:
+    target: recommend_metric
+    action: toggle_recommend
+    optional: true
+    states: [default, active]
+  like_toggle:
+    target: metric
+    action: toggle_like
+    optional: true
+    states: [default, active]
+
+fallbacks:
+  missing_cover: use_placeholder_cover
+  missing_avatar: hide_avatar_or_use_default
+  missing_author_name: hide_author_area
+  missing_metric: hide_metric
+  missing_commerce_image: hide_commerce_strip
+  missing_price: hide_commerce_strip
+  missing_topic: hide_topic_bar
+  missing_barrage_tags: hide_barrage_tags
+
+asset_requirements:
+  bitmap:
+    - key: cover-sample
+      relay_nodes: ["1640:271", "1641:1", "1641:6", "1641:13", "1641:19", "1641:2", "1641:25", "1648:8687"]
+      expected_path: assets/cover-sample.png
+      status: export_pending
+    - key: avatar-sample
+      relay_nodes: ["1640:206", "1640:212"]
+      expected_path: assets/avatar-sample.png
+      status: export_pending
+    - key: product-sample
+      relay_nodes: ["1640:186"]
+      expected_path: assets/product-sample.png
+      status: export_pending
+  vector:
+    - key: tag-video
+      relay_node: "1042:2742"
+      expected_path: assets/tag-video.svg
+      status: exported_from_relay
+    - key: tag-live-on
+      relay_node: "1042:2749"
+      expected_path: assets/tag-live-on.svg
+      status: exported_from_relay
+      usage: live_on_just_watched_view_count
+    - key: tag-rise
+      relay_node: "1042:3628"
+      expected_path: assets/tag-rise.svg
+      status: exported_from_relay
+    - key: tag-live
+      relay_node: "1572:11"
+      expected_path: assets/tag-live.svg
+      status: exported_from_relay
+    - key: tag-copy-fill
+      expected_path: src/assets/icons/icon-copy-fill.svg
+      source: foundations/visual/Icon.md
+      status: reused_from_icon_library
+      usage: image_text_corner_tag
+    - key: icon-view
+      expected_path: src/assets/icons/icon-browse.svg
+      source: foundations/visual/Icon.md
+      status: reused_from_icon_library
+    - key: icon-heart
+      expected_path: src/assets/icons/icon-heart.svg
+      source: foundations/visual/Icon.md
+      status: reused_from_icon_library
+      usage: like_metric
+    - key: icon-like
+      expected_path: src/assets/icons/icon-like.svg
+      source: foundations/visual/Icon.md
+      status: reused_from_icon_library
+      usage: recommend_metric
+    - key: icon-arrow
+      expected_path: assets/icon-arrow.svg
+      status: export_pending

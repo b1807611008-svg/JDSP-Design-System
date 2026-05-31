@@ -1,0 +1,74 @@
+# 双列 · AI Schema
+# bundle_part_of: design.md
+# 来源：Relay 节点 1758:251 章节抽取（v0.5.1 从 behaviors.md 拆出）
+# 状态：草稿，状态机 / 事件签名待设计师 + 工程师 review
+# 关联：spec.md (视觉规范) / variants.md (变体维度) / behaviors.md (交互文字)
+
+component:
+  slug: double-row
+  name_zh: 双列
+  name_en: Double row
+  level: flow
+  bg: horizontal
+  relay_node_id: "1758:251"
+
+forms:
+  - key: waterfall_feed
+    label: 双列瀑布流
+    width: 375
+    columns:
+      count: 2
+      item_width: 176
+      gap: 7
+      side_margin: 8
+
+slots:
+  card:
+    required:
+      - cover
+      - title
+    optional:
+      - tag
+      - marketing_info
+      - user_info
+      - interaction_info
+  cover:
+    variants:
+      - ratio: "1:1"
+        size: "176x176"
+      - ratio: "3:4"
+        size: "176x234"
+  tab:
+    variants:
+      - primary_tab
+      - secondary_tab
+
+states:
+  tab:
+    - selected
+    - default
+  interaction_icon:
+    - view
+    - like
+
+layout:
+  page_width: 375
+  card_width: 176
+  column_gap: 7
+  content_padding_x: 8
+  user_avatar_size: 16
+  interaction_icon_size: 12
+
+assets:
+  image_fills:
+    registry: ./_assets-cdn.md
+    status: pending_cdn_upload
+    count: 27
+    dedup_count: 9
+
+events:
+  on_card_tap: TODO
+  on_card_exposure: TODO
+  on_primary_tab_sticky: TODO
+  on_secondary_tab_sticky: TODO
+  on_feed_load_more: TODO

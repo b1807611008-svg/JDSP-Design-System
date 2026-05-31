@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>顶部视频 Tab · VideoTopTab 组件规范 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-mask: rgba(0, 0, 0, 0.7);
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+
+    --vtt-bg-immersive: linear-gradient(135deg, #4c1c20 0%, #1f1f1f 50%, #333333 100%);
+    --vtt-bg-default: #ffffff;
+    --vtt-bg-dark: #1f1f1f;
+    --vtt-bg-sticky: #171a2657;
+    --vtt-text-default: #ffffff;
+    --vtt-text-selected: #ffffff;
+    --vtt-text-plain: #171a26;
+    --vtt-text-help: #828794;
+    --vtt-shell-w: 375px;
+    --vtt-nav-h: 44px;
+    --vtt-nav-pad-x: 6px;
+    --vtt-nav-inner-w: 362px;
+    --vtt-back-w: 28px;
+    --vtt-back-icon-size: 22px;
+    --vtt-icon-hit: 44px;
+    --vtt-icon-size: 22px;
+    --vtt-max-tabs: 5;
+    --vtt-tab-h: 44px;
+    --vtt-tab-pad-x: 9px;
+    --vtt-tab-selected-inner-w: 33px;
+    --vtt-tab-selected-inner-h: 30px;
+    --vtt-tab-selected-pad-top: 14px;
+    --vtt-tab-selected-pad-bottom: 7px;
+    --vtt-tab-gap: 0px;
+    --vtt-tabs-viewport-w: 246px;
+    --vtt-tabs-viewport-w-immersive: 275px;
+    --vtt-tabs-track-offset-immersive: -68px;
+    --vtt-indicator-w: 16px;
+    --vtt-indicator-h: 2px;
+    --vtt-radius-indicator: 12px;
+    --vtt-stage-h: 340px;
+    --vtt-dropdown-w: 343px;
+    --vtt-dropdown-h: 44px;
+    --vtt-dropdown-pad: 16px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: var(--c-info); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--c-info); }
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+  }
+  .top-bar__brand {
+    padding: 14px 0;
+    margin-right: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text);
+    border-bottom: none;
+    letter-spacing: 0.02em;
+  }
+  .top-bar__brand small { color: var(--c-text-3); font-weight: 500; margin-left: 6px; }
+  .top-bar__nav { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; }
+  .top-bar__nav-link {
+    padding: 14px 14px 12px;
+    font-size: 13px;
+    color: var(--c-text-2);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    border-bottom: none;
+  }
+  .top-bar__nav-link.is-current { color: var(--c-text); font-weight: 600; }
+  .top-bar__spacer { flex: 1; }
+  .doc {
+    max-width: 880px;
+    margin: 40px auto;
+    background: var(--c-bg);
+    padding: 64px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 32px; font-weight: 600; margin: 0; line-height: 1.3; }
+  .meta { color: var(--c-text-3); font-size: 13px; margin-bottom: 40px; line-height: 1.8; }
+  .meta code { font-size: 12px; }
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background: var(--c-brand);
+    color: #fff;
+    border-radius: var(--r-base);
+    text-align: center;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: var(--c-text); }
+  p { margin: 12px 0; color: var(--c-text-2); }
+  strong { color: var(--c-text); font-weight: 600; }
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--c-code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--c-brand);
+  }
+  pre {
+    background: #1a1a1a;
+    color: #e8e8e8;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+  }
+  blockquote.warn { background: var(--c-warning-bg); border-left-color: var(--c-warning); }
+  blockquote.danger { background: var(--c-danger-bg); border-left-color: var(--c-danger); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--c-line); padding: 10px 14px; text-align: left; vertical-align: top; }
+  th { background: var(--c-bg-sunken); font-weight: 600; color: var(--c-text); }
+  td code { font-size: 12px; }
+  ul, ol { padding-left: 24px; color: var(--c-text-2); }
+  li { margin: 6px 0; }
+  .toc { background: var(--c-bg-sunken); padding: 20px 28px; border-radius: var(--r-base); margin-bottom: 40px; }
+  .toc h3 { margin: 0 0 8px; font-size: 14px; color: var(--c-text-3); font-weight: 500; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--c-text-2); border: none; }
+  .view-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    flex-shrink: 0;
+  }
+  .view-tab {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-text-2);
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .view-tab.is-active {
+    background: var(--c-bg);
+    color: var(--c-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-weight: 600;
+  }
+  body.mode-basic .pro-only { display: none !important; }
+  body.mode-pro .basic-only { display: none !important; }
+  body:not(.mode-basic):not(.mode-pro) .pro-only,
+  body:not(.mode-basic):not(.mode-pro) .basic-only { display: none; }
+  .basic-only.summary {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+    font-size: 14px;
+  }
+  body.mode-pro .pro-inline { display: inline; }
+  .pro-inline { color: var(--c-text-3); font-size: 12px; margin-left: 6px; }
+  .chip {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 0 4px 4px 0;
+    background: var(--c-bg-sunken);
+    border-radius: 4px;
+    color: var(--c-text-2);
+    font-size: 12px;
+  }
+  .stage {
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px dashed var(--c-line);
+    margin: 12px 0;
+    padding: 40px 24px;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .stage-label {
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+  .asset-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .asset-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    background: var(--c-bg);
+    color: var(--c-text-2);
+    font-size: 12px;
+  }
+  .asset-chip img {
+    width: 22px;
+    height: 22px;
+    display: block;
+    object-fit: contain;
+    background: #1f1f1f;
+    filter: brightness(0) invert(1);
+  }
+  .vtt-demo-card {
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-detail);
+    overflow: hidden;
+    background: var(--c-bg);
+    margin: 18px 0 22px;
+  }
+  .vtt-demo-card__header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--c-line);
+  }
+  .vtt-demo-card__title { color: var(--c-text-2); font-size: 14px; font-weight: 600; }
+  .vtt-demo-card__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .vtt-switch-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .vtt-switch-group__label {
+    font-size: 12px;
+    color: var(--c-text-3);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .vtt-switch {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--r-base);
+    background: var(--c-bg-sunken);
+  }
+  .vtt-switch button {
+    appearance: none;
+    border: 0;
+    border-radius: var(--r-base);
+    background: transparent;
+    color: var(--c-text-2);
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .vtt-switch button[aria-pressed="true"] {
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .vtt-demo-card__body {
+    min-height: var(--vtt-stage-h);
+    padding: 44px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vtt-bg-immersive);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-demo-card__body { background: #eef1f6; }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="dark"] .vtt-demo-card__body { background: #0f1014; }
+  .vtt-demo-card[data-vtt-flow="immersive"][data-vtt-theme="dark"] .vtt-demo-card__body {
+    background: linear-gradient(135deg, #2a1014 0%, #121212 50%, #1a1a1a 100%);
+  }
+  .vtt-phone {
+    width: var(--vtt-shell-w);
+    min-height: 180px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+  }
+  .vtt-phone__content {
+    height: 136px;
+    padding: 18px 20px;
+    color: rgba(255,255,255,0.72);
+    background: linear-gradient(160deg, rgba(255,255,255,0.08), rgba(0,0,0,0.18));
+    font-size: 12px;
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-phone,
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-phone__content {
+    background: #ffffff;
+    color: var(--c-text-3);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="dark"] .vtt-phone,
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="dark"] .vtt-phone__content {
+    background: #1f1f1f;
+    color: rgba(255,255,255,0.72);
+  }
+  .vtt-demo-card[data-vtt-flow="immersive"][data-vtt-theme="dark"] .vtt-phone__content {
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(0,0,0,0.32));
+  }
+  .vtt-nav {
+    height: var(--vtt-nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--vtt-nav-pad-x);
+    color: var(--vtt-text-selected);
+    background: transparent;
+  }
+  .vtt-nav__inner {
+    width: var(--vtt-nav-inner-w);
+    max-width: 100%;
+    height: var(--vtt-nav-h);
+    display: flex;
+    align-items: center;
+    flex: 0 0 var(--vtt-nav-inner-w);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-nav {
+    background: var(--vtt-bg-default);
+    color: var(--vtt-text-plain);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="dark"] .vtt-nav {
+    background: var(--vtt-bg-dark);
+    color: var(--vtt-text-selected);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .vtt-nav[data-sticky="true"] { background: var(--vtt-bg-sticky); backdrop-filter: blur(1px); }
+  .vtt-back {
+    width: var(--vtt-back-w);
+    height: var(--vtt-nav-h);
+    flex: 0 0 var(--vtt-back-w);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .vtt-back img {
+    width: var(--vtt-back-icon-size);
+    height: var(--vtt-back-icon-size);
+    display: block;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-back img { filter: none; }
+  .vtt-icon {
+    width: var(--vtt-icon-hit);
+    height: var(--vtt-icon-hit);
+    flex: 0 0 var(--vtt-icon-hit);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .vtt-icon img {
+    width: var(--vtt-icon-size);
+    height: var(--vtt-icon-size);
+    display: block;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-icon img { filter: none; }
+  .vtt-demo-card[data-vtt-flow="immersive"] .vtt-back { display: none; }
+  .vtt-demo-card[data-vtt-flow="immersive"] .vtt-nav__inner { gap: 0; }
+  .vtt-demo-card[data-vtt-flow="immersive"] .vtt-tabs {
+    position: relative;
+    flex: 0 0 var(--vtt-tabs-viewport-w-immersive);
+    width: var(--vtt-tabs-viewport-w-immersive);
+    max-width: var(--vtt-tabs-viewport-w-immersive);
+    height: var(--vtt-nav-h);
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+  }
+  .vtt-demo-card[data-vtt-flow="immersive"] .vtt-tabs__track {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    transform: none;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  .vtt-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--vtt-tab-gap);
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: var(--vtt-tabs-viewport-w);
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 16px;
+    line-height: 16px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  }
+  .vtt-tabs__track {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    min-width: min-content;
+  }
+  .vtt-tab {
+    position: relative;
+    height: var(--vtt-tab-h);
+    flex: 0 0 auto;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7px var(--vtt-tab-pad-x) 7px;
+    color: var(--vtt-text-default);
+    font-weight: 500;
+    opacity: 0.8;
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-tab { color: var(--vtt-text-plain); text-shadow: none; }
+  .vtt-tab.is-selected {
+    color: inherit;
+    font-weight: 500;
+    opacity: 1;
+    margin-top: 0;
+    min-width: calc(var(--vtt-tab-selected-inner-w) + 2 * var(--vtt-tab-pad-x));
+    padding: var(--vtt-tab-selected-pad-top) var(--vtt-tab-pad-x) var(--vtt-tab-selected-pad-bottom);
+    justify-content: flex-start;
+  }
+  .vtt-demo-card[data-vtt-flow="standard"][data-vtt-theme="default"] .vtt-tab.is-selected { color: inherit; }
+  .vtt-tab.is-selected::after {
+    content: "";
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin-top: 5px;
+    width: var(--vtt-indicator-w);
+    height: var(--vtt-indicator-h);
+    transform: none;
+    border-radius: var(--vtt-radius-indicator);
+    background: currentColor;
+  }
+  .vtt-tab.is-activity { color: inherit; }
+  .vtt-badge {
+    display: inline-block;
+    min-width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    vertical-align: top;
+    margin-left: 2px;
+  }
+  .vtt-dropdown {
+    width: var(--vtt-dropdown-w);
+    height: var(--vtt-dropdown-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--vtt-dropdown-pad);
+    border-radius: var(--r-detail);
+    background: var(--c-bg);
+    color: #1a1a1a;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .vtt-dropdown__label { font-size: 14px; line-height: 14px; }
+  .case {
+    margin: 20px 0;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+  }
+  .case.good { background: var(--c-success-bg); border-color: var(--c-success); }
+  .case.bad { background: var(--c-danger-bg); border-color: var(--c-danger); }
+  .case h4 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+  .case .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .case.good .badge { background: var(--c-success); }
+  .case.bad .badge { background: var(--c-danger); }
+  @media (max-width: 720px) {
+    .doc { margin: 0; padding: 32px 20px; border-radius: 0; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+    .vtt-demo-card__header { align-items: flex-start; flex-direction: column; }
+    .vtt-phone { transform: scale(0.86); transform-origin: center; }
+    .vtt-demo-card__body { min-height: 280px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="../../../docs/jd-design-wiki-knowledge-tree.html" class="top-bar__brand">JD Design Wiki <small>· V16</small></a>
+  <nav class="top-bar__nav" aria-label="5 大分区导航">
+    <a href="../../../knowledge/spec-page.html" class="top-bar__nav-link">Design 知识</a>
+    <a href="../../../foundations/spec-page.html" class="top-bar__nav-link">Design 基础</a>
+    <a href="../../../ai-mechanism/spec-page.html" class="top-bar__nav-link">AI 机制</a>
+    <a href="../../../product-architecture/spec-page.html" class="top-bar__nav-link">产品架构</a>
+    <a href="../../../horizontal/spec-page.html" class="top-bar__nav-link is-current">横向专项</a>
+  </nav>
+  <span class="top-bar__spacer"></span>
+</div>
+
+<div class="doc">
+<div class="title-row">
+  <h1>顶部视频 Tab · VideoTopTab 组件规范</h1>
+  <div class="view-tabs" role="tablist" aria-label="视图切换">
+    <button class="view-tab is-active" role="tab" data-view="basic" aria-selected="true">常规版</button>
+    <button class="view-tab" role="tab" data-view="pro" aria-selected="false">专业版</button>
+  </div>
+</div>
+<div class="meta">
+  <strong>JD APP 16.0 GUIDELINE</strong> · Component Composition Layer · v1.0.0<br>
+  样式来源：Relay V16.0 GUIDELINE 节点 <code>518:2141</code> · page <code>0:3770</code><br>
+  关联 Foundation：
+  <span class="chip">tokens/color.md</span>
+  <span class="chip">tokens/typography.md</span>
+  <span class="chip">tokens/spacing.md</span>
+  <span class="chip">tokens/radius.md</span>
+  <span class="chip">tokens/shadow.md</span>
+  <span class="chip">visual/Icon.md</span>
+</div>
+
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#sec-1">定义</a></li>
+    <li><a href="#sec-2">行为准则</a></li>
+    <li><a href="#sec-3">类型</a></li>
+    <li><a href="#sec-4">结构</a></li>
+    <li><a href="#sec-5">布局</a></li>
+    <li><a href="#sec-6">正反案例</a></li>
+    <li><a href="#sec-7">典型场景</a></li>
+  </ol>
+</div>
+
+<div class="basic-only summary">
+  <p><strong>这页文档怎么读：</strong> 常规版先看 Demo、7 条行为准则和正反案例；专业版展开 token 映射、依赖协议、ASCII 布局与 AI Schema 速查。</p>
+</div>
+
+<h2 id="sec-1"><span class="num">1</span>定义</h2>
+<p><strong>VideoTopTab</strong> 是视频场景顶部导航与频道切换的复合组件，负责承载频道 Tab、选中游标、返回/搜索/菜单/二级跳转等导航槽位。</p>
+<blockquote>它的核心边界是「视频顶部频道导航 + 页面联动」，而不是通用 Tab，也不是全局图标系统。</blockquote>
+<table>
+<thead><tr><th>对比维度</th><th>VideoTopTab</th><th>近邻组件</th></tr></thead>
+<tbody>
+<tr><td>层级</td><td>Component Composition Layer</td><td>Token / Visual Atom</td></tr>
+<tr><td>核心能力</td><td>顶部频道切换、沉浸态、吸顶、活动、降噪</td><td>只处理单一视觉或交互能力</td></tr>
+<tr><td>资产归属</td><td>组件私有导航 icon</td><td>全局 Icon 系统</td></tr>
+</tbody>
+</table>
+
+<h2 id="sec-2"><span class="num">2</span>行为准则</h2>
+<ol>
+  <li><strong>只组合既有能力</strong>：组件引用现有 token / visual atoms / private assets，不创建基础视觉属性。</li>
+  <li><strong>点击切换单源同步</strong>：TabItem 点击后同步 selected state、indicator 与页面频道。</li>
+  <li><strong>横向滚动不压缩文案</strong>：频道超出可视区时进入 scrollable，而不是缩小字体。</li>
+  <li><strong>TabList 右锚定</strong>：非沉浸流（常规 / 暗黑）从右往左露出视频 / 短剧 / 小说 / 推荐 / 直播；沉浸流 track 左移 68px，左侧露出「关注」边缘；均不压缩文案。</li>
+  <li><strong>选中不染色</strong>：selected 文案与下方 indicator 继承当前模式文本色，不额外使用品牌色高亮。</li>
+  <li><strong>吸顶不重排</strong>：sticky 只改变容器背景与层级，不改变 Tab 顺序和选中态。</li>
+  <li><strong>沉浸态优先可读</strong>：视频背景上使用沉浸态文本与防穿透 shadow token。</li>
+  <li><strong>活动态可降级</strong>：运营素材、Lottie 或活动 indicator 失败时回退为 selected + underline。</li>
+  <li><strong>Dropdown 与 TabList 单选一致</strong>：不允许两个区域出现不同 selected。</li>
+  <li><strong>降噪保护核心频道</strong>：视频、直播、关注为常驻 Tab，不被运营配置挤出首屏。</li>
+</ol>
+
+<h2 id="sec-3"><span class="num">3</span>类型</h2>
+<p>VideoTopTab 共定义 9 类变体：default、selected、activity、sticky、immersive、dropdown、folded、noise-reduction、scrollable。</p>
+
+<div class="vtt-demo-card" data-vtt-demo data-vtt-flow="immersive" data-vtt-theme="default">
+  <div class="vtt-demo-card__header">
+    <div class="vtt-demo-card__title">DEMO · 顶部 Tab 状态切换</div>
+    <div class="vtt-demo-card__controls">
+      <div class="vtt-switch-group" aria-label="流类型">
+        <span class="vtt-switch-group__label">流类型</span>
+        <div class="vtt-switch">
+          <button type="button" data-vtt-flow="immersive" aria-pressed="true">沉浸流</button>
+          <button type="button" data-vtt-flow="standard" aria-pressed="false">非沉浸流</button>
+        </div>
+      </div>
+      <div class="vtt-switch-group" aria-label="样式主题">
+        <span class="vtt-switch-group__label">样式</span>
+        <div class="vtt-switch">
+          <button type="button" data-vtt-theme="default" aria-pressed="true">常规</button>
+          <button type="button" data-vtt-theme="dark" aria-pressed="false">暗黑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="vtt-demo-card__body">
+    <div class="vtt-phone">
+      <div class="vtt-nav" id="vttNav" data-sticky="false">
+        <div class="vtt-nav__inner">
+          <button type="button" class="vtt-back" aria-label="返回">
+            <img src="./assets/icons/icon-back-video.svg" alt="">
+          </button>
+          <span class="vtt-icon vtt-icon--menu" aria-label="菜单">
+            <img src="./assets/icons/icon-menu-video.svg" alt="">
+          </span>
+          <div class="vtt-tabs" id="vttTabs" aria-label="频道 Tab">
+            <div class="vtt-tabs__track">
+              <span class="vtt-tab">关注</span>
+              <span class="vtt-tab">直播</span>
+              <span class="vtt-tab">推荐</span>
+              <span class="vtt-tab">小说</span>
+              <span class="vtt-tab">短剧</span>
+              <span class="vtt-tab is-selected">视频</span>
+            </div>
+          </div>
+          <span class="vtt-icon vtt-icon--search" aria-label="搜索">
+            <img src="./assets/icons/icon-search-video.svg" alt="">
+          </span>
+        </div>
+      </div>
+      <div class="vtt-phone__content" id="vttContent">
+        沉浸流 · 常规：顶部导航悬浮在视频内容上，无返回入口；菜单 + 频道 + 搜索 slot 保持稳定，左侧露出「关注」边缘。
+      </div>
+    </div>
+  </div>
+</div>
+<div class="stage-label">Demo 按<strong>流类型</strong>（沉浸流 / 非沉浸流）× <strong>样式</strong>（常规 / 暗黑）切换。非沉浸流对齐 Relay <a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A3770&node_id=518%3A2141">518:2141</a>；沉浸流对齐 Relay <a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A3770&node_id=2084%3A44">2084:44</a>。</div>
+
+<div class="basic-only summary">
+  <p><strong>常规版理解：</strong> 这不是单个 Tab 样式，而是一整套“顶部频道导航如何在视频流里活下来”的组合规则：正常看、滑动、吸顶、有活动、频道太多时都要能稳定工作。</p>
+</div>
+<div class="pro-only">
+<table>
+<thead><tr><th>Variant</th><th>Trigger</th><th>Required Layers</th><th>Degrade To</th></tr></thead>
+<tbody>
+<tr><td><code>default</code></td><td>常规顶部频道导航</td><td>Container + TabList + Indicator</td><td>—</td></tr>
+<tr><td><code>selected</code></td><td>当前频道命中</td><td>TabItem selected + Indicator active</td><td><code>default</code></td></tr>
+<tr><td><code>activity</code></td><td>运营活动配置命中</td><td>Activity TabItem + Activity Indicator / Asset</td><td><code>selected</code></td></tr>
+<tr><td><code>sticky</code></td><td>页面滚动至吸顶阈值</td><td>Sticky Container + readable background</td><td><code>default</code></td></tr>
+<tr><td><code>immersive</code></td><td>视频沉浸流</td><td>Transparent / mask background + shadow token</td><td><code>default</code></td></tr>
+<tr><td><code>dropdown</code></td><td>点击更多 / 折叠入口</td><td>Dropdown Channel Layer + selected sync</td><td><code>folded</code></td></tr>
+<tr><td><code>noise-reduction</code></td><td>长频道 / 复杂运营 / 高频滑动</td><td>常驻 Tab + 可配置 Tab + 更多频道收敛</td><td><code>scrollable</code></td></tr>
+</tbody>
+</table>
+</div><!-- /pro-only -->
+
+<h2 id="sec-4"><span class="num">4</span>结构</h2>
+<p>VideoTopTab 由 <strong>Container + Navigation Slot + TabList + Indicator + Dropdown</strong> 组合而成。</p>
+<div class="basic-only summary">
+  <p><strong>基础结构：</strong> 左右是功能入口，中间是频道，底部用 indicator 告诉用户当前在哪个频道；活动、吸顶、沉浸都只是状态层，不改变这个骨架。</p>
+</div>
+<div class="pro-only">
+<h3>4.1 Container Spec</h3>
+<table>
+<thead><tr><th>Capability</th><th>Token Reference</th><th>Rule</th></tr></thead>
+<tbody>
+<tr><td>Safe area</td><td><code>spacing.md</code> safe-area rule</td><td>顶部容器必须承接系统状态栏安全区。</td></tr>
+<tr><td>Sticky</td><td><code>color/background 5</code> / <code>color/mask 2</code></td><td>吸顶后从沉浸透明态过渡到可读背景层。</td></tr>
+<tr><td>Immersive</td><td><code>color/title_immerse</code> / <code>shadow_interactive</code></td><td>视频背景上使用沉浸态文本与防穿透阴影。</td></tr>
+<tr><td>Blur</td><td>TODO: missing token dependency</td><td>当前 token 层无 <code>blur.video_top_tab_overlay</code>。</td></tr>
+</tbody>
+</table>
+<h3>4.2 Navigation Assets</h3>
+<table>
+<thead><tr><th>Asset</th><th>Usage</th><th>Ownership</th></tr></thead>
+<tbody>
+<tr><td><code>icon-back-video.svg</code></td><td>返回按钮</td><td>VideoTopTab private asset</td></tr>
+<tr><td><code>icon-menu-video.svg</code></td><td>菜单入口</td><td>VideoTopTab private asset</td></tr>
+<tr><td><code>icon-search-video.svg</code></td><td>搜索入口</td><td>VideoTopTab private asset</td></tr>
+<tr><td><code>icon-forward-video.svg</code></td><td>二级跳转</td><td>VideoTopTab private asset</td></tr>
+</tbody>
+</table>
+<div class="asset-strip" aria-label="VideoTopTab private icon assets">
+  <span class="asset-chip"><img src="./assets/icons/icon-back-video.svg" alt="">back</span>
+  <span class="asset-chip"><img src="./assets/icons/icon-menu-video.svg" alt="">menu</span>
+  <span class="asset-chip"><img src="./assets/icons/icon-search-video.svg" alt="">search</span>
+  <span class="asset-chip"><img src="./assets/icons/icon-forward-video.svg" alt="">forward</span>
+</div>
+<blockquote>⚠️ 当前 icon 归属 VideoTopTab 私有资产层，未进入全局 Icon 系统。</blockquote>
+<table>
+<thead><tr><th>维度</th><th>尺寸</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>返回（back）</td><td>28×44</td><td><code>.vtt-back</code> 固定宽，icon 22×22 居中</td></tr>
+<tr><td>热区（menu / search）</td><td>44×44</td><td><code>.vtt-icon</code> 点击区域，icon 居中</td></tr>
+<tr><td>视觉（图形）</td><td>22×22</td><td>SVG 资产 frame bounds 与 <code>img</code> 渲染尺寸</td></tr>
+</tbody>
+</table>
+<h3>4.3 Token Mapping</h3>
+<table>
+<thead><tr><th>Component Role</th><th>Token Dependency</th></tr></thead>
+<tbody>
+<tr><td>container.background.default</td><td><code>color/background 2</code></td></tr>
+<tr><td>container.background.sticky</td><td><code>color/background 5</code></td></tr>
+<tr><td>label.default / selected</td><td>同一模式下共用同一个文本 token，不做选中高亮。</td></tr>
+<tr><td>container.horizontal</td><td>Relay measured：内容区 362×44，左右外边距 6；TODO: missing token dependency — <code>size.video_top_tab_content_w</code> / <code>spacing.video_top_tab_margin_x</code>。</td></tr>
+<tr><td>back.bounds</td><td>Relay measured：28×44；TODO: missing token dependency — <code>size.video_top_tab_back_w</code>。</td></tr>
+<tr><td>tab.max_visible</td><td>Relay measured：首屏最多 5 个 Tab。</td></tr>
+<tr><td>tab.item.bounds</td><td>Relay measured：高 44，左右内边距 9；部分固定宽 51；TODO: missing token dependency — <code>size.video_top_tab_item_h</code> / <code>spacing.video_top_tab_item_pad_x</code>。</td></tr>
+<tr><td>tab.list.viewport</td><td>Relay measured：246×44 可视区，超出横向滚动；TODO: missing token dependency — <code>size.video_top_tab_list_viewport_w</code>。</td></tr>
+<tr><td>icon.hit</td><td>Relay measured：44×44；TODO: missing token dependency — <code>size.video_top_tab_icon_hit</code>。</td></tr>
+<tr><td>icon.visual</td><td>Relay measured：22×22；TODO: missing token dependency — <code>size.video_top_tab_icon</code>。</td></tr>
+<tr><td>indicator.radius</td><td><code>radius.module.nav_tag</code></td></tr>
+<tr><td>immersive.shadow</td><td><code>shadow_interactive</code></td></tr>
+</tbody>
+</table>
+</div><!-- /pro-only -->
+
+<h2 id="sec-5"><span class="num">5</span>布局</h2>
+<table>
+<thead><tr><th>区域</th><th>布局规则</th></tr></thead>
+<tbody>
+<tr><td>leading.back</td><td>返回入口，固定 28×44。**非沉浸流展示；沉浸流不展示</strong>（Relay <code>2084:44</code>）。</td></tr>
+<tr><td>leading.menu</td><td>菜单 / 频道整合入口，热区 44×44、视觉 22×22，引用 <code>icon-menu-video.svg</code>。</td></tr>
+<tr><td>TabList</td><td>右对齐锚定。非沉浸流可视区 246×44（<code>518:2141</code>）；沉浸流可视区 275×44，track 右锚定 + 左侧「关注」peek，与 search 无缝隙（<code>2084:44</code>）。</td></tr>
+<tr><td>trailing slot</td><td>承载搜索 / 二级跳转，icon 热区 44×44、视觉 22×22 居中，不参与 TabList 滚动。</td></tr>
+<tr><td>Indicator</td><td>跟随 selected TabItem；颜色继承当前文本色，不使用品牌色或额外高亮。</td></tr>
+<tr><td>Dropdown</td><td>折叠频道层与 TabList 保持单选同步。</td></tr>
+</tbody>
+</table>
+<h3 class="pro-only">5.2 内部布局 ASCII</h3>
+<pre class="pro-only"><code>VideoTopTab — 非沉浸流 518:2141 (362×44 content, 6px horizontal margin)
+┌────────────────────────────────────────────────────────────┐
+│ back 28 │ menu 44 │ TabList viewport 246 (scroll) │ search 44 │
+└────────────────────────────────────────────────────────────┘
+
+VideoTopTab — 沉浸流 2084:10 (362×44 content, 6px horizontal margin)
+┌────────────────────────────────────────────────────────────┐
+│ menu 44 │ TabList viewport 275 (track -68px, 关注 peek) │ search 44 │
+└────────────────────────────────────────────────────────────┘
+
+Dropdown / Folded Channel Layer
+└── channel item + selected sync</code></pre>
+<blockquote class="warn">⚠️ 动效参数依赖 TODO: missing token dependency — <code>motion.video_top_tab_indicator</code>。</blockquote>
+
+<h2 id="sec-6"><span class="num">6</span>正反案例</h2>
+<div class="case good">
+  <h4><span class="badge">正例</span> 沉浸流频道切换</h4>
+  <p>使用沉浸态文本、shadow token 与稳定导航 slot；Tab 切换只更新 selected 与 indicator。</p>
+</div>
+<div class="case good">
+  <h4><span class="badge">正例</span> 活动态降级</h4>
+  <p>活动素材失败时降级为 selected 文案态与 underline indicator；文案和 indicator 仍继承当前文本色。</p>
+</div>
+<div class="case bad">
+  <h4><span class="badge">反例</span> 用缩小字号解决频道过多</h4>
+  <p><strong>问题：</strong> 频道过多应进入 scrollable / folded / dropdown，而不是破坏 typography token。</p>
+</div>
+<div class="case bad">
+  <h4><span class="badge">反例</span> 把私有 icon 迁移到全局 Icon</h4>
+  <p><strong>问题：</strong> 当前 4 个导航 icon 是 VideoTopTab component-owned private assets，不属于 global Icon system。</p>
+</div>
+
+<h2 id="sec-7"><span class="num">7</span>典型场景</h2>
+<table>
+<thead><tr><th>场景</th><th>Variant</th><th>触发</th><th>关键规则</th></tr></thead>
+<tbody>
+<tr><td>短视频沉浸流顶部频道</td><td><code>immersive</code></td><td>进入视频流</td><td>× 常规 / 暗黑：无返回；菜单 + TabList 275；透明 / mask 背景 + 防穿透阴影。</td></tr>
+<tr><td>非沉浸流频道导航</td><td><code>default</code></td><td>页面常规列表</td><td>× 常规 / 暗黑：返回 + TabList 246；可读 / 深底背景。</td></tr>
+<tr><td>滚动吸顶</td><td><code>sticky</code></td><td>超过滚动阈值</td><td>不改变 selected 与 Tab 顺序。</td></tr>
+<tr><td>运营活动频道</td><td><code>activity</code></td><td>服务端活动配置</td><td>素材失败时降级到 selected。</td></tr>
+<tr><td>频道过多</td><td><code>noise-reduction</code></td><td>长频道 / 复杂运营</td><td>视频、直播、关注为常驻 Tab。</td></tr>
+<tr><td>更多频道管理</td><td><code>dropdown</code></td><td>点击 folded / menu</td><td>Dropdown selected 与 TabList 单源同步。</td></tr>
+</tbody>
+</table>
+
+<hr>
+
+<h3 class="pro-only">API 速查</h3>
+<pre class="pro-only"><code>type VideoTopTabVariant =
+  | 'default'
+  | 'selected'
+  | 'activity'
+  | 'sticky'
+  | 'immersive'
+  | 'dropdown'
+  | 'folded'
+  | 'noise-reduction'
+  | 'scrollable';
+
+interface VideoTopTabEventPayload {
+  previous_id?: string;
+  next_id?: string;
+  trigger?: 'tap' | 'scroll' | 'route' | 'dropdown' | 'service';
+}</code></pre>
+
+<h3>引用</h3>
+<ul>
+  <li>Relay：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A3770&PAGE_LOAD_MODE=1">顶部tab page 0:3770</a></li>
+  <li>非沉浸流应用态：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A3770&node_id=518%3A2141"><code>518:2141</code></a></li>
+  <li>沉浸流应用态：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A3770&node_id=2084%3A44"><code>2084:44</code></a></li>
+  <li>Dropdown 对照节点：<code>771:39262</code></li>
+  <li>Token：<code>tokens/color.md</code> / <code>tokens/typography.md</code> / <code>tokens/spacing.md</code> / <code>tokens/radius.md</code> / <code>tokens/shadow.md</code></li>
+  <li>Private assets：<code>assets/icons/icon-back-video.svg</code> / <code>icon-search-video.svg</code> / <code>icon-menu-video.svg</code> / <code>icon-forward-video.svg</code></li>
+</ul>
+
+<div style="margin-top:60px; padding-top:20px; border-top:1px solid var(--c-line); color:var(--c-text-3); font-size:12px; text-align:center;">
+  JD APP V16.0 Design System · 顶部视频 Tab 规范 · 生成于 2026-05-25 · 非沉浸流 = Relay 518:2141 · 沉浸流 = Relay 2084:44 · Demo = 流类型 × 样式
+</div>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'spec-page-view-mode';
+  var body = document.body;
+  var tabs = document.querySelectorAll('.view-tab');
+  function setMode(mode) {
+    body.classList.remove('mode-basic', 'mode-pro');
+    body.classList.add('mode-' + mode);
+    tabs.forEach(function (tab) {
+      var active = tab.dataset.view === mode;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) {}
+  }
+  var initial = 'basic';
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'basic' || saved === 'pro') initial = saved;
+  } catch (e) {}
+  setMode(initial);
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { setMode(tab.dataset.view); });
+  });
+
+  var demo = document.querySelector('[data-vtt-demo]');
+  var vttTabs = document.getElementById('vttTabs');
+  var vttNav = document.getElementById('vttNav');
+  var vttContent = document.getElementById('vttContent');
+  if (!demo || !vttTabs || !vttNav || !vttContent) return;
+  var demoState = { flow: 'immersive', theme: 'default' };
+  var copy = {
+    immersive: {
+      default: '沉浸流 · 常规：顶部导航悬浮在视频内容上，无返回入口；菜单 + 频道 + 搜索 slot 保持稳定，左侧露出「关注」边缘。',
+      dark: '沉浸流 · 暗黑：深底视频场景下保持透明导航与沉浸态文本，布局与沉浸流常规一致。'
+    },
+    standard: {
+      default: '非沉浸流 · 常规：容器进入可读背景，362×44 内容区与 6px 外边距对齐 Relay 518:2141。',
+      dark: '非沉浸流 · 暗黑：深底背景与沉浸态文字，返回 + 菜单 + TabList 246 + 搜索 slot 保持稳定。'
+    }
+  };
+  var tabTrackHtml = {
+    immersive: '<div class="vtt-tabs__track"><span class="vtt-tab">关注</span><span class="vtt-tab">直播</span><span class="vtt-tab">推荐</span><span class="vtt-tab">小说</span><span class="vtt-tab">短剧</span><span class="vtt-tab is-selected">视频</span></div>',
+    standard: '<div class="vtt-tabs__track"><span class="vtt-tab">直播</span><span class="vtt-tab">推荐</span><span class="vtt-tab">小说</span><span class="vtt-tab">短剧</span><span class="vtt-tab is-selected">视频</span></div>'
+  };
+  function renderDemo() {
+    demo.dataset.vttFlow = demoState.flow;
+    demo.dataset.vttTheme = demoState.theme;
+    vttNav.dataset.sticky = String(demoState.flow === 'standard');
+    vttContent.textContent = copy[demoState.flow][demoState.theme];
+    vttTabs.innerHTML = tabTrackHtml[demoState.flow];
+    demo.querySelectorAll('[data-vtt-flow]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.vttFlow === demoState.flow));
+    });
+    demo.querySelectorAll('[data-vtt-theme]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.vttTheme === demoState.theme));
+    });
+  }
+  demo.addEventListener('click', function (event) {
+    var flowButton = event.target.closest('[data-vtt-flow]');
+    var themeButton = event.target.closest('[data-vtt-theme]');
+    if (flowButton) {
+      demoState.flow = flowButton.dataset.vttFlow;
+      renderDemo();
+    }
+    if (themeButton) {
+      demoState.theme = themeButton.dataset.vttTheme;
+      renderDemo();
+    }
+  });
+  renderDemo();
+})();
+</script>
+
+</body>
+</html>

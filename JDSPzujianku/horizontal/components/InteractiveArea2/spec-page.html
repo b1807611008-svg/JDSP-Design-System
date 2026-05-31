@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>互动区 · InteractiveArea 组件规范 — JD APP 16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-grass: #14ad5d;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+    --shadow-interactive: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+    --text-shadow-interactive: 0 1px 1px rgba(0,0,0,0.2);
+    --icon-root: "../../../src/assets/icons/";
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255,255,255,0.92);
+    border-bottom: 1px solid var(--c-line);
+    backdrop-filter: blur(14px);
+  }
+  .top-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand {
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .zone-nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .zone-nav a {
+    color: var(--c-text-2);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: var(--r-base);
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .zone-nav a.is-current {
+    background: var(--c-text);
+    color: #fff;
+  }
+  .doc {
+    max-width: 960px;
+    margin: 40px auto;
+    background: var(--c-bg);
+    padding: 64px 72px;
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    line-height: 1.3;
+    border-bottom: 2px solid var(--c-text);
+    padding-bottom: 16px;
+  }
+  h1 + .meta {
+    color: var(--c-text-3);
+    font-size: 13px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--c-line);
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background: var(--c-brand);
+    color: #fff;
+    border-radius: var(--r-base);
+    text-align: center;
+    font-size: 16px;
+    margin-right: 12px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  p { margin: 12px 0; color: var(--c-text-2); }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--c-code-bg);
+    color: var(--c-brand);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  pre {
+    background: #1a1a1a;
+    color: #e8e8e8;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--c-info-bg);
+    border-left: 3px solid var(--c-info);
+    border-radius: 0 var(--r-base) var(--r-base) 0;
+    color: var(--c-text-2);
+  }
+  blockquote.warn { background: var(--c-warning-bg); border-left-color: var(--c-warning); }
+  blockquote.danger { background: var(--c-danger-bg); border-left-color: var(--c-danger); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--c-line);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--c-bg-sunken); font-weight: 600; }
+  ul, ol { padding-left: 24px; color: var(--c-text-2); }
+  li { margin: 6px 0; }
+  .case {
+    margin: 20px 0;
+    padding: 20px 24px;
+    border-radius: var(--r-base);
+    border: 1px solid var(--c-line);
+  }
+  .case.good { background: var(--c-success-bg); border-color: var(--c-success); }
+  .case.bad { background: var(--c-danger-bg); border-color: var(--c-danger); }
+  .case h4 { margin: 0 0 8px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--c-brand);
+  }
+  .stage {
+    background: var(--c-bg-sunken);
+    border-radius: var(--r-base);
+    border: 1px dashed var(--c-line);
+    margin: 12px 0;
+    padding: 32px 24px;
+  }
+  .stage-label {
+    color: var(--c-text-3);
+    font-size: 12px;
+    text-align: center;
+    margin: -4px 0 16px;
+  }
+  .phone-stage {
+    min-height: 590px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    justify-items: center;
+    align-items: center;
+  }
+  .variant-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--r-base);
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+  .variant-tab {
+    min-width: 88px;
+    border: 0;
+    border-radius: 4px;
+    padding: 7px 12px;
+    background: transparent;
+    color: var(--c-text-2);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+  .variant-tab.is-active {
+    background: var(--c-text);
+    color: #fff;
+    font-weight: 600;
+  }
+  .variant-demo {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+  }
+  .state-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    align-items: start;
+  }
+  .state-panel {
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    background: #fff;
+    overflow: hidden;
+  }
+  .state-panel h4 {
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--c-line);
+    background: var(--c-bg-sunken);
+  }
+  .avatar-matrix {
+    background:
+      radial-gradient(circle at 50% 18%, rgba(255,255,255,0.18), transparent 26%),
+      linear-gradient(160deg, #2b2938 0%, #151924 52%, #090b10 100%);
+    padding: 18px 16px 20px;
+  }
+  .matrix-row {
+    display: grid;
+    grid-template-columns: 72px repeat(3, 1fr);
+    gap: 14px;
+    align-items: center;
+  }
+  .matrix-row + .matrix-row { margin-top: 16px; }
+  .matrix-label {
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .avatar-cell {
+    min-height: 118px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 8px;
+  }
+  .avatar-cell small {
+    color: rgba(255,255,255,0.72);
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .action-state-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 16px;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(255,255,255,0.14), transparent 24%),
+      linear-gradient(150deg, #262a38, #10131b 64%, #090b10);
+    padding: 18px;
+  }
+  .action-state-card {
+    min-height: 150px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 10px;
+    border-radius: var(--r-base);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    transition: background 150ms, border-color 150ms, transform 150ms;
+  }
+  .action-state-card:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.22);
+  }
+  .action-state-card:active { transform: scale(0.98); }
+  .action-state-card[aria-pressed="true"] {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.32);
+  }
+  .action-state-card small {
+    color: rgba(255,255,255,0.72);
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+  .action-state-card strong {
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .state-note {
+    margin: 0;
+    padding: 10px 12px 12px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .phone {
+    width: 220px;
+    min-height: 460px;
+    margin: 0 auto;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 34% 18%, rgba(255,255,255,0.2), transparent 25%),
+      linear-gradient(160deg, #2b2938 0%, #141926 46%, #0b0d12 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 18px 46px rgba(0,0,0,0.18);
+  }
+  .phone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08), transparent 28%),
+      linear-gradient(0deg, rgba(0,0,0,0.34), transparent 45%);
+  }
+  .rail {
+    position: absolute;
+    right: 18px;
+    bottom: 36px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    color: #fff;
+  }
+  .rail.with-grass { bottom: 18px; }
+  .rail .grass-slot { display: none; }
+  .rail.with-grass .grass-slot { display: block; }
+  .rail .volume-pill { display: none; }
+  .avatar {
+    width: 50px;
+    height: 83px;
+    position: relative;
+    margin-bottom: 0;
+  }
+  .avatar-core {
+    position: absolute;
+    left: 4px;
+    top: 30px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 30%, #fff2df 0 16%, #f2ad72 17% 33%, #8b4d39 34% 54%, #25314a 55% 100%);
+    box-shadow: inset 0 0 0 2px #fff;
+    z-index: 1;
+  }
+  .avatar.live .avatar-core { top: 29px; }
+  .live-ring {
+    display: none;
+    position: absolute;
+    left: 2px;
+    top: 27px;
+    width: 46px;
+    height: 46px;
+    border: 0.5px solid rgba(255,15,35,0.5);
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .avatar.live .live-ring { display: block; }
+  .avatar.live.followed::after {
+    content: "";
+    position: absolute;
+    box-sizing: border-box;
+    left: 4px;
+    top: 29px;
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid var(--c-brand);
+    border-radius: 50%;
+    z-index: 3;
+  }
+  .live-badge {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 50px;
+    height: 21px;
+    color: #fff;
+    z-index: 4;
+  }
+  .avatar.live .live-badge { display: block; }
+  .live-pill {
+    width: 48px;
+    height: 17px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: var(--c-brand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 9px;
+    line-height: 11px;
+    font-weight: 500;
+  }
+  .live-pill img {
+    width: 9px;
+    height: 9px;
+    filter: brightness(0) invert(1);
+  }
+  .live-badge::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    width: 10px;
+    height: 6px;
+    background: var(--c-brand);
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+  }
+  .follow-badge {
+    position: absolute;
+    left: 15px;
+    top: 62px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--c-brand);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    z-index: 5;
+  }
+  .follow-badge img {
+    width: 14px;
+    height: 14px;
+    filter: brightness(0) invert(1);
+  }
+  .avatar.intermediate .follow-badge {
+    background: #fff;
+  }
+  .avatar.intermediate .follow-badge img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(17%) sepia(100%) saturate(5300%) hue-rotate(345deg) brightness(106%) contrast(105%);
+  }
+  .avatar.followed .follow-badge { display: none; }
+  .action-item {
+    width: 50px;
+    height: 62px;
+    position: relative;
+    color: #fff;
+  }
+  .action-item.active.like { color: var(--c-brand); }
+  .action-item.active.grass { color: var(--c-grass); }
+  .action-item.disabled { color: rgba(255,255,255,0.45); }
+  .action-item .action-icon {
+    display: block;
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: brightness(0) invert(1) drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .action-item.active.like .action-icon {
+    filter: brightness(0) saturate(100%) invert(17%) sepia(100%) saturate(5300%) hue-rotate(345deg) brightness(106%) contrast(105%) drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .action-item.active.grass .action-icon {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(76%) saturate(575%) hue-rotate(95deg) brightness(92%) contrast(94%) drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+  .action-item .count {
+    position: absolute;
+    top: 43px;
+    left: 0;
+    width: 50px;
+    color: rgba(255,255,255,0.9);
+    font-size: 11px;
+    line-height: 15px;
+    font-weight: 500;
+    text-align: center;
+    text-shadow: var(--text-shadow-interactive);
+  }
+  .action-item.active.like .count { color: var(--c-brand); }
+  .action-item.active.grass .count { color: var(--c-grass); }
+  .volume {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .volume .circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    display: grid;
+    place-items: center;
+    color: #171a26;
+  }
+  .volume .circle img {
+    width: 16px;
+    height: 16px;
+  }
+  .volume-pill {
+    width: 69px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.9);
+    color: #171a26;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 10.91px;
+  }
+  .volume-pill img { width: 14px; height: 14px; }
+  .asset-note {
+    font-size: 12px;
+    color: var(--c-text-3);
+    margin-top: 12px;
+  }
+  .icon-swatch {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .icon-card {
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-base);
+    padding: 12px;
+    background: #fff;
+    text-align: center;
+  }
+  .icon-card img {
+    width: 50px;
+    height: 50px;
+    display: block;
+    margin: 0 auto 6px;
+  }
+  .icon-card small {
+    display: block;
+    color: var(--c-text-3);
+    line-height: 1.4;
+  }
+  @media (max-width: 760px) {
+    .doc { margin: 0; border-radius: 0; padding: 32px 20px; }
+    .top-inner { padding: 10px 16px; }
+    .phone-stage { grid-template-columns: 1fr; }
+    .matrix-row { grid-template-columns: 60px repeat(3, 1fr); gap: 8px; }
+    .action-state-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+    table { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<header class="top-bar">
+  <div class="top-inner">
+    <div class="brand">JD APP 16.0 GUIDELINE</div>
+    <nav class="zone-nav" aria-label="Design system zones">
+      <a href="../../../knowledge/spec-page.html">知识沉淀</a>
+      <a href="../../../foundations/spec-page.html">基础规范</a>
+      <a href="../../../ai-mechanism/spec-page.html">AI 机制</a>
+      <a href="../../../product-architecture/spec-page.html">产品架构</a>
+      <a href="../../../horizontal/spec-page.html" class="is-current">横向专项</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc">
+  <h1>互动区 · InteractiveArea 组件规范</h1>
+  <div class="meta">
+    JD APP 16.0 GUIDELINE · Component Composition Layer · version 1.0.0 · generated 2026-05-25<br>
+    Relay: <code>1958051135088508929 / page 0:13090 / node 1600:588</code><br>
+    Source bundle: <code>JDSPzujianku/horizontal/components/InteractiveArea2</code>
+  </div>
+
+  <h2 id="definition"><span class="num">1</span>定义</h2>
+  <p><strong>InteractiveArea</strong> 是短视频沉浸流右侧互动栏的完整组合组件，把作者头像入口、点赞、评论、可选种草、转发与音量控制组织成一条稳定的垂直 Action Rail。</p>
+  <p>它的核心边界是<strong>组合顺序、变体开关与事件透传</strong>，而不是重新定义头像、图标、文字、颜色、阴影或音量按钮的视觉细节。</p>
+  <table>
+    <thead><tr><th>对象</th><th>职责</th><th>视觉来源</th></tr></thead>
+    <tbody>
+      <tr><td>InteractiveArea2</td><td>定义 rail 顺序、with/without grass 变体、事件 payload 与页面边界。</td><td>不新建视觉；复用子组件契约。</td></tr>
+      <tr><td>InteractiveAvatar</td><td>维护头像、直播标签、直播环、关注关系 2×3 状态矩阵。</td><td><code>references/InteractiveArea/InteractiveAvatar.md</code></td></tr>
+      <tr><td>InteractiveActionItem / Volume</td><td>维护互动图标、计数文字、点赞/种草激活态与音量控制。</td><td><code>references/InteractiveArea/InteractiveActionItem.md</code> + <code>foundations/visual/Icon.md</code></td></tr>
+    </tbody>
+  </table>
+  <blockquote>
+    <p>立场：InteractiveArea2 只改写逻辑样式和发布结构，不改变原互动区视觉规范；旧目录里的 HTML 产物不作为新规范源。</p>
+  </blockquote>
+
+  <h2 id="principles"><span class="num">2</span>行为准则</h2>
+  <ol>
+    <li><strong>顺序固定：</strong>始终按 <code>avatar → like → comment → optional grass → share → volume</code> 渲染。</li>
+    <li><strong>变体不占位：</strong><code>without_grass</code> 不渲染种草空容器；<code>with_grass</code> 只在评论与转发之间插入种草。</li>
+    <li><strong>头像单源：</strong><code>liveState</code> 与 <code>relationship</code> 透传给 InteractiveAvatar，组合层不改头像状态层。</li>
+    <li><strong>操作项单源：</strong>like/comment/grass/share 透传 <code>type</code>、<code>isActive</code>、<code>disabled</code>、<code>count</code>。</li>
+    <li><strong>音量独立：</strong>volume 不复用普通 ActionItem 高度、计数或激活色，只使用音量控制二级组件。</li>
+    <li><strong>页面拥有定位：</strong>右侧位置、安全区、z-index 与播放器状态由页面层处理。</li>
+    <li><strong>禁用无副作用：</strong>disabled 操作不触发业务事件，也不改变视觉状态。</li>
+    <li><strong>图标用真资产：</strong>互动区图标必须引用 <code>src/assets/icons/*.svg</code>，并遵循 <code>Icon.md</code> 的 50×50 interactive 画板规则。</li>
+  </ol>
+
+  <h2 id="types"><span class="num">3</span>类型</h2>
+  <p>InteractiveArea2 定义 2 个组合变体，并复用头像、操作项和音量控制的状态维度。视觉变化来自子组件，组合层只决定渲染哪些 slot。</p>
+  <table>
+    <thead><tr><th>变体</th><th>Relay 节点</th><th>必渲染内容</th><th>降级规则</th></tr></thead>
+    <tbody>
+      <tr><td><code>without_grass</code></td><td><code>633:4487</code></td><td>Avatar + like + comment + share + volume</td><td>默认形态。</td></tr>
+      <tr><td><code>with_grass</code></td><td><code>1600:1053</code></td><td>Avatar + like + comment + grass + share + volume</td><td>grass 数据缺失时降级为 <code>without_grass</code>。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.1 头像状态矩阵</h3>
+  <p>头像部分必须同时表达关注关系与直播状态：列为未关注、中间态、已关注；行为非直播、直播中。</p>
+  <div class="stage">
+    <div class="state-panel">
+      <h4>InteractiveAvatar 2×3 状态</h4>
+      <div class="avatar-matrix" aria-label="InteractiveAvatar states">
+        <div class="matrix-row">
+          <div class="matrix-label">非直播<br><code>not_live</code></div>
+          <div class="avatar-cell">
+            <div class="avatar unfollowed">
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-add.svg" alt="未关注"></span>
+            </div>
+            <small>未关注</small>
+          </div>
+          <div class="avatar-cell">
+            <div class="avatar intermediate">
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-check-fill.svg" alt="中间态"></span>
+            </div>
+            <small>中间态</small>
+          </div>
+          <div class="avatar-cell">
+            <div class="avatar followed">
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-follow-added-fill.svg" alt="已关注"></span>
+            </div>
+            <small>已关注</small>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-label">直播中<br><code>live</code></div>
+          <div class="avatar-cell">
+            <div class="avatar live unfollowed">
+              <span class="live-badge"><span class="live-pill"><img src="../../../src/assets/icons/icon-cart-fill.svg" alt="">直播中</span></span>
+              <span class="live-ring"></span>
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-add.svg" alt="未关注"></span>
+            </div>
+            <small>未关注</small>
+          </div>
+          <div class="avatar-cell">
+            <div class="avatar live intermediate">
+              <span class="live-badge"><span class="live-pill"><img src="../../../src/assets/icons/icon-cart-fill.svg" alt="">直播中</span></span>
+              <span class="live-ring"></span>
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-check-fill.svg" alt="中间态"></span>
+            </div>
+            <small>中间态</small>
+          </div>
+          <div class="avatar-cell">
+            <div class="avatar live followed">
+              <span class="live-badge"><span class="live-pill"><img src="../../../src/assets/icons/icon-cart-fill.svg" alt="">直播中</span></span>
+              <span class="live-ring"></span>
+              <span class="avatar-core"></span>
+              <span class="follow-badge"><img src="../../../src/assets/icons/icon-follow-added-fill.svg" alt="已关注"></span>
+            </div>
+            <small>已关注</small>
+          </div>
+        </div>
+      </div>
+      <p class="state-note">直播中均展示 live badge 与外层直播环；只有直播中 + 已关注保留内层红环；已关注状态隐藏关注按钮。</p>
+    </div>
+  </div>
+
+  <h3>3.2 点赞 / 种草点击态</h3>
+  <p>互动区下方操作项中，点赞和种草支持点击高亮态；评论与转发只提供默认态和禁用态，不构造 active 态。</p>
+  <div class="stage">
+    <div class="state-panel">
+      <h4>ActionItem default / active</h4>
+      <div class="action-state-grid" aria-label="Action item click states">
+        <button class="action-state-card" type="button" data-toggle-action="like" aria-pressed="false">
+          <div class="action-item like"><img class="action-icon" src="../../../src/assets/icons/icon-like-default.svg" alt="点赞默认"><span class="count">34.5万</span></div>
+          <strong>默认态 / 点赞</strong>
+          <small>点击切换到 like.active</small>
+        </button>
+        <button class="action-state-card" type="button" data-toggle-action="grass" aria-pressed="false">
+          <div class="action-item grass"><img class="action-icon" src="../../../src/assets/icons/icon-grass-default.svg" alt="种草默认"><span class="count">9.9万</span></div>
+          <strong>默认态 / 已种草</strong>
+          <small>点击切换到 grass.active</small>
+        </button>
+      </div>
+      <p class="state-note">点击卡片可在 default / active 间切换；点赞高亮使用 primary red，种草高亮使用 recommend green。comment / share 不展示 active，点击后分别打开评论面板或分享面板。</p>
+    </div>
+  </div>
+
+  <h3>3.3 组合变体展示</h3>
+  <div class="stage phone-stage" aria-label="InteractiveArea variants rendered with real SVG assets">
+    <div class="variant-toggle" role="tablist" aria-label="组合变体切换">
+      <button class="variant-tab is-active" type="button" role="tab" data-variant="without_grass" aria-selected="true">无种草</button>
+      <button class="variant-tab" type="button" role="tab" data-variant="with_grass" aria-selected="false">有种草</button>
+    </div>
+    <div class="variant-demo">
+      <div class="phone">
+        <div class="rail" id="variant-rail" data-current-variant="without_grass">
+          <div class="avatar unfollowed" id="variant-avatar">
+            <span class="live-badge"><span class="live-pill"><img src="../../../src/assets/icons/icon-cart-fill.svg" alt="">直播中</span></span>
+            <span class="live-ring"></span>
+            <span class="avatar-core"></span>
+            <span class="follow-badge"><img src="../../../src/assets/icons/icon-add.svg" alt="未关注"></span>
+          </div>
+          <div class="action-item like" id="variant-like"><img class="action-icon" src="../../../src/assets/icons/icon-like-default.svg" alt="点赞"><span class="count">34.5万</span></div>
+          <div class="action-item comment"><img class="action-icon" src="../../../src/assets/icons/icon-comment-default.svg" alt="评论"><span class="count">1232</span></div>
+          <div class="action-item grass grass-slot"><img class="action-icon" src="../../../src/assets/icons/icon-grass-default.svg" alt="种草"><span class="count">9.9万</span></div>
+          <div class="action-item share"><img class="action-icon" src="../../../src/assets/icons/icon-share-default.svg" alt="转发"><span class="count">分享</span></div>
+          <div class="volume"><span class="circle"><img src="../../../src/assets/icons/icon-volume-mute-fill.svg" alt="静音"></span></div>
+        </div>
+      </div>
+      <div class="stage-label" id="variant-stage-label">without_grass：不保留种草占位，头像未关注、非直播，互动项为默认态，音量为 muted 圆形按钮</div>
+    </div>
+  </div>
+  <p class="asset-note">Stage 中所有图标均引用真实 SVG：<code>../../../src/assets/icons/</code>；未使用占位图或临时绘制 icon。</p>
+
+  <blockquote class="danger">
+    <p>不允许扩展：不得在组合层新增购物车、收藏等操作位；新增动作必须先在 InteractiveActionItem 中补齐 type、资产、状态与 token 映射。</p>
+  </blockquote>
+
+  <h2 id="structure"><span class="num">4</span>结构</h2>
+  <p>InteractiveArea 由 1 个头像子组件、3 或 4 个互动操作项，以及 1 个音量控制构成。互动 icon 使用 <code>Icon.md</code> 的 <code>size=&quot;interactive&quot;</code> 规则：SVG 画板固定 50×50，内部核心图形约 27pt，透明热区不可裁剪。</p>
+
+  <h3>4.1 容器与 slot</h3>
+  <table>
+    <thead><tr><th>Role</th><th>Token / 变量</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>container.width</td><td><code>size.interactive_avatar_w</code> / <code>size.interactive_icon</code></td><td>组合宽度取子组件宽度，不新增组合层宽度。</td></tr>
+      <tr><td>stack.gap</td><td><code>space.action_item_stack_gap</code></td><td>当前设计为 0；组合层不添加额外 gap。</td></tr>
+      <tr><td>avatar</td><td><code>size.interactive_avatar_w/h</code></td><td>始终位于最上方，50×83 外层容器不得裁剪。</td></tr>
+      <tr><td>action</td><td><code>size.interactive_icon</code> + <code>size.action_item</code></td><td>50×50 图标热区，ActionItem 总高 62。</td></tr>
+      <tr><td>volume</td><td><code>size.interactive_volume_hotzone</code></td><td>50×50 热区；胶囊态使用 69×30 独立尺寸。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 真实图标资产</h3>
+  <div class="icon-swatch">
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-like-default.svg" alt="icon-like-default"><small>icon-like-default.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-like-active.svg" alt="icon-like-active"><small>icon-like-active.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-comment-default.svg" alt="icon-comment-default"><small>icon-comment-default.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-grass-default.svg" alt="icon-grass-default"><small>icon-grass-default.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-grass-active.svg" alt="icon-grass-active"><small>icon-grass-active.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-share-default.svg" alt="icon-share-default"><small>icon-share-default.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-volume-mute-fill.svg" alt="icon-volume-mute-fill"><small>icon-volume-mute-fill.svg</small></div>
+    <div class="icon-card"><img src="../../../src/assets/icons/icon-cart-fill.svg" alt="icon-cart-fill"><small>icon-cart-fill.svg</small></div>
+  </div>
+
+  <h3>4.3 文字、颜色与阴影</h3>
+  <table>
+    <thead><tr><th>对象</th><th>Token</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>计数文字</td><td><code>font_size_11_500</code> proposal + <code>color/text_immerse</code></td><td>11px / 500，颜色为约 90% 白，不是纯白。</td></tr>
+      <tr><td>默认 icon</td><td><code>color/title_immerse</code></td><td>视频背景上使用白色，并叠加互动区阴影。</td></tr>
+      <tr><td>点赞激活</td><td><code>color/primary</code></td><td>品牌红。</td></tr>
+      <tr><td>种草激活</td><td><code>color/Recommend_btntext</code></td><td>种草绿。</td></tr>
+      <tr><td>防穿透</td><td><code>shadow_interactive</code></td><td>icon 用 drop-shadow，文字用 text-shadow，不能叠加在同一元素。</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="layout"><span class="num">5</span>布局</h2>
+  <h3>5.1 组合高度公式</h3>
+  <table>
+    <thead><tr><th>变体</th><th>公式</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>without_grass</code></td><td><code>size.interactive_avatar_h + 3 × size.action_item + size.interactive_volume_hotzone + 4 × space.action_item_stack_gap</code></td><td>无种草，不留空位。</td></tr>
+      <tr><td><code>with_grass</code></td><td><code>size.interactive_avatar_h + 4 × size.action_item + size.interactive_volume_hotzone + 5 × space.action_item_stack_gap</code></td><td>种草位插入在评论与转发之间。</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 内部布局</h3>
+  <pre><code>InteractiveArea
+├── InteractiveAvatar              50×83
+├── InteractiveActionItem(like)     50×62
+├── InteractiveActionItem(comment)  50×62
+├── InteractiveActionItem(grass)    50×62  # with_grass only
+├── InteractiveActionItem(share)    50×62
+└── InteractiveVolumeControl        50×50 muted / 69×30 unmute_prompt</code></pre>
+
+  <h3>5.3 页面定位边界</h3>
+  <table>
+    <thead><tr><th>项目</th><th>归属</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>右侧栏整体 x/y</td><td>Page</td><td>不消费 Relay 外层展示画布坐标。</td></tr>
+      <tr><td>底部安全区</td><td>Page</td><td>页面负责避让播放器、进度条、TabBar 与系统安全区。</td></tr>
+      <tr><td>z-index</td><td>Page token TODO</td><td>当前仅记录 <code>z_index.interactive_area</code> 待沉淀。</td></tr>
+      <tr><td>背景</td><td>Video page</td><td>组件默认悬浮在视频内容上，不自带背景板。</td></tr>
+    </tbody>
+  </table>
+  <blockquote class="warn">
+    <p>⚠️ TBD：源文档暂未提供 Motion Token。点赞、种草或直播呼吸动效若进入工程实现，需要补齐 duration / easing。</p>
+  </blockquote>
+
+  <h2 id="cases"><span class="num">6</span>正反案例</h2>
+  <div class="case good">
+    <h4><span class="badge">GOOD</span> 种草能力开启时只插入一个 grass slot</h4>
+    <p>使用 <code>with_grass</code>，grass 位于 comment 与 share 之间；其他子组件视觉保持原样。</p>
+  </div>
+  <div class="case good">
+    <h4><span class="badge">GOOD</span> 无种草时总高度自然收缩</h4>
+    <p><code>without_grass</code> 不保留空节点，不用透明占位维持旧高度。</p>
+  </div>
+  <div class="case good">
+    <h4><span class="badge">GOOD</span> 音量用独立二级组件</h4>
+    <p>muted 使用 50×50 hotzone；unmute_prompt 使用 69×30 胶囊，不复用 <code>size.action_item</code>。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> 在组合层重绘 icon</h4>
+    <p><strong>问题：</strong>会绕过 <code>Icon.md</code> 的 50×50 interactive 画板、透明热区和 currentColor 收口规则。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> without_grass 保留透明种草位</h4>
+    <p><strong>问题：</strong>破坏 Relay 组合节奏和总高度公式，也让业务状态与视觉结构不一致。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">BAD</span> 用普通 24px 图标替代互动区 SVG</h4>
+    <p><strong>问题：</strong>互动区图标内部核心约 27pt，缩到常规尺寸会显得过小，并丢失 50×50 热区。</p>
+  </div>
+
+  <h2 id="scenes"><span class="num">7</span>典型场景</h2>
+  <table>
+    <thead><tr><th>场景</th><th>组合类型</th><th>关键参数</th><th>触发 / 展示</th></tr></thead>
+    <tbody>
+      <tr><td>短视频沉浸流默认右侧栏</td><td><code>without_grass</code></td><td><code>avatar.not_live + like/comment/share + volume.muted</code></td><td>进入视频播放页即展示。</td></tr>
+      <tr><td>开放种草能力的视频内容</td><td><code>with_grass</code></td><td>默认展示 <code>grass.default</code>；点击后可进入 <code>grass.active</code></td><td>业务返回 grass 数据时展示。</td></tr>
+      <tr><td>作者直播中</td><td>任一组合</td><td><code>avatar.liveState=live</code> + <code>relationship</code> 状态</td><td>展示直播标签、直播外圈；followed 额外展示内层红环。</td></tr>
+      <tr><td>提示用户恢复声音</td><td>任一组合</td><td><code>volume.state=unmute_prompt</code></td><td>底部音量从圆形静音按钮切换为「取消静音」胶囊。</td></tr>
+      <tr><td>评论区关闭或分享不可用</td><td>任一组合</td><td><code>disabled_actions=[comment|share]</code></td><td>禁用态不触发业务事件。</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="api">API 速查</h2>
+  <pre><code>type InteractiveAreaVariant = "without_grass" | "with_grass";
+type AvatarLiveState = "not_live" | "live";
+type AvatarRelationship = "unfollowed" | "intermediate" | "followed";
+type VolumeState = "muted" | "unmute_prompt";
+
+interface InteractiveAreaProps {
+  variant: InteractiveAreaVariant;
+  avatar: { liveState: AvatarLiveState; relationship: AvatarRelationship };
+  like: ActionItemProps;
+  comment: ActionItemProps;
+  grass?: ActionItemProps;
+  share: ActionItemProps;
+  volume: { state: VolumeState };
+  onActionTap?: (payload: { type: "like" | "comment" | "grass" | "share"; count?: number }) =&gt; void;
+  onVolumeToggle?: (payload: { previous_state: VolumeState; next_state: VolumeState }) =&gt; void;
+}</code></pre>
+
+  <h2 id="references">引用</h2>
+  <ul>
+    <li>Page-doc bundle: <code>JDSPzujianku/horizontal/components/InteractiveArea2/design.md</code>, <code>spec.md</code>, <code>variants.md</code>, <code>behaviors.md</code>, <code>ai-schema.yaml</code>, <code>CHANGELOG.md</code></li>
+    <li>Legacy visual source: <code>JDSPzujianku/horizontal/components/InteractiveArea2/references/InteractiveArea/InteractiveAvatar.md</code>, <code>InteractiveActionItem.md</code></li>
+    <li>Icon rules: <code>JDSPzujianku/foundations/visual/Icon.md</code></li>
+    <li>SVG assets: <code>JDSPzujianku/src/assets/icons/icon-like-default.svg</code>, <code>icon-like-active.svg</code>, <code>icon-comment-default.svg</code>, <code>icon-grass-default.svg</code>, <code>icon-grass-active.svg</code>, <code>icon-share-default.svg</code>, <code>icon-volume-mute-fill.svg</code>, <code>icon-add.svg</code>, <code>icon-follow-added-fill.svg</code>, <code>icon-cart-fill.svg</code></li>
+    <li>Relay nodes: <code>1600:588</code>, <code>633:4487</code>, <code>1600:1053</code>, <code>633:3418</code>, <code>823:3046</code>, <code>633:3616</code>, <code>1791:107</code></li>
+  </ul>
+
+  <p class="asset-note">JD APP 16.0 Design System · 互动区规范 · 生成于 2026-05-25 · 样式基于 design-md-to-spec-page 7 章节模板。</p>
+</main>
+<script>
+(function () {
+  var iconRoot = '../../../src/assets/icons/';
+  var config = {
+    like: {
+      activeClass: 'active like',
+      defaultClass: 'like',
+      defaultIcon: 'icon-like-default.svg',
+      activeIcon: 'icon-like-active.svg',
+      defaultAlt: '点赞默认',
+      activeAlt: '已点赞',
+      defaultTitle: '默认态 / 点赞',
+      activeTitle: '高亮态 / 已点赞',
+      defaultHint: '点击切换到 like.active',
+      activeHint: '点击切回 like.default'
+    },
+    grass: {
+      activeClass: 'active grass',
+      defaultClass: 'grass',
+      defaultIcon: 'icon-grass-default.svg',
+      activeIcon: 'icon-grass-active.svg',
+      defaultAlt: '种草默认',
+      activeAlt: '已种草',
+      defaultTitle: '默认态 / 已种草',
+      activeTitle: '高亮态 / 已种草',
+      defaultHint: '点击切换到 grass.active',
+      activeHint: '点击切回 grass.default'
+    }
+  };
+
+  document.querySelectorAll('[data-toggle-action]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var type = button.dataset.toggleAction;
+      var item = button.querySelector('.action-item');
+      var img = button.querySelector('.action-icon');
+      var title = button.querySelector('strong');
+      var hint = button.querySelector('small');
+      var nextActive = button.getAttribute('aria-pressed') !== 'true';
+      var state = config[type];
+
+      button.setAttribute('aria-pressed', nextActive ? 'true' : 'false');
+      item.className = 'action-item ' + (nextActive ? state.activeClass : state.defaultClass);
+      img.src = iconRoot + (nextActive ? state.activeIcon : state.defaultIcon);
+      img.alt = nextActive ? state.activeAlt : state.defaultAlt;
+      title.textContent = nextActive ? state.activeTitle : state.defaultTitle;
+      hint.textContent = nextActive ? state.activeHint : state.defaultHint;
+    });
+  });
+
+  var variantCopy = {
+    without_grass: 'without_grass：不保留种草占位，头像未关注、非直播，互动项为默认态，音量为 muted 圆形按钮',
+    with_grass: 'with_grass：只在 comment 与 share 之间插入种草位；头像未关注、非直播，互动项为默认态，音量为 muted 圆形按钮'
+  };
+  var rail = document.getElementById('variant-rail');
+  var avatar = document.getElementById('variant-avatar');
+  var like = document.getElementById('variant-like');
+  var likeIcon = like ? like.querySelector('.action-icon') : null;
+  var followIcon = avatar ? avatar.querySelector('.follow-badge img') : null;
+  var variantLabel = document.getElementById('variant-stage-label');
+  var variantTabs = document.querySelectorAll('[data-variant]');
+
+  function setVariant(variant) {
+    var withGrass = variant === 'with_grass';
+
+    rail.className = 'rail' + (withGrass ? ' with-grass' : '');
+    rail.dataset.currentVariant = variant;
+    avatar.className = 'avatar unfollowed';
+    like.className = 'action-item like';
+    likeIcon.src = iconRoot + 'icon-like-default.svg';
+    likeIcon.alt = '点赞';
+    followIcon.src = iconRoot + 'icon-add.svg';
+    followIcon.alt = '未关注';
+    variantLabel.textContent = variantCopy[variant];
+
+    variantTabs.forEach(function (tab) {
+      var active = tab.dataset.variant === variant;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+  }
+
+  variantTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      setVariant(tab.dataset.variant);
+    });
+  });
+})();
+</script>
+</body>
+</html>

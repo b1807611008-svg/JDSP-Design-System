@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>InteractiveArea · 互动区组件规范</title>
+  <meta name="description" content="JD APP 16.0 互动区组件规范，基于 InteractiveArea.md 生成。" />
+  <style>
+    :root {
+      --color-text: #11141A;
+      --color-text-help: #6B6F7A;
+      --color-banner-bg: #F5F6FA;
+      --color-divider: rgba(17, 20, 26, 0.08);
+      --color-tips-bg: #F0F7FF;
+      --color-tips-border: #B3D4FC;
+      --color-must: #E94B5A;
+      --color-optional: #5BAA5F;
+      --color-example-bg: #FFF8DC;
+      --color-link: #1976D2;
+      --color-bullet: #1976D2;
+      --font-display: 'Intro', 'Helvetica Neue', Arial, sans-serif;
+      --font-cjk: 'PingFang SC', 'PingFang-SC', 'Microsoft YaHei', sans-serif;
+      --max-width: 1666px;
+      --page-max-width: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--color-text);
+      font-family: var(--font-cjk);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+    a { color: var(--color-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(17, 20, 26, 0.04);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    pre {
+      margin: 0 0 24px;
+      padding: 16px 18px;
+      overflow: auto;
+      border: 1px solid var(--color-divider);
+      border-radius: 6px;
+      background: #FAFAFA;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .wrap { max-width: var(--max-width); margin: 0 auto; }
+    .banner {
+      position: relative;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1fr 548px;
+      min-height: 240px;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .banner__text {
+      padding: 54px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      grid-column: 1;
+      min-width: 0;
+    }
+    .banner__tag {
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 20px;
+      letter-spacing: 0.04em;
+    }
+    .banner__title {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 1.1;
+      margin: 0;
+      word-break: break-word;
+    }
+    .banner__subtitle {
+      font-size: 16px;
+      line-height: 16px;
+      margin: 0;
+    }
+    .banner__art {
+      grid-column: 2;
+      width: 548px;
+      height: 240px;
+      background-image:
+        radial-gradient(circle at 30% 50%, #FFB8C5 0%, #FFE0E6 28%, transparent 62%),
+        radial-gradient(circle at 68% 48%, #E8DDFF 0%, transparent 52%);
+      background-position: center, center;
+      background-repeat: no-repeat, no-repeat;
+    }
+
+    .page { max-width: var(--page-max-width); margin: 0 auto; padding: 60px; }
+    .page__h2 { font-size: 28px; font-weight: 600; margin: 0 0 40px; letter-spacing: 0.5px; }
+    .page__h2 .num { color: var(--color-link); font-weight: 600; margin-right: 8px; }
+
+    .guideline-tips {
+      border: 1px solid var(--color-tips-border);
+      background: var(--color-tips-bg);
+      padding: 28px 36px;
+      border-radius: 8px;
+      margin: 0 0 56px;
+    }
+    .guideline-tips__title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+    .guideline-tips ol { margin: 0; padding-left: 24px; font-size: 15px; line-height: 1.85; }
+    .guideline-tips li { margin-bottom: 4px; }
+    .guideline-tips .must { color: var(--color-must); font-weight: 500; }
+    .guideline-tips .optional { color: var(--color-optional); font-weight: 500; }
+
+    .example-header {
+      background: var(--color-example-bg);
+      padding: 10px 16px;
+      margin: 0 0 36px;
+      font-size: 15px;
+      border-radius: 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .example-tag { color: var(--color-must); font-weight: 600; }
+    .example-name { font-weight: 600; }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 36px;
+    }
+    .meta-item {
+      border: 1px solid var(--color-divider);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: #fff;
+      font-size: 14px;
+    }
+    .meta-item strong { display: block; margin-bottom: 4px; }
+
+    .bullet-section { margin: 0 0 56px; }
+    .bullet-section__title {
+      position: relative;
+      padding-left: 24px;
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 20px;
+      letter-spacing: 0.3px;
+    }
+    .bullet-section__title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-bullet);
+    }
+    .bullet-section p,
+    .bullet-section ol,
+    .bullet-section ul {
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 16px;
+    }
+    .bullet-section ol,
+    .bullet-section ul { padding-left: 24px; }
+    .bullet-section li { margin-bottom: 6px; }
+
+    .section-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 24px;
+      font-size: 14px;
+    }
+    .section-table th,
+    .section-table td {
+      text-align: left;
+      padding: 12px 16px;
+      border: 1px solid var(--color-divider);
+      vertical-align: top;
+    }
+    .section-table th { background: var(--color-banner-bg); font-weight: 600; }
+    .note {
+      border-left: 3px solid var(--color-link);
+      background: rgba(25, 118, 210, 0.06);
+      padding: 12px 16px;
+      margin: 0 0 24px;
+      font-size: 14px;
+      color: var(--color-text);
+    }
+    .scene-copy {
+      font-size: 18px;
+      line-height: 1.9;
+      margin: 0 0 22px;
+    }
+    .scene-copy a,
+    .scene-copy code {
+      color: var(--color-link);
+      background: transparent;
+      padding: 0;
+    }
+    .state-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 28px;
+    }
+    .state-tab {
+      border: 1px solid var(--color-divider);
+      border-radius: 6px;
+      padding: 9px 18px;
+      background: #fff;
+      color: var(--color-text);
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .state-tab.is-active {
+      border-color: var(--color-link);
+      background: var(--color-link);
+      color: #fff;
+    }
+    .scene-stage {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 28px;
+      margin: 4px 0 28px;
+      padding: 24px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #292a33 0%, #11141A 100%);
+      color: #fff;
+    }
+    .rail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      min-width: 70px;
+    }
+    .avatar-demo {
+      position: relative;
+      width: 50px;
+      height: 83px;
+      margin-bottom: 0;
+    }
+    .live-pill {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 50px;
+      height: 21px;
+      border-radius: 999px;
+      background: #ff0f23;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: visible;
+    }
+    .live-pill__rect {
+      width: 48px;
+      height: 17px;
+      border-radius: 999px;
+      background: #ff0f23;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-top: 2px;
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 11px;
+      color: #fff;
+    }
+    .live-pill__triangle {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5.5px solid #ff0f23;
+      border-radius: 2px;
+      margin-top: -1px;
+    }
+    .avatar-ring {
+      position: absolute;
+      left: 2px;
+      top: 25px;
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: 0.5px solid rgba(255, 15, 35, 0.5);
+    }
+    .avatar-ring::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1.5px solid #ff0f23;
+    }
+    .avatar-face {
+      position: absolute;
+      left: 4px;
+      top: 29px;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 2px solid #fff;
+      background:
+        radial-gradient(circle at 50% 38%, #ffd3dd 0 18%, transparent 19%),
+        radial-gradient(circle at 50% 70%, #2d2031 0 23%, transparent 24%),
+        radial-gradient(circle at 50% 50%, #f16a8e 0 50%, #ffb15f 100%);
+    }
+    .follow-badge {
+      position: absolute;
+      left: 15px;
+      top: 62px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .follow-badge.unfollowed {
+      background: #ff0f23;
+    }
+    .follow-badge.intermediate {
+      background: #fff;
+    }
+    .follow-badge svg {
+      width: 12px;
+      height: 12px;
+    }
+    .follow-badge.unfollowed svg {
+      width: 16px;
+      height: 16px;
+    }
+    .action-demo {
+      width: 50px;
+      height: 62px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .action-icon {
+      width: 50px;
+      height: 43px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      color: #fff;
+      font-size: 35px;
+      line-height: 1;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+    }
+    .action-icon.is-active { color: #ff0f23; }
+    .action-count {
+      width: 50px;
+      height: 14px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 15px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+    .volume-demo {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .volume-core {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #171a26;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .scene-link {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 18px;
+      color: var(--color-link);
+    }
+
+    /* ===== 复用 InteractiveActionItem 样式 ===== */
+    .demo-rail { display: flex; flex-direction: column; align-items: center; gap: var(--space-action-item-stack-gap, 0); padding: 24px; border-radius: 8px; background: linear-gradient(180deg, #292a33 0%, #11141A 100%); margin: 4px 0 28px; width: fit-content; }
+    .iai { width: var(--size-interactive-icon, 50px); height: var(--size-action-item, 62px); position: relative; }
+    .iai__icon-wrap { position: absolute; left: 0; top: 0; width: var(--size-interactive-icon, 50px); height: var(--size-interactive-icon, 50px); color: var(--interactive-color-icon-default-immersive, #fff); filter: var(--shadow-interactive-filter, drop-shadow(0 1px 1px rgba(0,0,0,0.2))); }
+    .iai__icon-wrap[data-state="active-like"] { color: var(--interactive-color-icon-active-like, #ff0f23); }
+    .iai__icon-wrap[data-state="active-grass"] { color: var(--interactive-color-icon-active-grass, #14ad5d); }
+    .iai__icon-wrap[data-icon="icon-like-default"] { --icon-url: url("src/assets/icons/icon-like-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-like-active"] { --icon-url: url("src/assets/icons/icon-like-active.svg"); }
+    .iai__icon-wrap[data-icon="icon-comment-default"] { --icon-url: url("src/assets/icons/icon-comment-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-grass-default"] { --icon-url: url("src/assets/icons/icon-grass-default.svg"); }
+    .iai__icon-wrap[data-icon="icon-grass-active"] { --icon-url: url("src/assets/icons/icon-grass-active.svg"); }
+    .iai__icon-wrap[data-icon="icon-share-default"] { --icon-url: url("src/assets/icons/icon-share-default.svg"); }
+    .iai__icon { width: 100%; height: 100%; display: block; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
+    .iai__label { position: absolute; left: 0; top: var(--space-action-item-label-top, 43px); width: var(--size-interactive-icon, 50px); height: 14px; font-family: var(--font-family-pf-medium, "PingFang SC", sans-serif); font-size: var(--font-size-11, 11px); font-weight: var(--font-weight-medium, 500); line-height: var(--line-height-counter, 15px); text-align: center; color: var(--interactive-color-text-counter, #ffffffe5); text-shadow: var(--shadow-interactive-text, 0 1px 1px rgba(0,0,0,0.2)); word-break: break-word; }
+    .iai__label[data-state="active-like"] { color: var(--interactive-color-icon-active-like, #ff0f23); }
+    .iai__label[data-state="active-grass"] { color: var(--interactive-color-icon-active-grass, #14ad5d); }
+    .iai__label:empty { display: none; }
+    .ivc { position: relative; border: none; padding: 0; color: var(--color-interactive-volume-fg, #171a26); }
+    .ivc[data-state="muted"] { width: var(--size-interactive-volume-hotzone, 50px); height: var(--size-interactive-volume-hotzone, 50px); background: transparent; }
+    .ivc[data-state="unmute-prompt"] { width: var(--size-interactive-volume-control-w, 69px); height: var(--size-interactive-volume-control-h, 30px); border-radius: var(--radius-interactive-volume-pill, 9999px); background: var(--color-interactive-volume-bg, #ffffffe5); }
+    .ivc__circle { position: absolute; left: var(--space-interactive-volume-circle-inset, 10px); top: var(--space-interactive-volume-circle-inset, 10px); width: var(--size-interactive-volume-circle, 30px); height: var(--size-interactive-volume-circle, 30px); border-radius: var(--radius-interactive-volume-circle, 9999px); background: var(--color-interactive-volume-bg, #ffffffe5); }
+    .ivc__icon { position: absolute; color: currentColor; display: block; background: currentColor; -webkit-mask: url("src/assets/icons/icon-volume-mute-fill.svg") center / contain no-repeat; mask: url("src/assets/icons/icon-volume-mute-fill.svg") center / contain no-repeat; }
+    .ivc[data-state="muted"] .ivc__icon { left: var(--space-interactive-volume-icon-compact-inset, 17px); top: var(--space-interactive-volume-icon-compact-inset, 17px); width: var(--size-interactive-volume-icon-compact, 16px); height: var(--size-interactive-volume-icon-compact, 16px); }
+    .ivc[data-state="unmute-prompt"] .ivc__icon { left: var(--space-interactive-volume-inline-icon-x, 48px); top: var(--space-interactive-volume-inline-icon-y, 8px); width: var(--size-interactive-volume-icon-inline, 14px); height: var(--size-interactive-volume-icon-inline, 14px); opacity: var(--opacity-interactive-volume-content, 0.9); }
+    .ivc__label { position: absolute; left: var(--space-interactive-volume-label-x, 7px); top: var(--space-interactive-volume-label-y, 9.5px); opacity: var(--opacity-interactive-volume-content, 0.9); font-family: var(--font-family-pf-medium, "PingFang SC", sans-serif); font-size: var(--font-size-10, 10px); font-weight: var(--font-weight-medium, 500); line-height: var(--line-height-interactive-volume-label, 10.91px); color: currentColor; white-space: nowrap; }
+
+    .site-footer {
+      padding: 40px 60px;
+      border-top: 1px solid var(--color-divider);
+      font-size: 13px;
+      color: var(--color-text-help);
+    }
+
+    @media (max-width: 768px) {
+      .banner { grid-template-columns: 1fr; grid-template-rows: auto auto; min-height: 0; }
+      .banner__art { grid-column: 1; width: 100%; height: 120px; }
+      .banner__text, .page, .site-footer { padding: 32px 20px; }
+      .banner__title { font-size: 28px; line-height: 1.2; }
+      .page__h2 { font-size: 22px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .section-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .scene-stage { width: 100%; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__tag">JD APP 16.0&nbsp;&nbsp;GUIDELINE</span>
+        <h1 class="banner__title">InteractiveArea 互动区</h1>
+        <p class="banner__subtitle">设计与用研部 - 综合业务设计组</p>
+      </div>
+      <div class="banner__art" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+      <h2 class="page__h2"><span class="num">1.</span>业务组件库（业务型组件）</h2>
+
+      <aside class="guideline-tips">
+        <h3 class="guideline-tips__title">规范要素参考：</h3>
+        <ol>
+          <li><strong>组件定义</strong><span class="must">（必写）</span>：组件的目的或用途</li>
+          <li><strong>行为准则</strong><span class="optional">（选写）</span>：和用户约定好的行为规则</li>
+          <li><strong>组件类型</strong><span class="optional">（选写）</span>：根据不同交互 / 视觉形态或功能模式的分类</li>
+          <li><strong>组件结构</strong><span class="must">（必写）</span>：组件的骨架说明，包括内部组成、层级关系、必需和可选元素</li>
+          <li><strong>组件属性</strong><span class="must">（必写）</span>：元素空间关系、对齐方式、间距、颜色、不同尺寸下的适配规则</li>
+          <li><strong>典型场景示意</strong><span class="must">（必写）</span>：组件的使用场景举例，需尽可能覆盖全部典型场景</li>
+          <li><strong>错误示例</strong><span class="optional">（选写）</span>：组件“千万别这么做”的反面案例</li>
+        </ol>
+      </aside>
+
+      <p class="example-header">
+        <span class="example-tag">*示意：</span>
+        <span class="example-name">互动区（InteractiveArea） · Organism v1.0.0</span>
+        <a class="example-link" href="./InteractiveArea.md">InteractiveArea.md →</a>
+        <a class="example-link" href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A13090&node_id=1600%3A588">Relay frame →</a>
+      </p>
+
+      <div class="meta-grid">
+        <div class="meta-item"><strong>component_name</strong><code>InteractiveArea</code></div>
+        <div class="meta-item"><strong>category</strong><code>Organism</code></div>
+        <div class="meta-item"><strong>core_node</strong><code>1600:588</code></div>
+        <div class="meta-item"><strong>last_updated</strong><code>2026-05-24</code></div>
+      </div>
+
+      <section class="bullet-section" id="definition">
+        <h3 class="bullet-section__title">互动区 定义</h3>
+        <p><strong>InteractiveArea</strong> 是短视频沉浸式播放页右侧互动栏的完整组合组件。组件顶部承载作者头像入口（InteractiveAvatar），下方依次承载点赞、评论、可选种草、转发以及底部音量控制。</p>
+        <p>它由 InteractiveAvatar、InteractiveActionItem 与 InteractiveVolumeControl 自上而下垂直堆叠，属于 Organism 层组件。</p>
+      </section>
+
+      <section class="bullet-section" id="behavior">
+        <h3 class="bullet-section__title">行为准则</h3>
+        <ol>
+          <li>InteractiveArea 必须使用纵向堆叠，子项顺序严格遵循 Relay：头像在最上方，互动 icon 在下方，音量控制在底部。</li>
+          <li>子项之间不新增外部间距；垂直间距只允许引用 <code>space.action_item_stack_gap</code>。</li>
+          <li><code>without_grass</code> 变体不得渲染种草占位，否则会破坏总高度公式和视觉节奏。</li>
+          <li><code>with_grass</code> 变体中，种草操作项必须位于评论与转发之间。</li>
+          <li>音量控制不复用 <code>size.action_item</code>，必须使用 <code>size.interactive_volume_hotzone</code> 或 InteractiveVolumeControl 自身状态变量。</li>
+        </ol>
+      </section>
+
+      <section class="bullet-section" id="types">
+        <h3 class="bullet-section__title">互动区 类型</h3>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>组合变体</th>
+              <th>Relay 节点</th>
+              <th>子项顺序</th>
+              <th>高度计算</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>without_grass</code> / 无种草</td>
+              <td><code>633:4487</code></td>
+              <td>InteractiveAvatar → like → comment → share → volume</td>
+              <td><code>size.interactive_avatar_h + 3 × size.action_item + size.interactive_volume_hotzone + 4 × space.action_item_stack_gap</code></td>
+            </tr>
+            <tr>
+              <td><code>with_grass</code> / 有种草</td>
+              <td><code>1600:1053</code></td>
+              <td>InteractiveAvatar → like → comment → grass → share → volume</td>
+              <td><code>size.interactive_avatar_h + 4 × size.action_item + size.interactive_volume_hotzone + 5 × space.action_item_stack_gap</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="bullet-section" id="structure">
+        <h3 class="bullet-section__title">互动区 结构</h3>
+        <pre><code>InteractiveArea
+├── InteractiveAvatar
+├── InteractiveActionItem(type="like")
+├── InteractiveActionItem(type="comment")
+├── InteractiveActionItem(type="grass")  ← 仅 with_grass 渲染
+├── InteractiveActionItem(type="share")
+└── InteractiveVolumeControl</code></pre>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>结构</th>
+              <th>组成</th>
+              <th>规则</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>无种草结构</td>
+              <td>InteractiveAvatar、Like ActionItem、Comment ActionItem、Share ActionItem、InteractiveVolumeControl</td>
+              <td>不保留种草占位，不输出空容器。</td>
+            </tr>
+            <tr>
+              <td>有种草结构</td>
+              <td>InteractiveAvatar、Like ActionItem、Comment ActionItem、Grass ActionItem、Share ActionItem、InteractiveVolumeControl</td>
+              <td>种草位插入在评论与转发之间。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="bullet-section" id="properties">
+        <h3 class="bullet-section__title">设计属性</h3>
+        <p>本文档不新增变量名。所有尺寸、间距、颜色、字体、圆角、阴影均从 <code>components/InteractiveAvatar.md</code> 与 <code>components/InteractiveActionItem.md</code> 认领；若实现层需要总容器宽高，应使用公式由子组件变量计算，不得新建临时 CSS 数值。</p>
+
+        <h4>容器与堆叠</h4>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>属性</th>
+              <th>Token / 变量认领</th>
+              <th>来源文档</th>
+              <th>规则</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>互动区宽度</td>
+              <td><code>size.interactive_avatar_w</code> / <code>size.interactive_icon</code></td>
+              <td>InteractiveAvatar.md / InteractiveActionItem.md</td>
+              <td>子组件宽度均为同一互动区宽度；总容器宽取子组件宽度，不另设新变量。</td>
+            </tr>
+            <tr>
+              <td>头像区高度</td>
+              <td><code>size.interactive_avatar_h</code></td>
+              <td>InteractiveAvatar.md</td>
+              <td>顶部作者头像入口高度。</td>
+            </tr>
+            <tr>
+              <td>操作项高度</td>
+              <td><code>size.action_item</code></td>
+              <td>InteractiveActionItem.md</td>
+              <td>点赞 / 评论 / 种草 / 转发统一高度。</td>
+            </tr>
+            <tr>
+              <td>音量热区高度</td>
+              <td><code>size.interactive_volume_hotzone</code></td>
+              <td>InteractiveActionItem.md</td>
+              <td>底部音量控制热区高度。</td>
+            </tr>
+            <tr>
+              <td>子项垂直间距</td>
+              <td><code>space.action_item_stack_gap</code></td>
+              <td>InteractiveActionItem.md</td>
+              <td>Relay 节点中组合容器为 column 且无额外 gap；组合层沿用该变量。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>顶部头像区</h4>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>元素</th>
+              <th>Token / 变量认领</th>
+              <th>来源文档</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>头像组件容器</td>
+              <td><code>size.interactive_avatar_w</code> / <code>size.interactive_avatar_h</code></td>
+              <td>InteractiveAvatar.md</td>
+            </tr>
+            <tr>
+              <td>头像本体尺寸</td>
+              <td><code>avatar.size-42</code></td>
+              <td>visual/Avatar.md，由 InteractiveAvatar.md 认领</td>
+            </tr>
+            <tr>
+              <td>头像描边</td>
+              <td><code>stroke.interactive_avatar_image_border</code></td>
+              <td>InteractiveAvatar.md</td>
+            </tr>
+            <tr>
+              <td>直播环</td>
+              <td><code>size.interactive_avatar_live_ring_outer</code> / <code>size.interactive_avatar_live_ring_inner</code> / <code>stroke.interactive_avatar_live_ring_outer</code> / <code>stroke.interactive_avatar_live_ring_inner</code> / <code>opacity.interactive_avatar_live_ring_outer</code></td>
+              <td>InteractiveAvatar.md</td>
+            </tr>
+            <tr>
+              <td>直播标签</td>
+              <td><code>size.interactive_avatar_live_badge_w</code> / <code>size.interactive_avatar_live_badge_h</code> / <code>space.interactive_avatar_live_badge_y</code></td>
+              <td>InteractiveAvatar.md</td>
+            </tr>
+            <tr>
+              <td>关注按钮</td>
+              <td><code>size.interactive_avatar_follow_badge</code> / <code>space.interactive_avatar_follow_x</code> / <code>space.interactive_avatar_follow_y</code></td>
+              <td>InteractiveAvatar.md</td>
+            </tr>
+            <tr>
+              <td>未关注加号图标</td>
+              <td><code>icon-add</code> 局部描边变体</td>
+              <td>InteractiveAvatar.md；仅 Follow Badge 内使用，白色 1px 居中描边，不修改全局 <code>icon-add.svg</code>。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>互动操作项</h4>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>元素</th>
+              <th>Token / 变量认领</th>
+              <th>来源文档</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>图标容器</td>
+              <td><code>size.interactive_icon</code></td>
+              <td>InteractiveActionItem.md / visual/Icon.md</td>
+            </tr>
+            <tr>
+              <td>操作项容器</td>
+              <td><code>size.action_item</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>图标视觉内容</td>
+              <td><code>size.action_item_content</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>计数文字顶部定位</td>
+              <td><code>space.action_item_label_top</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>计数文字底部留白</td>
+              <td><code>space.action_item_bottom_inset</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>计数文字颜色</td>
+              <td><code>color/text_immerse</code></td>
+              <td>InteractiveActionItem.md / tokens/color.md</td>
+            </tr>
+            <tr>
+              <td>默认图标颜色</td>
+              <td><code>color/title_immerse</code></td>
+              <td>InteractiveActionItem.md / tokens/color.md</td>
+            </tr>
+            <tr>
+              <td>点赞激活色</td>
+              <td><code>color/primary</code></td>
+              <td>InteractiveActionItem.md / tokens/color.md</td>
+            </tr>
+            <tr>
+              <td>种草激活色</td>
+              <td><code>color/Recommend_btntext</code></td>
+              <td>InteractiveActionItem.md / tokens/color.md</td>
+            </tr>
+            <tr>
+              <td>禁用色</td>
+              <td><code>color/text_disable</code></td>
+              <td>InteractiveActionItem.md / tokens/color.md</td>
+            </tr>
+            <tr>
+              <td>计数文字阴影</td>
+              <td><code>shadow_interactive</code></td>
+              <td>InteractiveActionItem.md / tokens/shadow.md</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>音量控制</h4>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>元素</th>
+              <th>Token / 变量认领</th>
+              <th>来源文档</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>音量按钮热区</td>
+              <td><code>size.interactive_volume_hotzone</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>静音圆形视觉底</td>
+              <td><code>size.interactive_volume_circle</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>静音图标尺寸</td>
+              <td><code>size.interactive_volume_icon_compact</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>热区内圆形偏移</td>
+              <td><code>space.interactive_volume_circle_inset</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>热区内图标偏移</td>
+              <td><code>space.interactive_volume_icon_compact_inset</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>胶囊态尺寸</td>
+              <td><code>size.interactive_volume_control_w</code> / <code>size.interactive_volume_control_h</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>胶囊态文案定位</td>
+              <td><code>space.interactive_volume_label_x</code> / <code>space.interactive_volume_label_y</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>胶囊态图标定位</td>
+              <td><code>space.interactive_volume_inline_icon_x</code> / <code>space.interactive_volume_inline_icon_y</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>背景色</td>
+              <td><code>color.interactive_volume_bg</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>前景色</td>
+              <td><code>color.interactive_volume_fg</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>内容透明度</td>
+              <td><code>opacity.interactive_volume_content</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+            <tr>
+              <td>圆角</td>
+              <td><code>radius.interactive_volume_circle</code> / <code>radius.interactive_volume_pill</code></td>
+              <td>InteractiveActionItem.md</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="bullet-section" id="scenarios">
+        <h3 class="bullet-section__title">典型场景示意</h3>
+        <p class="scene-copy">
+          Action Rail：项间距 <a href="./InteractiveActionItem.md"><code>space.action_item_stack_gap</code></a>；
+          互动项内部为绝对定位，Label 顶部位于 <code>space.action_item_label_top</code>。
+          头像入口由 <a href="./InteractiveAvatar.md">InteractiveAvatar.md</a> 认领，
+          图标资产按 <a href="../../../../../foundations/visual/Icon.md">Icon.md</a> 的互动区规范维护，并通过 currentColor 响应 Default / Active 状态。
+          <strong>演示已复用 InteractiveActionItem 的 <code>.iai</code> / <code>.ivc</code> 样式与全部 token</strong>，不再使用 emoji 占位。
+        </p>
+        <div class="state-tabs" aria-label="互动区状态示例">
+          <span class="state-tab is-active">有种草 Default</span>
+          <span class="state-tab">无种草</span>
+          <span class="state-tab">点赞 Active</span>
+          <span class="state-tab">种草 Active</span>
+          <span class="state-tab">静音</span>
+          <span class="state-tab">取消静音</span>
+        </div>
+        <div class="scene-stage" role="img" aria-label="互动区典型场景示意，展示头像、点赞、评论、种草、转发和音量控制">
+          <!-- 有种草 Default -->
+          <div class="demo-rail">
+            <div class="avatar-demo">
+              <div class="live-pill">
+                <div class="live-pill__rect">
+                  <span style="font-size:9px;">🛒</span><span>直播中</span>
+                </div>
+                <div class="live-pill__triangle"></div>
+              </div>
+              <div class="avatar-ring"></div>
+              <div class="avatar-face"></div>
+              <div class="follow-badge unfollowed">
+                <svg viewBox="0 0 20 20" aria-label="未关注 icon-add，1px 居中描边" fill="#fff"><path d="M9 4v5H4v2h5v5h2v-5h5V9h-5V4z" stroke="#fff" stroke-width="1" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-like-default"><i class="iai__icon"></i></div><div class="iai__label">34.5万</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-comment-default"><i class="iai__icon"></i></div><div class="iai__label">1232</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-grass-default"><i class="iai__icon"></i></div><div class="iai__label">9.9万</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-share-default"><i class="iai__icon"></i></div><div class="iai__label">0</div></div>
+            <div class="ivc" data-state="muted"><i class="ivc__icon"></i></div>
+          </div>
+          <!-- 点赞 Active + 种草 Active + 取消静音 -->
+          <div class="demo-rail">
+            <div class="avatar-demo">
+              <div class="live-pill">
+                <div class="live-pill__rect">
+                  <span style="font-size:9px;">🛒</span><span>直播中</span>
+                </div>
+                <div class="live-pill__triangle"></div>
+              </div>
+              <div class="avatar-ring"></div>
+              <div class="avatar-face"></div>
+              <div class="follow-badge intermediate">
+                <svg viewBox="0 0 20 20" width="20" height="20" fill="#ff0f23"><path d="M16.7 5.3L8 14l-3.7-3.7L3 11.6 8 16.6 18 6.6z" stroke="#ff0f23" stroke-width="0.5" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="iai"><div class="iai__icon-wrap" data-state="active-like" data-icon="icon-like-active"><i class="iai__icon"></i></div><div class="iai__label" data-state="active-like">34.5万</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-comment-default"><i class="iai__icon"></i></div><div class="iai__label">34.5万</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-state="active-grass" data-icon="icon-grass-active"><i class="iai__icon"></i></div><div class="iai__label" data-state="active-grass">9.9万</div></div>
+            <div class="iai"><div class="iai__icon-wrap" data-icon="icon-share-default"><i class="iai__icon"></i></div><div class="iai__label">0</div></div>
+            <div class="ivc" data-state="unmute-prompt"><i class="ivc__icon"></i><span class="ivc__label">取消静音</span></div>
+          </div>
+        </div>
+        <a class="scene-link" href="../../../../../foundations/visual/Icon.md">Icon 规范入口（1487:10277）→</a>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>场景</th>
+              <th>渲染规则</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>短视频沉浸流右侧 Action Rail</td>
+              <td>使用 InteractiveArea 作为右侧互动栏完整组合，顶部为作者头像入口，下方承载互动动作。</td>
+            </tr>
+            <tr>
+              <td>无种草业务链路</td>
+              <td>使用 <code>without_grass</code>，渲染头像、点赞、评论、转发、音量控制。</td>
+            </tr>
+            <tr>
+              <td>有种草业务链路</td>
+              <td>使用 <code>with_grass</code>，在评论与转发之间插入种草操作项。</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">Relay 源：<a href="https://relay.jd.com/file/design?id=1958051135088508929&page_id=0%3A13090&node_id=1600%3A588">互动区 · node 1600:588</a></p>
+      </section>
+
+      <section class="bullet-section" id="anti-patterns">
+        <h3 class="bullet-section__title">错误示例</h3>
+        <ol>
+          <li>在 InteractiveArea 中写死任何 CSS 数值，而不是透传子组件变量。</li>
+          <li>在 <code>without_grass</code> 中保留种草空位或空容器。</li>
+          <li>把种草操作项放到点赞前、转发后或音量控制前。</li>
+          <li>让音量控制复用 <code>size.action_item</code>，导致底部热区与设计稿不一致。</li>
+          <li>在组合层重绘头像、图标、直播标签、关注按钮或音量按钮，绕过子组件规范。</li>
+          <li>把未关注 Follow Badge 的 1px 居中描边同步到全局 <code>icon-add.svg</code> 或其它加号入口。</li>
+        </ol>
+      </section>
+
+      <section class="bullet-section" id="traceability">
+        <h3 class="bullet-section__title">追溯与待办</h3>
+        <table class="section-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>类型</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>IA-AREA-01</code></td>
+              <td>token-check</td>
+              <td>本文档未新增变量名；总高度使用 InteractiveAvatar.md 与 InteractiveActionItem.md 中现有变量公式表达。</td>
+            </tr>
+            <tr>
+              <td><code>IA-AREA-02</code></td>
+              <td>design-note</td>
+              <td>Relay 外层 frame <code>1600:588</code> 的 188×428 与两列 x/y 位置是设计稿展示画布，不作为组件工程尺寸。</td>
+            </tr>
+            <tr>
+              <td><code>IA-AREA-03</code></td>
+              <td>dependency</td>
+              <td>InteractiveAvatar.md 中若干变量仍标记为待沉淀；InteractiveArea 仅引用这些已存在于组件文档的命名，不额外扩展。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      生成于 <time datetime="2026-05-24T16:47:13+08:00">2026-05-24T16:47:13+08:00</time> ·
+      源文件：<a href="./InteractiveArea.md">InteractiveArea.md</a>
+    </footer>
+  </div>
+</body>
+</html>

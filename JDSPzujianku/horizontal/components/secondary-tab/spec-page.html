@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二级 Tab · Secondary Tab 组件规范 — JD APP V16.0</title>
+<style>
+  :root {
+    --c-text: #171a26;
+    --c-text-2: #3d414d;
+    --c-text-3: #828794;
+    --c-line: #00000014;
+    --c-bg: #ffffff;
+    --c-bg-sunken: #f5f6fa;
+    --c-brand: #ff0f23;
+    --c-brand-bg: #fff0f4;
+    --c-success: #2aa32a;
+    --c-success-bg: #ebfbeb;
+    --c-danger: #ff0f23;
+    --c-danger-bg: #fff0f4;
+    --c-warning: #b26b00;
+    --c-warning-bg: #fff9e0;
+    --c-info: #0073ff;
+    --c-info-bg: #e5f5ff;
+    --c-code-bg: #f5f6fa;
+    --r-base: 6px;
+    --r-detail: 8px;
+    --r-xl: 12px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc {
+    max-width: 920px;
+    margin: 40px auto;
+    padding: 64px 72px;
+    background: var(--c-bg);
+    border-radius: var(--r-xl);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  h1 { font-size: 32px; font-weight: 600; margin: 0; line-height: 1.3; }
+  h2 { font-size: 24px; font-weight: 600; margin: 56px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--c-line); }
+  h2 .num { display: inline-block; width: 32px; height: 32px; line-height: 32px; margin-right: 12px; border-radius: var(--r-base); background: var(--c-brand); color: #fff; text-align: center; font-size: 16px; vertical-align: middle; }
+  h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; }
+  h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--c-text-2); }
+  p { margin: 12px 0; color: var(--c-text-2); }
+  strong { color: var(--c-text); font-weight: 600; }
+  code { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 13px; color: var(--c-brand); background: var(--c-code-bg); border-radius: 4px; padding: 2px 6px; }
+  pre { overflow-x: auto; margin: 16px 0; padding: 20px 24px; border-radius: var(--r-base); background: #1a1a1a; color: #e8e8e8; font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--c-line); padding: 10px 14px; text-align: left; vertical-align: top; }
+  th { background: var(--c-bg-sunken); color: var(--c-text); font-weight: 600; }
+  ul, ol { padding-left: 24px; color: var(--c-text-2); }
+  li { margin: 6px 0; }
+  a { color: var(--c-info); text-decoration: none; }
+  blockquote { margin: 16px 0; padding: 12px 20px; background: var(--c-info-bg); border-left: 3px solid var(--c-info); border-radius: 0 var(--r-base) var(--r-base) 0; color: var(--c-text-2); }
+  blockquote.warn { background: var(--c-warning-bg); border-left-color: var(--c-warning); }
+  .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; border-bottom: 2px solid var(--c-text); padding-bottom: 16px; margin-bottom: 8px; }
+  .meta { color: var(--c-text-3); font-size: 13px; margin-bottom: 40px; line-height: 1.8; }
+  .toc { background: var(--c-bg-sunken); padding: 20px 28px; border-radius: var(--r-base); margin-bottom: 40px; }
+  .toc h3 { margin: 0 0 8px; font-size: 14px; color: var(--c-text-3); font-weight: 500; }
+  .toc ol { margin: 0; }
+  .toc a { color: var(--c-text-2); }
+  .case { margin: 20px 0; padding: 20px 24px; border-radius: var(--r-base); border: 1px solid var(--c-line); }
+  .case.good { background: var(--c-success-bg); border-color: var(--c-success); }
+  .case.bad { background: var(--c-danger-bg); border-color: var(--c-danger); }
+  .case h4 { margin-top: 0; display: flex; gap: 8px; align-items: center; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: 600; }
+  .case.good .badge { background: var(--c-success); }
+  .case.bad .badge { background: var(--c-danger); }
+  .stage { margin: 16px 0; padding: 32px 24px; border: 1px dashed var(--c-line); border-radius: var(--r-base); background: var(--c-bg-sunken); display: flex; align-items: center; justify-content: center; }
+  .stage-label { margin-top: -4px; margin-bottom: 12px; color: var(--c-text-3); text-align: center; font-size: 12px; }
+
+  .secondary-demo {
+    width: min(100%, 430px);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 10px;
+    padding: 22px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  }
+  .demo-caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; color: var(--c-text-3); font-size: 12px; }
+  .demo-actions { display: flex; align-items: center; gap: 8px; }
+  .demo-icon-btn {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--c-bg-sunken);
+    color: var(--c-text);
+    cursor: pointer;
+    font: inherit;
+    line-height: 28px;
+    text-align: center;
+  }
+  .secondary-bar {
+    width: 375px;
+    max-width: 100%;
+    height: 44px;
+    padding: 8px 0;
+    background: #fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  .secondary-scroll {
+    width: 331px;
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    cursor: grab;
+  }
+  .secondary-scroll::-webkit-scrollbar { display: none; }
+  .secondary-scroll.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+  .secondary-tab {
+    flex: 0 0 auto;
+    height: 28px;
+    min-width: 52px;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 4px;
+    background: #f5f6fa;
+    color: #171a26;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14.02px;
+    white-space: nowrap;
+    text-align: center;
+    cursor: pointer;
+    transition: background 160ms, color 160ms, transform 120ms;
+  }
+  .secondary-tab:hover { transform: translateY(-1px); }
+  .secondary-tab.is-selected {
+    background: #fff0f4;
+    color: #ff0f23;
+    font-weight: 500;
+  }
+  .secondary-add {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    border: 0;
+    border-radius: 4px;
+    background: #f5f6fa;
+    color: #171a26;
+    font-size: 22px;
+    line-height: 26px;
+    cursor: pointer;
+  }
+  .all-tabs-panel {
+    width: 375px;
+    max-width: 100%;
+    margin: 14px auto 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: #fafbfe;
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(52px, max-content));
+    gap: 8px;
+    justify-content: start;
+  }
+  .all-tabs-panel.is-open { display: grid; }
+  .feedback { margin-top: 14px; color: var(--c-text-3); font-size: 12px; text-align: center; }
+  .mock-row { width: 375px; max-width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; overflow: hidden; padding: 8px; background: #fff; border-radius: 8px; border: 1px solid var(--c-line); }
+  .mock-row.bad-multi .secondary-tab.is-selected:nth-child(2) { background: #fff0f4; color: #ff0f23; font-weight: 500; }
+  .mock-row.bad-solid .secondary-tab.is-selected { background: #ff0f23; color: #fff; }
+
+  @media print { body { background: #fff; } .doc { box-shadow: none; margin: 0; padding: 24px 32px; max-width: none; } .demo-actions, .secondary-add { display: none; } }
+  @media (max-width: 720px) { .doc { margin: 0; padding: 32px 20px; border-radius: 0; } h1 { font-size: 24px; } h2 { font-size: 20px; } table { font-size: 12px; } th, td { padding: 8px 10px; } }
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="title-row">
+    <h1>二级 Tab · Secondary Tab 组件规范</h1>
+  </div>
+  <div class="meta">
+    JD APP V16.0 GUIDELINE · 来源 Relay <code>2131:27</code> · 输出 <code>JDSPzujianku/horizontal/components/secondary-tab/spec-page.html</code><br>
+    Bundle: <code>design.md</code> · <code>spec.md</code> · <code>variants.md</code> · <code>behaviors.md</code> · <code>ai-schema.yaml</code>
+  </div>
+
+  <div class="toc">
+    <h3>目录</h3>
+    <ol>
+      <li><a href="#sec-1">定义</a></li>
+      <li><a href="#sec-2">行为准则</a></li>
+      <li><a href="#sec-3">类型</a></li>
+      <li><a href="#sec-4">结构</a></li>
+      <li><a href="#sec-5">布局</a></li>
+      <li><a href="#sec-6">正反案例</a></li>
+      <li><a href="#sec-7">典型场景</a></li>
+    </ol>
+  </div>
+
+  <h2 id="sec-1"><span class="num">1</span>定义</h2>
+  <p><strong>二级 Tab</strong> 是用于内容流或频道页的横向分类筛选组件，支持左右滑动分类列表、全部分类展示、选中 / 非选中状态，以及右侧加号入口。</p>
+  <table>
+    <tr><th>相邻组件</th><th>区别</th></tr>
+    <tr><td>一级导航 Tab</td><td>一级导航切换页面主频道；二级 Tab 只切换当前页面内的内容分类。</td></tr>
+    <tr><td>复杂筛选器</td><td>复杂筛选器可多选、可组合条件；二级 Tab 是单选分类切换。</td></tr>
+    <tr><td>分类管理面板</td><td>分类管理面板承载编辑、排序、更多分类；二级 Tab 只提供入口。</td></tr>
+  </table>
+  <blockquote>立场：二级 Tab 是轻量单选分类条，不要把它扩展成多条件筛选器。</blockquote>
+
+  <h2 id="sec-2"><span class="num">2</span>行为准则</h2>
+  <ol>
+    <li>同一组二级 Tab 中只允许一个选中项。</li>
+    <li>点击 tab item 后，当前项变为选中态，原选中项恢复非选中态。</li>
+    <li>横向滚动时，右侧加号入口保持固定，不跟随列表滚动。</li>
+    <li>选中项切换后，应自动滚动到可见区域内。</li>
+    <li>分类数量少时可隐藏加号入口，让列表占满容器宽度。</li>
+    <li>文案保持单行，过长时优先自适应 item 宽度，再考虑截断。</li>
+    <li>加号入口行为需由业务确认，推荐用于展开全部分类。</li>
+  </ol>
+
+  <h2 id="sec-3"><span class="num">3</span>类型</h2>
+  <table>
+    <tr><th>类型</th><th>Relay 节点</th><th>尺寸</th><th>说明</th></tr>
+    <tr><td>左右滑动</td><td><code>2131:7</code></td><td>375 × 44</td><td>主形态，滚动区 + 固定加号入口。</td></tr>
+    <tr><td>全部 tab</td><td><code>2131:28</code></td><td>375 × 28</td><td>完整分类列表，可作为展开后的状态。</td></tr>
+    <tr><td>选中态</td><td><code>2131:23</code></td><td>52 × 28</td><td>浅红底 + 品牌红文字 + 500 字重。</td></tr>
+    <tr><td>非选中态</td><td><code>2131:24</code></td><td>52 × 28</td><td>浅灰底 + 标题色文字 + 400 字重。</td></tr>
+  </table>
+  <div class="stage">
+    <div class="secondary-demo" data-demo>
+      <div class="demo-caption">
+        <span>交互演示：点击 tab 切换选中态，拖动列表或用按钮左右滑动，点 + 展开全部分类</span>
+        <div class="demo-actions">
+          <button class="demo-icon-btn" type="button" data-scroll-left aria-label="向左滚动">‹</button>
+          <button class="demo-icon-btn" type="button" data-scroll-right aria-label="向右滚动">›</button>
+        </div>
+      </div>
+      <div class="secondary-bar">
+        <div class="secondary-scroll" data-scroll>
+          <button class="secondary-tab is-selected" type="button" data-tab="精选">精选</button>
+          <button class="secondary-tab" type="button" data-tab="时尚">时尚</button>
+          <button class="secondary-tab" type="button" data-tab="科技">科技</button>
+          <button class="secondary-tab" type="button" data-tab="数码">数码</button>
+          <button class="secondary-tab" type="button" data-tab="美食">美食</button>
+          <button class="secondary-tab" type="button" data-tab="生活">生活</button>
+          <button class="secondary-tab" type="button" data-tab="健康">健康</button>
+          <button class="secondary-tab" type="button" data-tab="时尚穿搭">时尚穿搭</button>
+        </div>
+        <button class="secondary-add" type="button" data-toggle-all aria-label="展开全部分类">+</button>
+      </div>
+      <div class="all-tabs-panel" data-all-tabs>
+        <button class="secondary-tab is-selected" type="button" data-tab="精选">精选</button>
+        <button class="secondary-tab" type="button" data-tab="时尚">时尚</button>
+        <button class="secondary-tab" type="button" data-tab="科技">科技</button>
+        <button class="secondary-tab" type="button" data-tab="数码">数码</button>
+        <button class="secondary-tab" type="button" data-tab="美食">美食</button>
+        <button class="secondary-tab" type="button" data-tab="生活">生活</button>
+        <button class="secondary-tab" type="button" data-tab="健康">健康</button>
+        <button class="secondary-tab" type="button" data-tab="时尚穿搭">时尚穿搭</button>
+      </div>
+      <div class="feedback" data-feedback>当前选中：精选</div>
+    </div>
+  </div>
+  <div class="stage-label">可操作演示，无位图切图依赖。</div>
+  <blockquote class="warn">不允许扩展：不要把二级 Tab 扩成多选筛选器，也不要在 item 内加入图标、角标或多行文案。</blockquote>
+
+  <h2 id="sec-4"><span class="num">4</span>结构</h2>
+  <pre><code>Secondary Tab
+├── container 375×44
+│   ├── scroll area 331×28
+│   │   ├── tab item selected
+│   │   └── tab item default
+│   └── add entry 28×28
+└── all tabs row 375×28</code></pre>
+  <table>
+    <tr><th>结构</th><th>规格</th><th>说明</th></tr>
+    <tr><td>外层容器</td><td>375 × 44，上下 padding 8</td><td>承载横向列表与加号入口。</td></tr>
+    <tr><td>滚动区</td><td>331 × 28，左右 padding 8，gap 8</td><td>横向滚动，item 不换行。</td></tr>
+    <tr><td>Tab item</td><td>高 28，左右 padding 12，上下 padding 6，圆角 4</td><td>选中与非选中共用尺寸。</td></tr>
+    <tr><td>加号入口</td><td>28 × 28，icon 24 × 24</td><td>固定在右侧，不参与滚动。</td></tr>
+  </table>
+  <table>
+    <tr><th>状态</th><th>背景</th><th>文字</th><th>字重</th></tr>
+    <tr><td>选中态</td><td><code>#fff0f4</code></td><td><code>#ff0f23</code></td><td>500</td></tr>
+    <tr><td>非选中态</td><td><code>#f5f6fa</code></td><td><code>#171a26</code></td><td>400</td></tr>
+  </table>
+
+  <h2 id="sec-5"><span class="num">5</span>布局</h2>
+  <table>
+    <tr><th>布局规则</th><th>说明</th></tr>
+    <tr><td>右侧入口固定</td><td>加号入口在横滑模式下固定，滚动只发生在 331 px 滚动区内。</td></tr>
+    <tr><td>当前项可见</td><td>点击或外部切换后，选中项应滚动到可见范围。</td></tr>
+    <tr><td>单行横向</td><td>分类 item 不换行，不纵向扩展。</td></tr>
+    <tr><td>少量分类</td><td>可隐藏加号入口，滚动区扩展至整行宽度。</td></tr>
+  </table>
+  <div class="stage">
+    <div class="mock-row">
+      <button class="secondary-tab is-selected" type="button">精选</button>
+      <button class="secondary-tab" type="button">时尚</button>
+      <button class="secondary-tab" type="button">科技</button>
+      <button class="secondary-tab" type="button">数码</button>
+      <button class="secondary-tab" type="button">美食</button>
+      <button class="secondary-tab" type="button">生活</button>
+      <button class="secondary-tab" type="button">健康</button>
+    </div>
+  </div>
+  <div class="stage-label">全部 tab 示例：375 × 28，一行承载完整分类。</div>
+
+  <h2 id="sec-6"><span class="num">6</span>正反案例</h2>
+  <div class="case good">
+    <h4><span class="badge">Do</span>固定加号入口，列表只在滚动区滑动</h4>
+    <div class="mock-row">
+      <button class="secondary-tab is-selected" type="button">精选</button>
+      <button class="secondary-tab" type="button">时尚</button>
+      <button class="secondary-tab" type="button">科技</button>
+      <button class="secondary-tab" type="button">数码</button>
+      <button class="secondary-add" type="button">+</button>
+    </div>
+    <p>用户始终能找到更多分类入口，横滑和展开行为分离。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">Don't</span>同一行出现多个选中态</h4>
+    <div class="mock-row bad-multi">
+      <button class="secondary-tab is-selected" type="button">精选</button>
+      <button class="secondary-tab is-selected" type="button">时尚</button>
+      <button class="secondary-tab" type="button">科技</button>
+    </div>
+    <p>二级 Tab 是单选分类切换，多个选中态会让内容列表状态不可判断。</p>
+  </div>
+  <div class="case bad">
+    <h4><span class="badge">Don't</span>使用强实底红表达选中</h4>
+    <div class="mock-row bad-solid">
+      <button class="secondary-tab is-selected" type="button">精选</button>
+      <button class="secondary-tab" type="button">时尚</button>
+      <button class="secondary-tab" type="button">科技</button>
+    </div>
+    <p>Relay 规范是浅红底 + 品牌红文字，强实底红会抬高视觉层级，抢占一级导航注意力。</p>
+  </div>
+
+  <h2 id="sec-7"><span class="num">7</span>典型场景</h2>
+  <table>
+    <tr><th>场景</th><th>类型</th><th>参数</th><th>触发演示</th></tr>
+    <tr><td>内容流二级分类</td><td>左右滑动</td><td>375×44，滚动区 331×28，右侧加号 28×28</td><td>点击上方演示中的「时尚 / 科技」切换选中态。</td></tr>
+    <tr><td>分类较多</td><td>左右滑动 + 加号</td><td>item gap 8，右侧入口固定</td><td>拖动上方演示横向列表，或点击左右按钮。</td></tr>
+    <tr><td>分类总览</td><td>全部 tab</td><td>375×28，一行展示完整分类</td><td>点击上方演示中的「+」展开全部分类。</td></tr>
+    <tr><td>状态说明</td><td>选中 / 非选中</td><td>选中：#fff0f4 + #ff0f23；非选中：#f5f6fa + #171a26</td><td>点击任一 tab，观察当前选中状态变化。</td></tr>
+  </table>
+
+  <h3>API 速查</h3>
+  <pre><code>interface SecondaryTabItem {
+  key: string;
+  label: string;
+}
+
+interface SecondaryTabProps {
+  items: SecondaryTabItem[];
+  activeKey: string;
+  showAddEntry?: boolean;
+  onChange?: (key: string) =&gt; void;
+  onAddClick?: () =&gt; void;
+}</code></pre>
+
+  <h3>引用</h3>
+  <ul>
+    <li>Relay 节点：<code>2131:27</code></li>
+    <li>源文档：<code>design.md</code> / <code>spec.md</code> / <code>variants.md</code> / <code>behaviors.md</code></li>
+    <li>Token：<code>color/primary-light</code> · <code>color/primary</code> · <code>color/background 1</code> · <code>color/tittle</code></li>
+  </ul>
+
+  <hr>
+  <p class="meta">Generated by design-md-to-spec-page · 2026-05-30 · Secondary Tab</p>
+</div>
+
+<script>
+  (function () {
+    function setSelected(root, label) {
+      root.querySelectorAll('.secondary-tab').forEach(function (button) {
+        var same = (button.dataset.tab || button.textContent.trim()) === label;
+        button.classList.toggle('is-selected', same);
+      });
+      var feedback = root.querySelector('[data-feedback]');
+      if (feedback) feedback.textContent = '当前选中：' + label;
+      var selectedInScroll = root.querySelector('.secondary-scroll .secondary-tab.is-selected');
+      if (selectedInScroll) selectedInScroll.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('[data-demo]').forEach(function (demo) {
+      var scroll = demo.querySelector('[data-scroll]');
+      var panel = demo.querySelector('[data-all-tabs]');
+      demo.querySelectorAll('.secondary-tab').forEach(function (tab) {
+        tab.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          setSelected(demo, tab.dataset.tab || tab.textContent.trim());
+        });
+      });
+      demo.addEventListener('click', function (event) {
+        if (event.target.closest('[data-toggle-all]')) panel.classList.toggle('is-open');
+        if (event.target.closest('[data-scroll-left]')) scroll.scrollBy({ left: -96, behavior: 'smooth' });
+        if (event.target.closest('[data-scroll-right]')) scroll.scrollBy({ left: 96, behavior: 'smooth' });
+      });
+
+      scroll.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+          event.preventDefault();
+          scroll.scrollLeft += event.deltaY;
+        }
+      }, { passive: false });
+
+      var isDown = false;
+      var startX = 0;
+      var startLeft = 0;
+      scroll.addEventListener('pointerdown', function (event) {
+        if (event.target.closest('.secondary-tab')) return;
+        isDown = true;
+        startX = event.clientX;
+        startLeft = scroll.scrollLeft;
+        scroll.classList.add('is-dragging');
+        scroll.setPointerCapture(event.pointerId);
+      });
+      scroll.addEventListener('pointermove', function (event) {
+        if (!isDown) return;
+        scroll.scrollLeft = startLeft - (event.clientX - startX);
+      });
+      scroll.addEventListener('pointerup', function () {
+        isDown = false;
+        scroll.classList.remove('is-dragging');
+      });
+      scroll.addEventListener('pointercancel', function () {
+        isDown = false;
+        scroll.classList.remove('is-dragging');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VideoFeedPage · 手机端样式</title>
+<style>
+  :root {
+    --page-w: 375px;
+    --page-h: 812px;
+    --color-primary: #ff0f23;
+    --color-immerse-title: #ffffff;
+    --color-immerse-text: rgba(255,255,255,0.9);
+    --color-bottom-bg: #1a1a1a;
+    --shadow-action: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+    --shadow-text: 0 1px 1px rgba(0,0,0,0.2);
+    --shadow-info: 0 0 2px rgba(0,0,0,0.3);
+    --icon-white: brightness(0) invert(1);
+    --icon-muted: brightness(0) invert(1) opacity(0.5);
+    --icon-dark: brightness(0) saturate(100%) invert(8%) sepia(16%) saturate(1212%) hue-rotate(187deg) brightness(92%) contrast(92%);
+  }
+
+  * { box-sizing: border-box; }
+
+  button {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: #f5f6fa;
+    color: var(--color-immerse-title);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: var(--page-w);
+    height: var(--page-h);
+    position: relative;
+    overflow: hidden;
+    background: #211a0a;
+    box-shadow: 0 24px 80px rgba(23,26,38,0.28);
+    touch-action: none;
+    user-select: none;
+  }
+
+  .video-content {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 48%, rgba(255,255,255,0.035), transparent 26%),
+      linear-gradient(180deg, rgba(41,30,7,0.85) 0%, rgba(25,21,11,0.98) 58%, rgba(9,12,14,1) 100%);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: transform 260ms cubic-bezier(0.2, 0, 0, 1), opacity 260ms cubic-bezier(0.2, 0, 0, 1), background 260ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .phone.is-switching-up .video-content { transform: translateY(-18px); opacity: 0.72; }
+  .phone.is-switching-down .video-content { transform: translateY(18px); opacity: 0.72; }
+
+  .bottom-mask {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 73px;
+    height: 261px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.58) 100%);
+    pointer-events: none;
+  }
+
+  .status-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 375px;
+    height: 44px;
+    z-index: 50;
+  }
+
+  .time {
+    position: absolute;
+    left: 21px;
+    top: 14px;
+    width: 54px;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 18px;
+  }
+
+  .system-icons {
+    position: absolute;
+    right: 15px;
+    top: 14px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .cellular {
+    width: 17px;
+    height: 11px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .cellular span {
+    width: 3px;
+    background: #fff;
+    border-radius: 1px;
+  }
+
+  .cellular span:nth-child(1) { height: 4px; }
+  .cellular span:nth-child(2) { height: 6px; }
+  .cellular span:nth-child(3) { height: 8px; }
+  .cellular span:nth-child(4) { height: 11px; }
+
+  .wifi {
+    width: 16px;
+    height: 12px;
+    position: relative;
+  }
+
+  .wifi::before,
+  .wifi::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid #fff;
+    border-color: #fff transparent transparent transparent;
+    border-radius: 50%;
+  }
+
+  .wifi::before {
+    width: 16px;
+    height: 16px;
+    top: 0;
+  }
+
+  .wifi::after {
+    width: 9px;
+    height: 9px;
+    top: 4px;
+  }
+
+  .wifi span {
+    position: absolute;
+    left: 6px;
+    top: 9px;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+  }
+
+  .battery {
+    width: 25px;
+    height: 12px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 3px;
+  }
+
+  .battery::before {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 1.5px;
+    height: 4px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 1px;
+  }
+
+  .battery::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 18px;
+    height: 6px;
+    background: #fff;
+    border-radius: 1.5px;
+  }
+
+  .video-top-tab {
+    position: absolute;
+    left: 0;
+    top: 44px;
+    width: 375px;
+    height: 44px;
+    z-index: 40;
+    overflow: hidden;
+  }
+
+  .top-inner {
+    position: absolute;
+    left: 6px;
+    top: 0;
+    width: 362px;
+    height: 44px;
+  }
+
+  .top-icon {
+    position: absolute;
+    top: 0;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    display: grid;
+    place-items: center;
+  }
+
+  .top-icon img {
+    width: 22px;
+    height: 22px;
+    filter: var(--icon-white) drop-shadow(0 1px 1px rgba(0,0,0,0.25));
+  }
+
+  .menu-icon {
+    left: 0;
+  }
+
+  .search-icon {
+    left: 319.5px;
+  }
+
+  .top-return {
+    left: 291px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(6px);
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .top-return.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .tab-viewport {
+    position: absolute;
+    left: 44px;
+    top: 0;
+    width: 275px;
+    height: 44px;
+    overflow: hidden;
+    transition: width 160ms ease;
+    /* v1.1: 滑动态两侧线性渐隐 */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  }
+
+  .video-top-tab.has-return .tab-viewport {
+    width: 247px;
+  }
+
+  .tab-viewport.no-fade-left {
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 0%, #000 88%, transparent 100%);
+  }
+
+  .tab-viewport.no-fade-right {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 100%);
+  }
+
+  .tab-viewport.no-fade-left.no-fade-right {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .tab-track {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: transform 280ms cubic-bezier(0.2, 0, 0, 1);
+    cursor: grab;
+  }
+
+  .tab-track.is-dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+
+  .tab {
+    height: 44px;
+    min-width: 51px;
+    padding: 0 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 180ms ease;
+  }
+
+  .tab.is-active {
+    opacity: 1;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 7px;
+  }
+
+  .tab.is-active::after {
+    content: "";
+    width: 16px;
+    height: 2px;
+    background: #fff;
+    border-radius: 999px;
+  }
+
+  .interactive-area {
+    position: absolute;
+    left: 321px;
+    top: 347px;
+    width: 50px;
+    height: 381px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 220ms cubic-bezier(0.2, 0, 0, 1), opacity 220ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .phone.is-switching-up .interactive-area,
+  .phone.is-switching-up .info-layer {
+    transform: translateY(-22px);
+    opacity: 0;
+  }
+
+  .phone.is-switching-down .interactive-area,
+  .phone.is-switching-down .info-layer {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 83px;
+    position: relative;
+  }
+
+  .avatar-image {
+    position: absolute;
+    left: 4px;
+    top: 30px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background:
+      radial-gradient(circle at 50% 28%, #ffd49e 0 15%, #ef8c54 16% 34%, #742d39 35% 58%, #25284b 59% 100%);
+  }
+
+  .follow {
+    position: absolute;
+    left: 15px;
+    top: 62px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    cursor: pointer;
+  }
+
+  .follow:active {
+    transform: scale(0.92);
+  }
+
+  .follow img {
+    width: 16px;
+    height: 16px;
+    filter: var(--icon-white);
+  }
+
+  .follow .icon-add-follow {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+  }
+
+  .follow .icon-follow-pending {
+    display: none;
+  }
+
+  .follow .icon-follow-pending {
+    width: 14px;
+    height: 14px;
+    color: var(--color-primary);
+  }
+
+  .follow.is-pending {
+    background: rgba(255,255,255,0.92);
+    pointer-events: none;
+  }
+
+  .follow.is-pending .icon-add-follow {
+    display: none;
+  }
+
+  .follow.is-pending .icon-follow-pending {
+    display: block;
+  }
+
+  .follow.is-followed {
+    display: none;
+  }
+
+  .action-item {
+    position: relative;
+    width: 50px;
+    height: 62px;
+    flex: 0 0 62px;
+  }
+
+  .action-item .action-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: var(--icon-white) var(--shadow-action);
+  }
+
+  .action-item.is-active[data-action="like"] .action-icon {
+    filter: brightness(0) saturate(100%) invert(17%) sepia(100%) saturate(5300%) hue-rotate(345deg) brightness(106%) contrast(105%) var(--shadow-action);
+  }
+
+  .action-item.is-active[data-action="grass"] .action-icon {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(76%) saturate(575%) hue-rotate(95deg) brightness(92%) contrast(94%) var(--shadow-action);
+  }
+
+  .action-item .count {
+    position: absolute;
+    left: 0;
+    top: 43px;
+    width: 50px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    line-height: 15px;
+    font-weight: 500;
+    text-align: center;
+    text-shadow: var(--shadow-text);
+    white-space: nowrap;
+  }
+
+  .action-item.is-active[data-action="like"] .count {
+    color: var(--color-primary);
+  }
+
+  .action-item.is-active[data-action="grass"] .count {
+    color: #14ad5d;
+  }
+
+  .volume {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+  }
+
+  .volume-bg {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+  }
+
+  .volume img {
+    position: absolute;
+    left: 17px;
+    top: 17px;
+    width: 16px;
+    height: 16px;
+    filter: var(--icon-dark);
+  }
+
+  .info-layer {
+    position: absolute;
+    left: 11px;
+    top: 672px;
+    width: 274px;
+    height: 46px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 220ms cubic-bezier(0.2, 0, 0, 1), opacity 220ms cubic-bezier(0.2, 0, 0, 1), top 180ms ease, height 180ms ease;
+  }
+
+  .info-layer.is-expanded {
+    top: 654px;
+    height: 64px;
+  }
+
+  .nickname {
+    color: #fff;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    text-shadow: var(--shadow-info);
+  }
+
+  .copy-row {
+    width: 274px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .description {
+    flex: 1;
+    height: 18px;
+    color: var(--color-immerse-text);
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 400;
+    text-shadow: var(--shadow-info);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .info-layer.is-expanded .copy-row {
+    align-items: flex-end;
+  }
+
+  .info-layer.is-expanded .description {
+    height: 36px;
+    display: block;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: clip;
+  }
+
+  .expand {
+    width: 28px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    background: transparent;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: left;
+    text-shadow: var(--shadow-info);
+    cursor: pointer;
+  }
+
+  .progress-line {
+    position: absolute;
+    left: 11px;
+    top: 730.5px;
+    width: 196px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.3);
+    box-shadow: 0 -1px 1px rgba(0,0,0,0.3);
+    z-index: 20;
+  }
+
+  .bottom-tab {
+    position: absolute;
+    left: 0;
+    top: 732px;
+    width: 375px;
+    height: 80px;
+    background: var(--color-bottom-bg);
+    z-index: 45;
+    transition: opacity 220ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .phone.is-switching-up .bottom-tab,
+  .phone.is-switching-down .bottom-tab {
+    opacity: 0.72;
+  }
+
+  .bottom-tab__type-a,
+  .bottom-tab__type-b {
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .bottom-tab[data-bottom-mode="comment"] .bottom-tab__type-b {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .bottom-tab[data-bottom-mode="strip"] .bottom-tab__type-a {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .bottom-tab[data-bottom-mode="strip"] .bottom-tab__type-b {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .bottom-tab[data-bottom-mode="comment"] .bottom-tab__type-a {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .comment-entry {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 351px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .comment-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 22px;
+  }
+
+  .comment-icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+  }
+
+  .comment-placeholder {
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    line-height: 12px;
+    letter-spacing: 0.29px;
+  }
+
+  .emoji {
+    width: 20px;
+    height: 20px;
+    filter: var(--icon-muted);
+  }
+
+  .bottom-strip {
+    position: absolute;
+    left: 11px;
+    top: 14px;
+    width: 353px;
+    height: 34px;
+    padding: 7px 10px;
+    border: 0;
+    margin: 0;
+    background: rgba(255,255,255,0.10);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .bottom-strip.is-hot {
+    color: #ffe433;
+  }
+
+  .bottom-strip__main {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .bottom-strip__icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    display: block;
+    object-fit: contain;
+  }
+
+  .bottom-strip__icon--wide {
+    width: 24px;
+    flex-basis: 24px;
+  }
+
+  .bottom-strip__label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .bottom-strip__sep {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 2px;
+  }
+
+  .bottom-strip__content {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bottom-strip__assist {
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+  }
+
+  .bottom-strip.is-hot .bottom-strip__assist {
+    color: rgba(255,228,51,0.7);
+  }
+
+  .bottom-strip__arrow {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    opacity: 0.7;
+    filter: var(--icon-white);
+  }
+
+  .bottom-strip-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 92px;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.45);
+    color: rgba(255,255,255,0.88);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 46;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 400ms ease;
+  }
+
+  .bottom-strip-hint.is-hidden {
+    opacity: 0;
+  }
+
+  .home-indicator {
+    position: absolute;
+    left: 0;
+    top: 46px;
+    width: 375px;
+    height: 34px;
+    opacity: 0.8;
+  }
+
+  .home-indicator::after {
+    content: "";
+    position: absolute;
+    left: 121px;
+    top: 19px;
+    width: 134px;
+    height: 5px;
+    background: #fff;
+    border-radius: 999px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 0;
+      background: #211a0a;
+      display: block;
+    }
+
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      min-height: 812px;
+      box-shadow: none;
+      transform-origin: top left;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="phone" aria-label="Video Feed Page mobile preview">
+    <div class="video-content" aria-hidden="true" data-video-content></div>
+    <div class="bottom-mask" aria-hidden="true"></div>
+
+    <section class="status-bar" aria-label="SystemSafeArea">
+      <div class="time">9:41</div>
+      <div class="system-icons" aria-hidden="true">
+        <div class="cellular"><span></span><span></span><span></span><span></span></div>
+        <div class="wifi"><span></span></div>
+        <div class="battery"></div>
+      </div>
+    </section>
+
+    <nav class="video-top-tab" aria-label="video-top-tab">
+      <div class="top-inner">
+        <button class="top-icon menu-icon" type="button" aria-label="菜单">
+          <img src="../../horizontal/components/video-top-tab/assets/icons/icon-menu-video.svg" alt="">
+        </button>
+        <div class="tab-viewport" aria-label="频道" data-tab-viewport>
+          <div class="tab-track" data-tab-track>
+            <button class="tab" type="button" data-tab-index="0">京言</button>
+            <button class="tab" type="button" data-tab-index="1">JoyAI</button>
+            <button class="tab" type="button" data-tab-index="2">AI穿搭</button>
+            <button class="tab" type="button" data-tab-index="3">关注</button>
+            <button class="tab" type="button" data-tab-index="4">直播</button>
+            <button class="tab" type="button" data-tab-index="5">推荐</button>
+            <button class="tab" type="button" data-tab-index="6">小说</button>
+            <button class="tab" type="button" data-tab-index="7">短剧</button>
+            <button class="tab is-active" type="button" data-tab-index="8">视频</button>
+          </div>
+        </div>
+        <button class="top-icon top-return" type="button" data-tab-return aria-label="返回默认频道位置" hidden>
+          <img src="../../horizontal/components/video-top-tab/assets/icons/icon-forward-video.svg" alt="">
+        </button>
+        <button class="top-icon search-icon" type="button" aria-label="搜索">
+          <img src="../../horizontal/components/video-top-tab/assets/icons/icon-search-video.svg" alt="">
+        </button>
+      </div>
+    </nav>
+
+    <aside class="interactive-area" aria-label="InteractiveArea2">
+      <div class="avatar">
+        <div class="avatar-image" role="img" aria-label="用户头像"></div>
+        <button class="follow" type="button" aria-label="关注" aria-pressed="false" data-follow>
+          <svg class="icon-add-follow" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <path d="M9 4v5H4v2h5v5h2v-5h5V9h-5V4z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
+          </svg>
+          <svg class="icon-follow-pending" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <path d="M5 10.2 8.3 13.5 15.2 6.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <button class="action-item" type="button" data-action="like" aria-label="点赞 34.5万" aria-pressed="false">
+        <img class="action-icon" src="../../src/assets/icons/icon-like-default.svg" alt="">
+        <span class="count">34.5万</span>
+      </button>
+      <button class="action-item" type="button" data-static-action="comment" aria-label="评论 34.5万">
+        <img class="action-icon" src="../../src/assets/icons/icon-comment-default.svg" alt="">
+        <span class="count">34.5万</span>
+      </button>
+      <button class="action-item" type="button" data-action="grass" aria-label="种草 34.5万" aria-pressed="false">
+        <img class="action-icon" src="../../src/assets/icons/icon-grass-default.svg" alt="">
+        <span class="count">34.5万</span>
+      </button>
+      <button class="action-item" type="button" data-static-action="share" aria-label="转发 34.5万">
+        <img class="action-icon" src="../../src/assets/icons/icon-share-default.svg" alt="">
+        <span class="count">34.5万</span>
+      </button>
+      <button class="volume" type="button" aria-label="静音">
+        <span class="volume-bg" aria-hidden="true"></span>
+        <img src="../../src/assets/icons/icon-volume-mute-fill.svg" alt="">
+      </button>
+    </aside>
+
+    <section class="info-layer" aria-label="info-layer">
+      <div class="nickname" data-feed-nickname>@昵称文案</div>
+      <div class="copy-row">
+        <div class="description" id="feed-description" data-feed-description>将喜欢的一切留在身边这便是努力的意...</div>
+        <button class="expand" type="button" data-feed-expand aria-controls="feed-description" aria-expanded="false" aria-label="展开视频文案">展开</button>
+      </div>
+    </section>
+
+    <div class="progress-line" aria-hidden="true"></div>
+
+    <section class="bottom-tab" aria-label="bottom-tab" data-bottom-tab data-bottom-mode="comment">
+      <div class="bottom-tab__type-a" data-bottom-type-a>
+        <div class="comment-entry">
+          <div class="comment-left">
+            <img class="comment-icon" src="../../src/assets/icons/icon-comment-check-brand.svg" alt="">
+            <span class="sr-only">评论</span>
+            <span class="comment-placeholder">善语评论，文明发言</span>
+          </div>
+          <img class="emoji" src="../../src/assets/icons/icon-happy.svg" alt="">
+        </div>
+      </div>
+      <button class="bottom-strip bottom-tab__type-b" type="button" data-bottom-type-b aria-label="内容通条">
+        <span class="bottom-strip__main">
+          <img class="bottom-strip__icon" data-strip-icon src="../../horizontal/components/bottom-tab/assets/icon-topic.svg" alt="">
+          <span class="bottom-strip__label" data-strip-label>话题</span>
+          <span class="bottom-strip__sep" aria-hidden="true"></span>
+          <span class="bottom-strip__content" data-strip-content>一周减肥不重样</span>
+          <span class="bottom-strip__assist" data-strip-assist hidden>88.8万人在看</span>
+        </span>
+        <svg class="bottom-strip__arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M6 4.5 10 8 6 11.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="home-indicator" aria-hidden="true"></div>
+    </section>
+    <div class="bottom-strip-hint" data-feed-hint>上滑 / 下滑切换视频 · 通条随内容挂载</div>
+  </main>
+<script>
+(function () {
+  var iconRoot = '../../src/assets/icons/';
+  var phone = document.querySelector('.phone');
+  var videoContent = document.querySelector('[data-video-content]');
+  var infoLayer = document.querySelector('.info-layer');
+  var followButton = document.querySelector('[data-follow]');
+  var nickname = document.querySelector('[data-feed-nickname]');
+  var description = document.querySelector('[data-feed-description]');
+  var expandButton = document.querySelector('[data-feed-expand]');
+  var actionButtons = {
+    like: document.querySelector('[data-action="like"]'),
+    grass: document.querySelector('[data-action="grass"]'),
+    comment: document.querySelector('[data-static-action="comment"]'),
+    share: document.querySelector('[data-static-action="share"]')
+  };
+  var bottomTab = document.querySelector('[data-bottom-tab]');
+  var bottomTypeB = document.querySelector('[data-bottom-type-b]');
+  var stripIcon = document.querySelector('[data-strip-icon]');
+  var stripLabel = document.querySelector('[data-strip-label]');
+  var stripContent = document.querySelector('[data-strip-content]');
+  var stripAssist = document.querySelector('[data-strip-assist]');
+  var feedHint = document.querySelector('[data-feed-hint]');
+  var bottomBarAssetRoot = '../../horizontal/components/bottom-tab/assets/';
+  var isSwitching = false;
+  var touchStartY = 0;
+  var touchCurrentY = 0;
+
+  var feedIndex = 0;
+  var isDescriptionExpanded = false;
+  var imageOverlay = 'linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.04) 38%, rgba(0,0,0,0.64) 100%)';
+
+  var feeds = [
+    {
+      nickname: '@昵称文案',
+      description: '将喜欢的一切留在身边这便是努力的意义的气不好 #勇敢吧快乐加倍',
+      expandable: true,
+      followState: 'idle',
+      counts: { like: '34.5万', comment: '34.5万', grass: '34.5万', share: '34.5万' },
+      background: 'radial-gradient(circle at 50% 48%, rgba(255,255,255,0.035), transparent 26%), linear-gradient(180deg, rgba(41,30,7,0.85) 0%, rgba(25,21,11,0.98) 58%, rgba(9,12,14,1) 100%)',
+      posters: [
+        { title: '都市好物', start: '#6f4f2f', end: '#14110b', accent: '#ffd39d', scene: 'shopping' },
+        { title: '生活片段', start: '#244f4f', end: '#101415', accent: '#9df0dc', scene: 'home' },
+        { title: '日常推荐', start: '#703947', end: '#140b10', accent: '#ffc1cf', scene: 'product' }
+      ],
+      bottomBar: { mode: 'comment' }
+    },
+    {
+      nickname: '@京东家电',
+      description: '新风空调正在直播讲解，滑动查看更多同款内容',
+      expandable: true,
+      followState: 'idle',
+      counts: { like: '8.2万', comment: '1289', grass: '2.4万', share: '分享' },
+      background: 'radial-gradient(circle at 60% 32%, rgba(255,255,255,0.12), transparent 24%), linear-gradient(180deg, rgba(27,50,70,0.9) 0%, rgba(13,28,45,0.98) 55%, rgba(4,8,18,1) 100%)',
+      posters: [
+        { title: '清爽家电', start: '#2b6f8a', end: '#071320', accent: '#b7f0ff', scene: 'appliance' },
+        { title: '智能客厅', start: '#375b7d', end: '#0c1420', accent: '#c8ddff', scene: 'home' },
+        { title: '科技蓝调', start: '#24626d', end: '#09151a', accent: '#6fe7ff', scene: 'product' }
+      ],
+      bottomBar: {
+        mode: 'strip',
+        icon: 'icon-related-search.svg',
+        label: '相关搜索',
+        content: '新风空调怎么选',
+        assist: null,
+        hot: false
+      }
+    },
+    {
+      nickname: '@趋势好物局',
+      description: '这件春夏单品适合通勤，也适合周末出门',
+      expandable: false,
+      followState: 'idle',
+      counts: { like: '12.8万', comment: '5632', grass: '6.1万', share: '分享' },
+      background: 'radial-gradient(circle at 42% 36%, rgba(255,255,255,0.1), transparent 22%), linear-gradient(180deg, rgba(70,35,54,0.9) 0%, rgba(31,20,38,0.98) 56%, rgba(8,8,14,1) 100%)',
+      posters: [
+        { title: '春夏穿搭', start: '#8c5066', end: '#161016', accent: '#ffd0df', scene: 'fashion' },
+        { title: '通勤灵感', start: '#67528f', end: '#120f1a', accent: '#d8c8ff', scene: 'fashion' },
+        { title: '趋势好物', start: '#7b4157', end: '#140c11', accent: '#ffc0d7', scene: 'product' }
+      ],
+      bottomBar: {
+        mode: 'strip',
+        icon: 'icon-topic.svg',
+        label: '话题',
+        content: '春夏通勤穿搭',
+        assist: '12.8万人在看',
+        hot: false
+      }
+    }
+  ];
+
+  function getSceneMarkup(theme) {
+    var accent = theme.accent;
+
+    if (theme.scene === 'appliance') {
+      return ''
+        + '<rect x="78" y="150" width="220" height="260" rx="32" fill="#ffffff" fill-opacity="0.16" stroke="' + accent + '" stroke-opacity="0.4" stroke-width="2"/>'
+        + '<circle cx="248" cy="204" r="18" fill="' + accent + '" opacity="0.9"/>'
+        + '<path d="M122 256h132M122 302h92M122 348h118" stroke="#ffffff" stroke-opacity="0.42" stroke-width="10" stroke-linecap="round"/>'
+        + '<path d="M78 456c56-32 156-32 220 0v120H78z" fill="#ffffff" fill-opacity="0.10"/>';
+    }
+
+    if (theme.scene === 'fashion') {
+      return ''
+        + '<path d="M188 136c52 0 94 42 94 94v292c0 30-24 54-54 54h-80c-30 0-54-24-54-54V230c0-52 42-94 94-94z" fill="#ffffff" fill-opacity="0.14" stroke="' + accent + '" stroke-opacity="0.4" stroke-width="2"/>'
+        + '<path d="M140 252c32 26 64 39 96 0M130 350h116M142 418h92" stroke="' + accent + '" stroke-width="10" stroke-linecap="round" opacity="0.82"/>'
+        + '<circle cx="188" cy="196" r="38" fill="#ffffff" fill-opacity="0.18"/>';
+    }
+
+    if (theme.scene === 'home') {
+      return ''
+        + '<rect x="54" y="278" width="268" height="164" rx="24" fill="#ffffff" fill-opacity="0.13" stroke="' + accent + '" stroke-opacity="0.4" stroke-width="2"/>'
+        + '<rect x="84" y="322" width="82" height="84" rx="18" fill="#ffffff" fill-opacity="0.16"/>'
+        + '<rect x="196" y="322" width="82" height="84" rx="18" fill="#ffffff" fill-opacity="0.16"/>'
+        + '<path d="M70 506h236M116 472h144" stroke="' + accent + '" stroke-width="12" stroke-linecap="round" opacity="0.8"/>';
+    }
+
+    return ''
+      + '<rect x="106" y="188" width="164" height="228" rx="28" fill="#ffffff" fill-opacity="0.16" stroke="' + accent + '" stroke-opacity="0.4" stroke-width="2"/>'
+      + '<rect x="130" y="224" width="116" height="88" rx="20" fill="#ffffff" fill-opacity="0.18"/>'
+      + '<path d="M130 350h116M150 386h76" stroke="' + accent + '" stroke-width="10" stroke-linecap="round" opacity="0.86"/>'
+      + '<path d="M92 496c44-38 148-48 208 0v82H92z" fill="#ffffff" fill-opacity="0.10"/>';
+  }
+
+  function buildPoster(theme) {
+    var svg = ''
+      + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812">'
+      + '<defs>'
+      + '<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + theme.start + '"/><stop offset="1" stop-color="' + theme.end + '"/></linearGradient>'
+      + '<radialGradient id="glow" cx="50%" cy="34%" r="54%"><stop offset="0" stop-color="' + theme.accent + '" stop-opacity="0.55"/><stop offset="1" stop-color="' + theme.accent + '" stop-opacity="0"/></radialGradient>'
+      + '</defs>'
+      + '<rect width="375" height="812" fill="url(#bg)"/>'
+      + '<rect width="375" height="812" fill="url(#glow)"/>'
+      + '<circle cx="72" cy="154" r="96" fill="#ffffff" fill-opacity="0.08"/>'
+      + '<circle cx="326" cy="344" r="142" fill="#ffffff" fill-opacity="0.06"/>'
+      + getSceneMarkup(theme)
+      + '<text x="188" y="646" fill="#ffffff" fill-opacity="0.38" font-size="28" font-family="PingFang SC, Arial, sans-serif" font-weight="700" text-anchor="middle">' + theme.title + '</text>'
+      + '</svg>';
+
+    return 'url("data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg) + '")';
+  }
+
+  function getFeedPoster(feed) {
+    if (!feed.poster) {
+      var posters = feed.posters || [];
+      var theme = posters[Math.floor(Math.random() * posters.length)];
+      feed.poster = theme ? buildPoster(theme) : '';
+    }
+
+    return feed.poster;
+  }
+
+  function getFeedBackground(feed) {
+    var poster = getFeedPoster(feed);
+    return poster ? imageOverlay + ', ' + poster + ', ' + feed.background : feed.background;
+  }
+
+  var config = {
+    like: {
+      defaultIcon: 'icon-like-default.svg',
+      activeIcon: 'icon-like-active.svg',
+      defaultLabel: '点赞',
+      activeLabel: '已点赞'
+    },
+    grass: {
+      defaultIcon: 'icon-grass-default.svg',
+      activeIcon: 'icon-grass-active.svg',
+      defaultLabel: '种草',
+      activeLabel: '已种草'
+    }
+  };
+
+  function setActionCount(type, count) {
+    var button = actionButtons[type];
+    if (!button) return;
+    var displayCount = type === 'share' ? '分享' : count;
+    button.querySelector('.count').textContent = displayCount;
+    var labelPrefix = (button.classList.contains('is-active') && config[type] ? config[type].activeLabel : (config[type] ? config[type].defaultLabel : type));
+    button.setAttribute('aria-label', type === 'share' ? '转发 分享' : (labelPrefix + ' ' + displayCount));
+  }
+
+  function resetToggleAction(type) {
+    var button = actionButtons[type];
+    var state = config[type];
+    if (!button || !state) return;
+    button.classList.remove('is-active');
+    button.setAttribute('aria-pressed', 'false');
+    button.querySelector('.action-icon').src = iconRoot + state.defaultIcon;
+  }
+
+  function renderBottomBar(feed) {
+    var bar = feed.bottomBar || { mode: 'comment' };
+    bottomTab.dataset.bottomMode = bar.mode === 'strip' ? 'strip' : 'comment';
+
+    if (bar.mode !== 'strip') {
+      bottomTab.setAttribute('aria-label', 'bottom-tab · 评论输入');
+      return;
+    }
+
+    stripIcon.src = bottomBarAssetRoot + bar.icon;
+    stripIcon.alt = bar.label;
+    stripLabel.textContent = bar.label;
+    stripContent.textContent = bar.content;
+    bottomTypeB.classList.toggle('is-hot', Boolean(bar.hot));
+
+    if (bar.assist) {
+      stripAssist.hidden = false;
+      stripAssist.textContent = bar.assist;
+    } else {
+      stripAssist.hidden = true;
+      stripAssist.textContent = '';
+    }
+
+    bottomTypeB.setAttribute(
+      'aria-label',
+      bar.label + ' · ' + bar.content + (bar.assist ? ' · ' + bar.assist : '')
+    );
+    bottomTab.setAttribute('aria-label', 'bottom-tab · Type B 通条');
+  }
+
+  function setDescriptionExpanded(nextExpanded) {
+    var feed = feeds[feedIndex];
+    var canExpand = Boolean(feed.expandable);
+    isDescriptionExpanded = canExpand && nextExpanded;
+    description.textContent = feed.description;
+    infoLayer.classList.toggle('is-expanded', isDescriptionExpanded);
+    expandButton.hidden = !canExpand;
+    expandButton.textContent = isDescriptionExpanded ? '收起' : '展开';
+    expandButton.setAttribute('aria-expanded', isDescriptionExpanded ? 'true' : 'false');
+    expandButton.setAttribute('aria-label', (isDescriptionExpanded ? '收起' : '展开') + '视频文案');
+  }
+
+  function setFollowState(feed, state) {
+    feed.followState = state;
+    if (feed !== feeds[feedIndex]) return;
+
+    followButton.classList.toggle('is-pending', state === 'pending');
+    followButton.classList.toggle('is-followed', state === 'followed');
+    followButton.disabled = state === 'pending' || state === 'followed';
+    followButton.setAttribute('aria-pressed', state === 'followed' ? 'true' : 'false');
+
+    if (state === 'pending') {
+      followButton.setAttribute('aria-label', '关注中');
+    } else if (state === 'followed') {
+      followButton.setAttribute('aria-label', '已关注');
+    } else {
+      followButton.setAttribute('aria-label', '关注');
+    }
+  }
+
+  function renderFeed() {
+    var feed = feeds[feedIndex];
+    videoContent.style.backgroundImage = getFeedBackground(feed);
+    nickname.textContent = feed.nickname;
+    setDescriptionExpanded(false);
+    setFollowState(feed, feed.followState || 'idle');
+    resetToggleAction('like');
+    resetToggleAction('grass');
+    setActionCount('like', feed.counts.like);
+    setActionCount('comment', feed.counts.comment);
+    setActionCount('grass', feed.counts.grass);
+    setActionCount('share', feed.counts.share);
+    renderBottomBar(feed);
+  }
+
+  expandButton.addEventListener('click', function () {
+    setDescriptionExpanded(!isDescriptionExpanded);
+  });
+
+  followButton.addEventListener('click', function () {
+    var feed = feeds[feedIndex];
+    if (feed.followState === 'pending' || feed.followState === 'followed') return;
+
+    setFollowState(feed, 'pending');
+    window.setTimeout(function () {
+      setFollowState(feed, 'followed');
+    }, 4000);
+  });
+
+  function switchFeed(direction) {
+    if (isSwitching) return;
+    isSwitching = true;
+    phone.classList.add(direction > 0 ? 'is-switching-up' : 'is-switching-down');
+
+    window.setTimeout(function () {
+      feedIndex = (feedIndex + direction + feeds.length) % feeds.length;
+      renderFeed();
+      phone.classList.remove('is-switching-up', 'is-switching-down');
+      window.setTimeout(function () {
+        isSwitching = false;
+      }, 120);
+    }, 170);
+  }
+
+  document.querySelectorAll('[data-action="like"], [data-action="grass"]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var action = button.dataset.action;
+      var nextActive = button.getAttribute('aria-pressed') !== 'true';
+      var icon = button.querySelector('.action-icon');
+      var count = button.querySelector('.count').textContent;
+      var state = config[action];
+
+      button.classList.toggle('is-active', nextActive);
+      button.setAttribute('aria-pressed', nextActive ? 'true' : 'false');
+      button.setAttribute('aria-label', (nextActive ? state.activeLabel : state.defaultLabel) + ' ' + count);
+      icon.src = iconRoot + (nextActive ? state.activeIcon : state.defaultIcon);
+    });
+  });
+
+  phone.addEventListener('pointerdown', function (event) {
+    if (event.target.closest('button')) return;
+    touchStartY = event.clientY;
+    touchCurrentY = event.clientY;
+    phone.setPointerCapture(event.pointerId);
+  });
+
+  phone.addEventListener('pointermove', function (event) {
+    touchCurrentY = event.clientY;
+  });
+
+  phone.addEventListener('pointerup', function (event) {
+    if (event.target.closest('button')) return;
+    var deltaY = touchStartY - touchCurrentY;
+    if (Math.abs(deltaY) > 56) {
+      switchFeed(deltaY > 0 ? 1 : -1);
+    }
+  });
+
+  phone.addEventListener('wheel', function (event) {
+    if (Math.abs(event.deltaY) < 24) return;
+    event.preventDefault();
+    switchFeed(event.deltaY > 0 ? 1 : -1);
+  }, { passive: false });
+
+  bottomTypeB.addEventListener('click', function () {
+    var feed = feeds[feedIndex];
+    if (!feed.bottomBar || feed.bottomBar.mode !== 'strip') return;
+    window.alert('进入「' + feed.bottomBar.label + ' · ' + feed.bottomBar.content + '」详情（Demo）');
+  });
+
+  window.setTimeout(function () {
+    if (feedHint) feedHint.classList.add('is-hidden');
+  }, 4200);
+
+  renderFeed();
+
+  /* ========== v1.1: 顶部 Tab 左右滑动交互 (Relay 2075:6916) ========== */
+  (function () {
+    var viewport = document.querySelector('[data-tab-viewport]');
+    var track = document.querySelector('[data-tab-track]');
+    var returnButton = document.querySelector('[data-tab-return]');
+    var tabs = Array.prototype.slice.call(track.querySelectorAll('.tab'));
+    var trackX = 0;
+    var defaultAnchorX = 0;
+    var hasDefaultAnchor = false;
+    var dragStartX = 0;
+    var dragStartTrackX = 0;
+    var isDragging = false;
+
+    function getMinX() {
+      return -(track.scrollWidth - viewport.clientWidth);
+    }
+
+    function clampX(x) {
+      return Math.max(getMinX(), Math.min(0, x));
+    }
+
+    function updateFade() {
+      var min = getMinX();
+      viewport.classList.toggle('no-fade-left', trackX >= -2);
+      viewport.classList.toggle('no-fade-right', trackX <= min + 2);
+      updateReturnButton();
+    }
+
+    function updateReturnButton() {
+      if (!returnButton || !hasDefaultAnchor) return;
+      var shouldShow = Math.abs(trackX - defaultAnchorX) > 2;
+      document.querySelector('.video-top-tab').classList.toggle('has-return', shouldShow);
+      returnButton.hidden = !shouldShow;
+      returnButton.classList.toggle('is-visible', shouldShow);
+    }
+
+    function setTrackX(x, animate) {
+      trackX = clampX(x);
+      if (animate) {
+        track.classList.remove('is-dragging');
+      } else {
+        track.classList.add('is-dragging');
+      }
+      track.style.transform = 'translateX(' + trackX + 'px)';
+      updateFade();
+    }
+
+    function scrollActiveIntoView(animate) {
+      var active = track.querySelector('.tab.is-active');
+      if (!active) return;
+      var tabLeft = active.offsetLeft;
+      var tabRight = tabLeft + active.offsetWidth;
+      var vpWidth = viewport.clientWidth;
+      var targetX = trackX;
+      if (tabRight + trackX > vpWidth - 20) {
+        targetX = -(tabRight - vpWidth + 20);
+      }
+      if (tabLeft + trackX < 20) {
+        targetX = -(tabLeft - 20);
+      }
+      setTrackX(targetX, animate !== false);
+    }
+
+    function selectTab(index) {
+      tabs.forEach(function (t, i) {
+        t.classList.toggle('is-active', i === index);
+      });
+      scrollActiveIntoView(true);
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function (e) {
+        if (isDragging) { e.preventDefault(); return; }
+        selectTab(i);
+      });
+    });
+
+    if (returnButton) {
+      returnButton.addEventListener('click', function () {
+        setTrackX(defaultAnchorX, true);
+      });
+    }
+
+    // Pointer drag for horizontal scroll
+    track.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      isDragging = false;
+      dragStartX = e.clientX;
+      dragStartTrackX = trackX;
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('is-dragging');
+    });
+
+    track.addEventListener('pointermove', function (e) {
+      if (!track.hasPointerCapture(e.pointerId)) return;
+      var dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > 4) isDragging = true;
+      setTrackX(dragStartTrackX + dx, false);
+    });
+
+    track.addEventListener('pointerup', function (e) {
+      if (!track.hasPointerCapture(e.pointerId)) return;
+      track.releasePointerCapture(e.pointerId);
+      track.classList.remove('is-dragging');
+      updateFade();
+    });
+
+    track.addEventListener('lostpointercapture', function () {
+      track.classList.remove('is-dragging');
+    });
+
+    // 初始化：滚动到选中 Tab 可见
+    scrollActiveIntoView(false);
+    defaultAnchorX = trackX;
+    hasDefaultAnchor = true;
+    updateReturnButton();
+  })();
+})();
+</script>
+</body>
+</html>
